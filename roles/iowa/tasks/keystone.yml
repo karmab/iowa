@@ -76,6 +76,14 @@
     tenant: admin
     tenant_description: "Admin Tenant"
 
+- name: Create Keystone services tenant
+  run_once: yes
+  keystone_user:
+    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    tenant_description: "Services Tenant"
+
 - name: Create Keystone admin user
   run_once: yes
   keystone_user:
@@ -85,7 +93,7 @@
     user: admin
     password: "{{ keystone.admin_password }}"
 
-- name: Create Keystone admin role
+- name: Grant Keystone admin role
   run_once: yes
   keystone_user:
     endpoint: "http://{{ common.controller_host }}:35357/v2.0"
@@ -94,7 +102,7 @@
     user: admin
     role: admin 
 
-- name: Create Keystone member role
+- name: Grant Keystone member role
   run_once: yes
   keystone_user:
     endpoint: "http://{{ common.controller_host }}:35357/v2.0"
@@ -114,7 +122,7 @@
     OS_TENANT_NAME: "admin"
     OS_REGION_NAME: "{{ common.region }}"
 
-- debug: var=keystone_service
+##- debug: var=keystone_service
 
 - name: Create Keystone service
   run_once: yes
@@ -137,8 +145,6 @@
     OS_SERVICE_ENDPOINT: "{{ admin_url }}"
     OS_TENANT_NAME: "admin"
     OS_REGION_NAME: "{{ common.region }}"
-
-- debug: var=keystone_endpoint
 
 - name: Create Keystone endpoint
   run_once: yes

@@ -5,7 +5,7 @@
     public_url: "{{ glance.public_url | default('http://' ~ common.controller_host ~ ':9292') }}"
     internal_url: "{{ glance.internal_url | default('http://' ~ common.controller_host ~ ':9292') }}"
     admin_url: "{{ glance.admin_url | default('http://' ~ common.controller_host ~ ':9292') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':9292') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
 
 - name: Install Glance
   yum: 
@@ -18,33 +18,156 @@
 
 - name: Configure Glance SQL connection
   ini_file: 
-    dest: /etc/glance/glance-{{ item }}.conf
+    dest: "/etc/glance/glance-{{ item }}.conf"
     section: DEFAULT
     option: sql_connection
-    value: mysql://{{ glance.dbuser}}:{{glance.dbpassword}}@{{ common.controller_host}}/{{ glance.dbname }}
-    with_items:
-     - 'api'
-     - 'registry'
+    value: "mysql://{{ glance.dbuser}}:{{glance.dbpassword}}@{{ common.controller_host}}/{{ glance.dbname }}"
+  with_items:
+    - 'api'
+    - 'registry'
+
+- name: Configure Glance Rabbit
+  ini_file: 
+    dest: /etc/glance/glance-api.conf
+    section: DEFAULT
+    option: notification_driver
+    value: messsaging
+
+- name: Configure Glance Rabbit
+  ini_file: 
+    dest: /etc/glance/glance-api.conf
+    section: DEFAULT
+    option: rabbit_hosts
+    value: "{{ common.rabbit_hosts | append(':5672') | join(',')}}"
+
+- name: Configure Glance Rabbit
+  ini_file: 
+    dest: /etc/glance/glance-api.conf
+    section: DEFAULT
+    option: rabbit_userid
+    value: "{{ common.rabbit_user }}"
+
+- name: Configure Glance Rabbit
+  ini_file: 
+    dest: /etc/glance/glance-api.conf
+    section: DEFAULT
+    option: rabbit_password
+    value: "{{ common.rabbit_password }}"
+
+- name: Configure Glance Rabbit
+  ini_file: 
+    dest: /etc/glance/glance-api.conf
+    section: DEFAULT
+    option: rabbit_virtual_host
+    value: /
+
+- name: Configure Glance 
+  ini_file: 
+    dest: "/etc/glance/glance-{{ item }}.conf"
+    section: paste_deploy
+    option: flavor
+    value: keystone
+  with_items:
+    - 'api'
+    - 'registry'
+
+- name: Configure Glance 
+  ini_file: 
+    dest: "/etc/glance/glance-{{ item }}.conf"
+    section: keystone_authtoken
+    option: auth_host
+    value: "{{ common.controller_host }}"
+  with_items:
+    - 'api'
+    - 'registry'
+
+- name: Configure Glance 
+  ini_file: 
+    dest: "/etc/glance/glance-{{ item }}.conf"
+    section: keystone_authtoken
+    option: auth_port
+    value: 35357
+  with_items:
+    - 'api'
+    - 'registry'
+
+- name: Configure Glance 
+  ini_file: 
+    dest: "/etc/glance/glance-{{ item }}.conf"
+    section: keystone_authtoken
+    option: auth_protocol
+    value: http
+  with_items:
+    - 'api'
+    - 'registry'
+
+- name: Configure Glance 
+  ini_file: 
+    dest: "/etc/glance/glance-{{ item }}.conf"
+    section: keystone_authtoken
+    option: admin_tenant_name
+    value: services
+  with_items:
+    - 'api'
+    - 'registry'
+
+- name: Configure Glance 
+  ini_file: 
+    dest: "/etc/glance/glance-{{ item }}.conf"
+    section: keystone_authtoken
+    option: admin_user
+    value: glance
+  with_items:
+    - 'api'
+    - 'registry'
+
+- name: Configure Glance 
+  ini_file: 
+    dest: "/etc/glance/glance-{{ item }}.conf"
+    section: keystone_authtoken
+    option: admin_password
+    value: "{{ glance.password }}" 
+  with_items:
+    - 'api'
+    - 'registry'
+
+- name: Configure Glance 
+  ini_file: 
+    dest: "/etc/glance/glance-api.conf"
+    section: DEFAULT
+    option: filesystem_store_datadir
+    value: /var/lib/glance/images
+
+- name: Configure Glance 
+  ini_file: 
+    dest: "/etc/glance/glance-api.conf"
+    section: glance_store
+    option: stores
+    value: glance.store.filesystem.Store
+
+- name: Check Glance database version
+  shell: glance-manage db_version
+  register: glance_db_version
+  changed_when: false
 
 - name: Populate Glance Database
   run_once: yes
   shell: glance-manage db_sync
-
+  when: glance_db_version.stdout == "0"
 
 - name: Create Glance user
-  run_once: yes
   keystone_user:
+    state: present
     endpoint: "http://{{ common.controller_host }}:35357/v2.0"
-    token: "{{ admin.password }}"
-    tenant: services
+    token: "{{ keystone.admin_token }}"
     user: glance
+    tenant: services
     password: "{{ glance.password }}"
 
-- name: Create Glance member role
-  run_once: yes
+- name: Grant Glance admin role
   keystone_user:
     endpoint: "http://{{ common.controller_host }}:35357/v2.0"
-    token: "{{ glance.admin_token }}"
+    token: "{{ keystone.admin_token }}"
     tenant: services
     user: glance
     role: admin
@@ -54,54 +177,57 @@
   register: glance_service
   changed_when: false
   environment:
-    OS_USERNAME: "admin"
-    OS_PASSWORD: {{ keystone.admin_password }}
+    OS_USERNAME: admin
+    OS_PASSWORD: "{{ keystone.admin_password }}"
     OS_AUTH_URL: "{{ keystone_url }}"
-    OS_TENANT_NAME: "services"
+    OS_TENANT_NAME: admin
     OS_REGION_NAME: "{{ common.region }}"
-
-- debug: var=glance_service
 
 - name: Create Glance service
   run_once: yes
-  shell: keystone service-create --name=glance --type=identity --description="Glance Identity service"
+  shell: keystone service-create --name=glance --type=image --description="Glance Image service"
   environment:
-    OS_USERNAME: "admin"
-    OS_PASSWORD: {{ keystone.admin_password }}
+    OS_USERNAME: admin
+    OS_PASSWORD: "{{ keystone.admin_password }}"
     OS_AUTH_URL: "{{ keystone_url }}"
-    OS_TENANT_NAME: "services"
+    OS_TENANT_NAME: admin
     OS_REGION_NAME: "{{ common.region }}"
   when: glance_service.stdout == "missing"
 
 - name: Check Glance endpoint
-  shell: keystone endpoint-get --service image || echo 'missing'
+  shell: keystone endpoint-get --service glance || echo 'missing'
   register: glance_endpoint
   changed_when: false
   environment:
-    OS_USERNAME: "admin"
-    OS_PASSWORD: {{ keystone.admin_password }}
+    OS_USERNAME: admin
+    OS_PASSWORD: "{{ keystone.admin_password }}"
     OS_AUTH_URL: "{{ keystone_url }}"
-    OS_TENANT_NAME: "services"
+    OS_TENANT_NAME: admin
     OS_REGION_NAME: "{{ common.region }}"
-
-- debug: var=glance_endpoint
 
 - name: Create Glance endpoint
   run_once: yes
-  shell: keystone endpoint-create --service image --publicurl {{ public_url }} --adminurl {{ admin_url }} --internalurl {{ internal_url }} --region {{ common.region }}
+  shell: "keystone endpoint-create --service glance --publicurl {{ public_url }} --adminurl {{ admin_url }} --internalurl {{ internal_url }} --region {{ common.region }}"
   environment:
-    OS_USERNAME: "admin"
-    OS_PASSWORD: {{ keystone.admin_password }}
+    OS_USERNAME: admin
+    OS_PASSWORD: "{{ keystone.admin_password }}"
     OS_AUTH_URL: "{{ keystone_url }}"
-    OS_TENANT_NAME: "services"
+    OS_TENANT_NAME: admin
     OS_REGION_NAME: "{{ common.region }}"
   when: glance_endpoint.stdout == "missing"
 
+- name: Configure Glance directory 
+  file: 
+    path: "/var/lib/glance/images"
+    state: directory
+    owner: glance
+    group: glance
+
 - name: Enable Glance service
   service:
-   name: openstack-{{ item }}
-   enabled: yes
-   state: started
-   with-items:
+    name: "openstack-glance-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
     - 'api'
     - 'registry'

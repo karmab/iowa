@@ -4,6 +4,10 @@ defaults:
 common:
  controller_host: 127.0.0.1
  region: RegionOne
+ rabbit_user: guest
+ rabbit_password: guest
+ rabbit_hosts:
+  - 127.0.0.1
 
 databases:
  - keystone
@@ -26,6 +30,7 @@ glance:
  dbuser: glance
  dbpassword: glance
  dbname: glance
+ password: glance
 
 cinder:
  dbuser: cinder
