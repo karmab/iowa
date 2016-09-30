@@ -1,0 +1,32 @@
+---
+
+- name: Install MariaD/Galera
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'mariadb-galera-server'
+    - 'MySQL-python'
+
+- name: Enable MariadDB service
+  service:
+   name: mariadb
+   enabled: yes
+   state: started
+
+- name: Create Db Users
+  mysql_user:
+   name: "{{ vars[item[0]]['dbuser'] }}"
+   password: "{{ vars[item[0]]['dbpassword'] }}"
+   priv: "*.*:ALL,GRANT"
+   state: "present"
+   host: "item[1]"
+  with_nested:
+   - "{{ databases}}"
+   - ['localhost', '%' ]
+
+- name: Create Dbs
+  mysql_db:
+   name: "{{ item }}" 
+   state: "present"
+  with_items: "{{ databases }}"

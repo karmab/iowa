@@ -1,0 +1,53 @@
+defaults:
+ debug: true
+
+common:
+ controller_host: 127.0.0.1
+ region: RegionOne
+
+databases:
+ - keystone
+ - cinder
+ - glance
+ - nova
+ - neutron
+ - heat
+ - ceilometer
+
+keystone:
+ dbuser: keystone
+ dbpassword: keystone
+ dbname: keystone
+ admin_token: XXXXXX
+ admin_password: unix1234
+ public_url: http://127.0.0.1:5000/v2.0
+
+glance:
+ dbuser: glance
+ dbpassword: glance
+ dbname: glance
+
+cinder:
+ dbuser: cinder
+ dbpassword: cinder
+ dbname: cinder
+
+neutron:
+ dbuser: neutron
+ dbpassword: neutron
+ dbname: neutron
+
+nova:
+ dbuser: nova
+ dbpassword: nova
+ dbname: nova
+
+heat:
+ dbuser: heat
+ dbpassword: heat
+ dbname: heat
+
+ceilometer:
+ dbuser: ceilometer
+ dbpassword: ceilometer
+ dbname: ceilometer

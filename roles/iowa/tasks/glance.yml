@@ -1,0 +1,107 @@
+---
+
+- name: Set Glance variables
+  set_fact:
+    public_url: "{{ glance.public_url | default('http://' ~ common.controller_host ~ ':9292') }}"
+    internal_url: "{{ glance.internal_url | default('http://' ~ common.controller_host ~ ':9292') }}"
+    admin_url: "{{ glance.admin_url | default('http://' ~ common.controller_host ~ ':9292') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':9292') }}"
+
+- name: Install Glance
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'openstack-glance'
+    - 'openstack-utils'
+    - 'openstack-selinux'
+
+- name: Configure Glance SQL connection
+  ini_file: 
+    dest: /etc/glance/glance-{{ item }}.conf
+    section: DEFAULT
+    option: sql_connection
+    value: mysql://{{ glance.dbuser}}:{{glance.dbpassword}}@{{ common.controller_host}}/{{ glance.dbname }}
+    with_items:
+     - 'api'
+     - 'registry'
+
+- name: Populate Glance Database
+  run_once: yes
+  shell: glance-manage db_sync
+
+
+- name: Create Glance user
+  run_once: yes
+  keystone_user:
+    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    token: "{{ admin.password }}"
+    tenant: services
+    user: glance
+    password: "{{ glance.password }}"
+
+- name: Create Glance member role
+  run_once: yes
+  keystone_user:
+    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    token: "{{ glance.admin_token }}"
+    tenant: services
+    user: glance
+    role: admin
+
+- name: Check Glance service
+  shell: keystone service-get glance || echo 'missing'
+  register: glance_service
+  changed_when: false
+  environment:
+    OS_USERNAME: "admin"
+    OS_PASSWORD: {{ keystone.admin_password }}
+    OS_AUTH_URL: "{{ keystone_url }}"
+    OS_TENANT_NAME: "services"
+    OS_REGION_NAME: "{{ common.region }}"
+
+- debug: var=glance_service
+
+- name: Create Glance service
+  run_once: yes
+  shell: keystone service-create --name=glance --type=identity --description="Glance Identity service"
+  environment:
+    OS_USERNAME: "admin"
+    OS_PASSWORD: {{ keystone.admin_password }}
+    OS_AUTH_URL: "{{ keystone_url }}"
+    OS_TENANT_NAME: "services"
+    OS_REGION_NAME: "{{ common.region }}"
+  when: glance_service.stdout == "missing"
+
+- name: Check Glance endpoint
+  shell: keystone endpoint-get --service image || echo 'missing'
+  register: glance_endpoint
+  changed_when: false
+  environment:
+    OS_USERNAME: "admin"
+    OS_PASSWORD: {{ keystone.admin_password }}
+    OS_AUTH_URL: "{{ keystone_url }}"
+    OS_TENANT_NAME: "services"
+    OS_REGION_NAME: "{{ common.region }}"
+
+- debug: var=glance_endpoint
+
+- name: Create Glance endpoint
+  run_once: yes
+  shell: keystone endpoint-create --service image --publicurl {{ public_url }} --adminurl {{ admin_url }} --internalurl {{ internal_url }} --region {{ common.region }}
+  environment:
+    OS_USERNAME: "admin"
+    OS_PASSWORD: {{ keystone.admin_password }}
+    OS_AUTH_URL: "{{ keystone_url }}"
+    OS_TENANT_NAME: "services"
+    OS_REGION_NAME: "{{ common.region }}"
+  when: glance_endpoint.stdout == "missing"
+
+- name: Enable Glance service
+  service:
+   name: openstack-{{ item }}
+   enabled: yes
+   state: started
+   with-items:
+    - 'api'
+    - 'registry'

@@ -1,0 +1,5 @@
+---
+- name: Debug Stuff
+  debug:
+##   var=hostvars[inventory_hostname]
+   var=vars['keystone']

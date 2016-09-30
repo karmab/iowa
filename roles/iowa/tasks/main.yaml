@@ -1,0 +1,16 @@
+---
+##- include: debug.yml
+##- include: preupgrade.yml
+###- include: haproxy.yml
+- include: mysql.yml
+##- include: rabbitmq.yml
+##- include: mongodb.yml
+- include: keystone.yml
+##- include: glance.yml
+##- include: cinder.yml
+##- include: neutron.yml
+##- include: nova.yml
+##- include: heat.yml
+##- include: ceilometer.yml
+##- include: dashboard.yml
+##- include: postupgrade.yml

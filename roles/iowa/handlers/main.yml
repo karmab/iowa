@@ -1,0 +1,7 @@
+---
+- name: Reload Daemons
+  shell: systemctl daemon-reload
+
+- name: Restart Keystone
+  service: name=openstack-keystone state=restarted
+
