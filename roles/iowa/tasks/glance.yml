@@ -25,6 +25,8 @@
   with_items:
     - 'api'
     - 'registry'
+  notify:
+    - Restart Glance
 
 - name: Configure Glance Rabbit
   ini_file: 
@@ -32,6 +34,8 @@
     section: DEFAULT
     option: notification_driver
     value: messsaging
+  notify:
+    - Restart Glance
 
 - name: Configure Glance Rabbit
   ini_file: 
@@ -39,6 +43,8 @@
     section: DEFAULT
     option: rabbit_hosts
     value: "{{ common.rabbit_hosts | append(':5672') | join(',')}}"
+  notify:
+    - Restart Glance
 
 - name: Configure Glance Rabbit
   ini_file: 
@@ -46,6 +52,8 @@
     section: DEFAULT
     option: rabbit_userid
     value: "{{ common.rabbit_user }}"
+  notify:
+    - Restart Glance
 
 - name: Configure Glance Rabbit
   ini_file: 
@@ -53,6 +61,8 @@
     section: DEFAULT
     option: rabbit_password
     value: "{{ common.rabbit_password }}"
+  notify:
+    - Restart Glance
 
 - name: Configure Glance Rabbit
   ini_file: 
@@ -60,8 +70,10 @@
     section: DEFAULT
     option: rabbit_virtual_host
     value: /
+  notify:
+    - Restart Glance
 
-- name: Configure Glance 
+- name: Configure Glance Keystone
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
     section: paste_deploy
@@ -70,8 +82,10 @@
   with_items:
     - 'api'
     - 'registry'
+  notify:
+    - Restart Glance
 
-- name: Configure Glance 
+- name: Configure Glance Keystone
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
     section: keystone_authtoken
@@ -80,8 +94,10 @@
   with_items:
     - 'api'
     - 'registry'
+  notify:
+    - Restart Glance
 
-- name: Configure Glance 
+- name: Configure Glance Keystone
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
     section: keystone_authtoken
@@ -90,8 +106,10 @@
   with_items:
     - 'api'
     - 'registry'
+  notify:
+    - Restart Glance
 
-- name: Configure Glance 
+- name: Configure Glance Keystone
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
     section: keystone_authtoken
@@ -100,8 +118,10 @@
   with_items:
     - 'api'
     - 'registry'
+  notify:
+    - Restart Glance
 
-- name: Configure Glance 
+- name: Configure Glance Keystone
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
     section: keystone_authtoken
@@ -110,8 +130,10 @@
   with_items:
     - 'api'
     - 'registry'
+  notify:
+    - Restart Glance
 
-- name: Configure Glance 
+- name: Configure Glance Keystone
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
     section: keystone_authtoken
@@ -120,8 +142,10 @@
   with_items:
     - 'api'
     - 'registry'
+  notify:
+    - Restart Glance
 
-- name: Configure Glance 
+- name: Configure Glance Keystone
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
     section: keystone_authtoken
@@ -130,20 +154,26 @@
   with_items:
     - 'api'
     - 'registry'
+  notify:
+    - Restart Glance
 
-- name: Configure Glance 
+- name: Configure Glance Store
   ini_file: 
     dest: "/etc/glance/glance-api.conf"
     section: DEFAULT
     option: filesystem_store_datadir
     value: /var/lib/glance/images
+  notify:
+    - Restart Glance
 
-- name: Configure Glance 
+- name: Configure Glance Store
   ini_file: 
     dest: "/etc/glance/glance-api.conf"
     section: glance_store
     option: stores
     value: glance.store.filesystem.Store
+  notify:
+    - Restart Glance
 
 - name: Check Glance Database Version
   shell: glance-manage db_version

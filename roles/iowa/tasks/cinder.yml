@@ -1,0 +1,199 @@
+---
+
+- name: Set Cinder Variables
+  set_fact:
+    public_url: "{{ cinder.public_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
+    internal_url: "{{ cinder.internal_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
+    admin_url: "{{ cinder.admin_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
+
+- name: Install Cinder
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'openstack-cinder'
+    - 'openstack-utils'
+    - 'openstack-selinux'
+    - 'device-mapper-multipath'
+
+- name: Configure Cinder SQL Connection
+  ini_file: 
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option: sql_connection
+    value: "mysql://{{ cinder.dbuser}}:{{cinder.dbpassword}}@{{ common.controller_host}}/{{ cinder.dbname }}"
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+
+- name: Configure Cinder Rabbit
+  ini_file: 
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option:  rpc_backend
+    value: cinder.openstack.common.rpc.impl_kombu
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+- name: Configure Cinder Rabbit
+  ini_file: 
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option: rabbit_hosts
+    value: "{{ common.rabbit_hosts | append(':5672') | join(',')}}"
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+- name: Configure Cinder Rabbit
+  ini_file: 
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option: rabbit_userid
+    value: "{{ common.rabbit_user }}"
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+- name: Configure Cinder Rabbit
+  ini_file: 
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option: rabbit_password
+    value: "{{ common.rabbit_password }}"
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+- name: Configure Cinder Rabbit
+  ini_file: 
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option: rabbit_virtual_host
+    value: /
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: DEFAULT
+    option: auth_strategy
+    value: keystone
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: keystone_authtoken
+    option: auth_host
+    value: "{{ common.controller_host }}"
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: keystone_authtoken
+    option: auth_port
+    value: 35357
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: keystone_authtoken
+    option: auth_protocol
+    value: http
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: keystone_authtoken
+    option: admin_tenant_name
+    value: services
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: keystone_authtoken
+    option: admin_user
+    value: cinder
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: keystone_authtoken
+    option: admin_password
+    value: "{{ cinder.password }}" 
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
+- name: Check Cinder Database Version
+  shell: cinder-manage db version
+  register: cinder_db_version
+  changed_when: false
+
+- name: Populate Cinder Database
+  run_once: yes
+  shell: cinder-manage db sync
+  when: cinder_db_version.stdout == "0"
+
+- name: Create Cinder User
+  keystone_user:
+    state: present
+    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    token: "{{ keystone.admin_token }}"
+    user: cinder
+    tenant: services
+    password: "{{ cinder.password }}"
+
+- name: Grant Cinder Admin Role
+  keystone_user:
+    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    user: cinder
+    role: admin
+
+- name: Create Cinder Service And Endpoint
+  keystone_service: 
+    name: cinder
+    type: volume
+    description: "Cinder Volume Service"
+    publicurl: "{{ public_url }}"
+    internalurl: "{{ internal_url }}"
+    adminurl: "{{ admin_url }}"
+    endpoint: "{{ keystone_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
+- name: Enable Cinder Service
+  service:
+    name: "openstack-cinder-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+   - api
+   - scheduler

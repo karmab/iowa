@@ -36,23 +36,31 @@ cinder:
  dbuser: cinder
  dbpassword: cinder
  dbname: cinder
+ password: cinder
+ volume_driver: cinder.volume.drivers.nfs.NfsDriver
+ nfs_shares:
+  - 127.0.0.1:/cinder
 
 neutron:
  dbuser: neutron
  dbpassword: neutron
  dbname: neutron
+ password: neutron
 
 nova:
  dbuser: nova
  dbpassword: nova
  dbname: nova
+ aassword: nova
 
 heat:
  dbuser: heat
  dbpassword: heat
  dbname: heat
+ password: heat
 
 ceilometer:
  dbuser: ceilometer
  dbpassword: ceilometer
  dbname: ceilometer
+ password: ceilometer

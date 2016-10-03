@@ -22,6 +22,8 @@
     section: sql
     option: connection
     value: mysql://{{ keystone.dbuser}}:{{keystone.dbpassword}}@{{ common.controller_host}}/{{ keystone.dbname }}
+  notify:
+    - Restart Keystone
 
 - name: Configure Keystone Admin Token 
   ini_file: 
@@ -30,7 +32,7 @@
     option: admin_token
     value: '{{ keystone.admin_token }}'
   notify:
-      - Restart Keystone
+    - Restart Keystone
 
 - name: Configure Keystone token_flush Cron
   cron:
@@ -57,7 +59,7 @@
 
 - name: Create Keystone Client File
   template:
-    src: files/keystonerc_admin.j2
+    src: keystonerc_admin.j2
     dest: /root/keystonerc_admin
 
 - name: Create Keystone Admin Tenant

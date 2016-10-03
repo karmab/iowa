@@ -2,6 +2,17 @@
 - name: Reload Daemons
   shell: systemctl daemon-reload
 
+- name: Restart Glance
+  service: name=openstack-glance-api state=restarted
+
+- name: Restart Cinder
+  service: name=openstack-cinder-api state=restarted
+
+- name: Restart Cinder Scheduler
+  service: name=openstack-cinder-scheduler state=restarted
+
+- name: Restart Cinder Volume
+  service: name=openstack-cinder-volume state=restarted
+
 - name: Restart Keystone
   service: name=openstack-keystone state=restarted
-

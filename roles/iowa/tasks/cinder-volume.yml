@@ -1,0 +1,183 @@
+---
+
+- name: Set Cinder Variables
+  set_fact:
+    public_url: "{{ cinder.public_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
+    internal_url: "{{ cinder.internal_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
+    admin_url: "{{ cinder.admin_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
+    volume_driver: "{{ cinder.volume_driver | default('cinder.volume.drivers.lvm.LVMISCSIDriver') }}"
+    volume_group: "{{ cinder.volume_group | default('cinder-volumes') }}"
+    nfs_shares: "{{ cinder.nfs_shares_config | default('/etc/cinder/nfs_shares') }}"
+
+- name: Install Cinder
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'openstack-cinder'
+    - 'openstack-utils'
+    - 'openstack-selinux'
+    - 'device-mapper-multipath'
+
+- name: Configure Cinder SQL Connection
+  ini_file: 
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option: sql_connection
+    value: "mysql://{{ cinder.dbuser}}:{{cinder.dbpassword}}@{{ common.controller_host}}/{{ cinder.dbname }}"
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Rabbit
+  ini_file: 
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option:  rpc_backend
+    value: cinder.openstack.common.rpc.impl_kombu
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Rabbit
+  ini_file: 
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option: rabbit_hosts
+    value: "{{ common.rabbit_hosts | append(':5672') | join(',')}}"
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Rabbit
+  ini_file: 
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option: rabbit_userid
+    value: "{{ common.rabbit_user }}"
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Rabbit
+  ini_file: 
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option: rabbit_password
+    value: "{{ common.rabbit_password }}"
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Rabbit
+  ini_file: 
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option: rabbit_virtual_host
+    value: /
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: DEFAULT
+    option: auth_strategy
+    value: keystone
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: keystone_authtoken
+    option: auth_host
+    value: "{{ common.controller_host }}"
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: keystone_authtoken
+    option: auth_port
+    value: 35357
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: keystone_authtoken
+    option: auth_protocol
+    value: http
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: keystone_authtoken
+    option: admin_tenant_name
+    value: services
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: keystone_authtoken
+    option: admin_user
+    value: cinder
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Keystone
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: keystone_authtoken
+    option: admin_password
+    value: "{{ cinder.password }}" 
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Volume Driver
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: DEFAULT
+    option: volume_driver
+    value: "{{ volume_driver }}"
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Volume Group
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: DEFAULT
+    option: volume_group
+    value: "{{ volume_group }}"
+  when: volume_driver == 'cinder.volume.drivers.lvm.LVMISCSIDriver' 
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Volume NFS Shares
+  ini_file: 
+    dest: "/etc/cinder/cinder.conf"
+    section: DEFAULT
+    option: nfs_shares_config
+    value: "{{ nfs_shares }}"
+  when: volume_driver == 'cinder.volume.drivers.nfs.NfsDriver' 
+  notify:
+      - Restart Cinder Volume
+
+- name: Configure Cinder Volume NFS Shares
+  template: 
+    src: nfs_shares.j2
+    dest: "{{ nfs_shares }}"
+    owner: cinder
+    group: cinder
+  when: volume_driver == 'cinder.volume.drivers.nfs.NfsDriver' 
+  notify:
+      - Restart Cinder Volume
+
+- name: Enable Cinder Volume Service
+  service:
+    name: "openstack-cinder-volume"
+    enabled: yes
+    state: started

@@ -5,9 +5,10 @@
 ##- include: mysql.yml
 ##- include: rabbitmq.yml
 ##- include: mongodb.yml
-- include: keystone.yml tags=keystone
-- include: glance.yml tags=glance
-##- include: cinder.yml
+##- include: keystone.yml tags=keystone
+##- include: glance.yml tags=glance
+- include: cinder.yml tags=cinder
+- include: cinder-volume.yml tags=cinder
 ##- include: neutron.yml
 ##- include: nova.yml
 ##- include: heat.yml
