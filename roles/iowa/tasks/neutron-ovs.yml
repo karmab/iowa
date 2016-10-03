@@ -1,0 +1,68 @@
+---
+
+- name: Set Neutron Ovs Variables
+  set_fact:
+    public_url: "{{ neutron.public_url | default('http://' ~ common.controller_host ~ ':9696') }}"
+    internal_url: "{{ neutron.internal_url | default('http://' ~ common.controller_host ~ ':9696') }}"
+    admin_url: "{{ neutron.admin_url | default('http://' ~ common.controller_host ~ ':9696') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
+    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ common.controller_host ~ ':35357/v2.0') }}"
+    bridge_mappings: "{{ neutron.bridge_mappings | default('') }}"
+
+- name: Install Neutron Ovs
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'openvswitch'
+    - 'openstack-neutron'
+    - 'openstack-neutron-ml2'
+    - 'openstack-neutron-openvswitch'
+    - 'openstack-utils'
+    - 'openstack-selinux'
+
+- name: Enable Neutron Ovs Openvswitch Service
+  service:
+    name: "openvswitch"
+    enabled: yes
+    state: started
+  with_items:
+   - neutron-openvswitch-agent
+  notify:
+   - Restart Neutron Openvswitch
+
+- name: Restart Openvswitch Now
+  meta: flush_handlers
+
+- name: Create Neutron Ovs br-int
+  openvswitch_bridge: 
+    bridge: br-int
+    state: present
+
+- name: Create Neutron Ovs ifcfg-br-int
+  template:
+    src: "{{ role_path }}/files/ifcfg-br-int"
+    dest: /etc/sysconfig/network-scripts/ifcfg-br-int
+
+- name: Configure Neutron Ovs Bridge Mappings
+  ini_file:
+    dest: "/etc/neutron/plugin.ini"
+    section: OVS
+    option: bridge_mappings
+    value: "{{ bridge_mappings }}"
+  notify:
+   - Restart Neutron
+  when: bridge_mappings != '' 
+
+- name: Enable Neutron Ovs Services
+  service:
+    name: "neutron-openvswitch-agent"
+    enabled: yes
+    state: started
+  with_items:
+   - neutron-openvswitch-agent
+
+- name: Enable Neutron Ovs Cleanup
+  service:
+    name: "neutron-ovs-cleanup"
+    enabled: yes

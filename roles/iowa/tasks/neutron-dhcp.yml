@@ -1,0 +1,98 @@
+---
+
+- name: Set Neutron Dhcp Variables
+  set_fact:
+    public_url: "{{ neutron.public_url | default('http://' ~ common.controller_host ~ ':9696') }}"
+    internal_url: "{{ neutron.internal_url | default('http://' ~ common.controller_host ~ ':9696') }}"
+    admin_url: "{{ neutron.admin_url | default('http://' ~ common.controller_host ~ ':9696') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
+    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ common.controller_host ~ ':35357/v2.0') }}"
+
+- name: Install Neutron Dhcp
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'openstack-neutron'
+    - 'openstack-neutron-ml2'
+    - 'openstack-neutron-openvswitch'
+    - 'openstack-utils'
+    - 'openstack-selinux'
+
+- name: Configure Neutron Dhcp Keystone
+  ini_file: 
+    dest: "/etc/neutron/dhcp_agent.ini"
+    section: DEFAULT
+    option: auth_strategy
+    value: keystone
+  notify:
+   - Restart Neutron Dhcp
+
+- name: Configure Neutron Dhcp Keystone
+  ini_file: 
+    dest: "/etc/neutron/dhcp_agent.ini"
+    section: keystone_authtoken
+    option: auth_host
+    value: "{{ common.controller_host }}"
+  notify:
+   - Restart Neutron Dhcp
+
+- name: Configure Neutron Dhcp Keystone
+  ini_file: 
+    dest: "/etc/neutron/dhcp_agent.ini"
+    section: keystone_authtoken
+    option: auth_port
+    value: 35357
+  notify:
+   - Restart Neutron Dhcp
+
+- name: Configure Neutron Dhcp Keystone
+  ini_file: 
+    dest: "/etc/neutron/dhcp_agent.ini"
+    section: keystone_authtoken
+    option: auth_protocol
+    value: http
+  notify:
+   - Restart Neutron Dhcp
+
+- name: Configure Neutron Dhcp Keystone
+  ini_file: 
+    dest: "/etc/neutron/dhcp_agent.ini"
+    section: keystone_authtoken
+    option: admin_tenant_name
+    value: services
+  notify:
+   - Restart Neutron Dhcp
+
+- name: Configure Neutron Dhcp Keystone
+  ini_file: 
+    dest: "/etc/neutron/dhcp_agent.ini"
+    section: keystone_authtoken
+    option: admin_user
+    value: neutron
+  notify:
+   - Restart Neutron Dhcp
+
+- name: Configure Neutron Dhcp Keystone
+  ini_file: 
+    dest: "/etc/neutron/dhcp_agent.ini"
+    section: keystone_authtoken
+    option: admin_password
+    value: "{{ neutron.password }}" 
+  notify:
+   - Restart Neutron Dhcp
+
+- name: Configure Neutron Dhcp Interface Driver
+  ini_file: 
+    dest: "/etc/neutron/dhcp_agent.ini"
+    section: DEFAULT
+    option: interface_driver
+    value: neutron.agent.linux.interface.OVSInterfaceDriver
+  notify:
+   - Restart Neutron Dhcp
+
+- name: Enable Neutron Dhcp Service
+  service:
+    name: "neutron-dhcp-agent"
+    enabled: yes
+    state: started

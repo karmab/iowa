@@ -51,7 +51,7 @@ nova:
  dbuser: nova
  dbpassword: nova
  dbname: nova
- aassword: nova
+ password: nova
 
 heat:
  dbuser: heat

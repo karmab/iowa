@@ -16,3 +16,18 @@
 
 - name: Restart Keystone
   service: name=openstack-keystone state=restarted
+
+- name: Restart Neutron
+  service: name=neutron-server state=restarted
+
+- name: Restart Neutron Dhcp
+  service: name=neutron-dhcp-agent state=restarted
+
+- name: Restart Neutron L3
+  service: name=neutron-l3-agent state=restarted
+
+- name: Restart Neutron Metadata
+  service: name=neutron-metadata-agent state=restarted
+
+- name: Restart Neutron Openvswitch
+  service: name=openvswitch state=restarted

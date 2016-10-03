@@ -1,0 +1,324 @@
+---
+
+- name: Set Neutron Variables
+  set_fact:
+    public_url: "{{ neutron.public_url | default('http://' ~ common.controller_host ~ ':9696') }}"
+    internal_url: "{{ neutron.internal_url | default('http://' ~ common.controller_host ~ ':9696') }}"
+    admin_url: "{{ neutron.admin_url | default('http://' ~ common.controller_host ~ ':9696') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
+    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ common.controller_host ~ ':35357/v2.0') }}"
+    nova_url: "{{ nova.internal_url | default('http://' ~ common.controller_host ~ ':8774/v2') }}"
+    core_plugin: "{{ neutron.core_plugin | default('ml2') }}"
+    service_plugins: "{{ neutron.service_plugins | default(['router']) }}"
+    tenant_type: "{{ neutron.tenant_type | default('gre') }}"
+    network_vlan_ranges: "{{ neutron.network_vlan_ranges | default('physnet1:1000:2999,physnet2:3000:3999') }}"
+    type_drivers: "{{ neutron.type_drivers | default(['local,flat,vlan,gre,vxlan']) }}"
+    mechanism_drivers: "{{ neutron.mechanism_drivers | default(['l2population']) }}"
+
+- name: Install Neutron
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'openstack-neutron'
+    - 'openstack-neutron-ml2'
+    - 'openstack-neutron-openvswitch'
+    - 'openstack-utils'
+    - 'openstack-selinux'
+
+- name: Configure Neutron SQL Connection
+  ini_file: 
+    dest: /etc/neutron/neutron.conf
+    section: DATABASE
+    option: sql_connection
+    value: "mysql://{{ neutron.dbuser}}:{{neutron.dbpassword}}@{{ common.controller_host}}/{{ neutron.dbname }}"
+  notify:
+   - Restart Neutron
+
+
+- name: Configure Neutron Rabbit
+  ini_file: 
+    dest: /etc/neutron/neutron.conf
+    section: DEFAULT
+    option:  rpc_backend
+    value: neutron.openstack.common.rpc.impl_kombu
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Rabbit
+  ini_file: 
+    dest: /etc/neutron/neutron.conf
+    section: DEFAULT
+    option: rabbit_hosts
+    value: "{{ common.rabbit_hosts | append(':5672') | join(',')}}"
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Rabbit
+  ini_file: 
+    dest: /etc/neutron/neutron.conf
+    section: DEFAULT
+    option: rabbit_userid
+    value: "{{ common.rabbit_user }}"
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Rabbit
+  ini_file: 
+    dest: /etc/neutron/neutron.conf
+    section: DEFAULT
+    option: rabbit_password
+    value: "{{ common.rabbit_password }}"
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Rabbit
+  ini_file: 
+    dest: /etc/neutron/neutron.conf
+    section: DEFAULT
+    option: rabbit_virtual_host
+    value: /
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Keystone
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: DEFAULT
+    option: auth_strategy
+    value: keystone
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Keystone
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: keystone_authtoken
+    option: auth_host
+    value: "{{ common.controller_host }}"
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Keystone
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: keystone_authtoken
+    option: auth_port
+    value: 35357
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Keystone
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: keystone_authtoken
+    option: auth_protocol
+    value: http
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Keystone
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: keystone_authtoken
+    option: admin_tenant_name
+    value: services
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Keystone
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: keystone_authtoken
+    option: admin_user
+    value: neutron
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Keystone
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: keystone_authtoken
+    option: admin_password
+    value: "{{ neutron.password }}" 
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Core Plugin
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: DEFAULT
+    option: core_plugin
+    value: "{{ core_plugin }}" 
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Service Plugins
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: DEFAULT
+    option: service_plugins
+    value: "{{ service_plugins | join(',') }}" 
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Ml2 Plugin File
+  file:
+    state: link
+    src: "/etc/neutron/plugin.ini"
+    dest: "/etc/neutron/plugins/ml2/ml2_conf.ini"
+    force: yes
+  when: core_plugin == 'ml2'
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Ml2 Tenant Type
+  ini_file: 
+    dest: "/etc/neutron/plugin.ini"
+    section: ml2
+    option: tenant_network_type
+    value: "{{ tenant_type }}"
+  when: core_plugin == 'ml2'
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Ml2 Vlan Ranges
+  ini_file: 
+    dest: "/etc/neutron/plugin.ini"
+    section: ml2
+    option: network_vlan_ranges
+    value: "{{ network_vlan_ranges }}"
+  when: core_plugin == 'ml2' and tenant_type == 'vlan'
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Ml2 Type Drivers
+  ini_file: 
+    dest: "/etc/neutron/plugin.ini"
+    section: ml2
+    option: type_drivers
+    value: "{{ type_drivers | join(',') }}"
+  when: core_plugin == 'ml2'
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Ml2 Mechanism Driver
+  ini_file: 
+    dest: "/etc/neutron/plugin.ini"
+    section: ml2
+    option: mechanism_drivers
+    value: "{{ mechanism_drivers | join(',') }}"
+  when: core_plugin == 'ml2'
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Ml2 L2 Population
+  ini_file: 
+    dest: "/etc/neutron/plugin.ini"
+    section: agent
+    option: l2_population
+    value: True
+  when: "core_plugin == 'ml2' and 'l2population' in mechanism_drivers"
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Communication to Nova
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: DEFAULT
+    option: nova_url
+    value: "{{ nova_url }}"
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Communication to Nova
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: DEFAULT
+    option: nova_admin_username
+    value: nova
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Communication to Nova
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: DEFAULT
+    option: nova_admin_password
+    value: "{{ nova.password }}"
+  notify:
+   - Restart Neutron
+
+#- name: Configure Neutron Communication to Nova
+#  ini_file: 
+#    dest: "/etc/neutron/neutron.conf"
+#    section: DEFAULT
+#    option: nova_admin_tenant_id
+#    value: services
+#  notify:
+#   - Restart Neutron
+
+- name: Configure Neutron Communication to Nova
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: DEFAULT
+    option: nova_admin_auth_url
+    value: "{{ keystone_admin_url }}"
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Communication to Nova
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: DEFAULT
+    option: nova_region_name
+    value: "{{ common.region }}"
+  notify:
+   - Restart Neutron
+
+- name: Check Neutron Database Version
+  shell: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugin.ini upgrade head
+  register: neutron_db_version
+  changed_when: false
+
+- name: Populate Neutron Database
+  run_once: yes
+  shell: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugin.ini current
+  when: "'OK' not in neutron_db_version"
+
+- name: Create Neutron User
+  keystone_user:
+    state: present
+    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    token: "{{ keystone.admin_token }}"
+    user: neutron
+    tenant: services
+    password: "{{ neutron.password }}"
+
+- name: Grant Neutron Admin Role
+  keystone_user:
+    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    user: neutron
+    role: admin
+
+- name: Create Neutron Service And Endpoint
+  keystone_service: 
+    name: neutron
+    type: network
+    description: "Neutron Networking Service"
+    publicurl: "{{ public_url }}"
+    internalurl: "{{ internal_url }}"
+    adminurl: "{{ admin_url }}"
+    endpoint: "{{ keystone_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
+- name: Enable Neutron Service
+  service:
+    name: "neutron-server"
+    enabled: yes
+    state: started
