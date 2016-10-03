@@ -1,6 +1,6 @@
 ---
 
-- name: Set Keystone variables
+- name: Set Keystone Variables
   set_fact:
     public_url: "{{ keystone.public_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
     internal_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
@@ -16,7 +16,7 @@
     - 'openstack-utils'
     - 'openstack-selinux'
 
-- name: Configure Keystone SQL connection 
+- name: Configure Keystone SQL Connection 
   ini_file: 
     dest: /etc/keystone/keystone.conf
     section: sql
@@ -32,43 +32,35 @@
   notify:
       - Restart Keystone
 
-- name: Configure Keystone token_flush cron
+- name: Configure Keystone token_flush Cron
   cron:
     name: token_flush
     minute: 0
     hour: 0,8,12,16,20
     job: keystone-manage token_flush
 
-#- name: Enable Keystone user account
-#  user:
-#    name: keystone
-#    shell: /bin/bash
+- name: Check Keystone Database Version
+  shell: keystone-manage db_version
+  register: keystone_db_version
+  changed_when: false
 
 - name: Populate Keystone Database
   run_once: yes
   shell: keystone-manage db_sync
-#  become: true
-#  become_method: su
-#  become_user: keystone
-# become_flags: '-s /bin/sh'
+  when: keystone_db_version.stdout == "0"
 
-#- name: Disable Keystone user account
-#  user:
-#   name: keystone
-#   shell: /sbin/nologin
-
-- name: Enable Keystone service
+- name: Enable Keystone Service
   service:
    name: openstack-keystone
    enabled: yes
    state: started
 
-- name: Create Keystone client file
+- name: Create Keystone Client File
   template:
     src: files/keystonerc_admin.j2
     dest: /root/keystonerc_admin
 
-- name: Create Keystone admin tenant
+- name: Create Keystone Admin Tenant
   run_once: yes
   keystone_user:
     endpoint: "http://{{ common.controller_host }}:35357/v2.0"
@@ -76,7 +68,7 @@
     tenant: admin
     tenant_description: "Admin Tenant"
 
-- name: Create Keystone services tenant
+- name: Create Keystone Services Tenant
   run_once: yes
   keystone_user:
     endpoint: "http://{{ common.controller_host }}:35357/v2.0"
@@ -84,7 +76,7 @@
     tenant: services
     tenant_description: "Services Tenant"
 
-- name: Create Keystone admin user
+- name: Create Keystone Admin User
   run_once: yes
   keystone_user:
     endpoint: "http://{{ common.controller_host }}:35357/v2.0"
@@ -93,7 +85,7 @@
     user: admin
     password: "{{ keystone.admin_password }}"
 
-- name: Grant Keystone admin role
+- name: Grant Keystone Admin Role
   run_once: yes
   keystone_user:
     endpoint: "http://{{ common.controller_host }}:35357/v2.0"
@@ -102,7 +94,7 @@
     user: admin
     role: admin 
 
-- name: Grant Keystone member role
+- name: Grant Keystone Member Role
   run_once: yes
   keystone_user:
     endpoint: "http://{{ common.controller_host }}:35357/v2.0"
@@ -111,48 +103,14 @@
     user: admin
     role: _member_
 
-- name: Check Keystone service
-  shell: keystone service-get keystone || echo 'missing'
-  register: keystone_service
-  changed_when: false
-  environment:
-    OS_SERVICE_TOKEN: "{{ keystone.admin_token }}"
-    OS_USERNAME: "admin"
-    OS_SERVICE_ENDPOINT: "{{ admin_url }}"
-    OS_TENANT_NAME: "admin"
-    OS_REGION_NAME: "{{ common.region }}"
-
-##- debug: var=keystone_service
-
-- name: Create Keystone service
-  run_once: yes
-  shell: keystone service-create --name=keystone --type=identity --description="Keystone Identity service"
-  environment:
-    OS_SERVICE_TOKEN: "{{ keystone.admin_token }}"
-    OS_USERNAME: "admin"
-    OS_SERVICE_ENDPOINT: "{{ admin_url }}"
-    OS_TENANT_NAME: "admin"
-    OS_REGION_NAME: "{{ common.region }}"
-  when: keystone_service.stdout == "missing"
-
-- name: Check Keystone endpoint
-  shell: keystone endpoint-get --service identity || echo 'missing'
-  register: keystone_endpoint
-  changed_when: false
-  environment:
-    OS_SERVICE_TOKEN: "{{ keystone.admin_token }}"
-    OS_USERNAME: "admin"
-    OS_SERVICE_ENDPOINT: "{{ admin_url }}"
-    OS_TENANT_NAME: "admin"
-    OS_REGION_NAME: "{{ common.region }}"
-
-- name: Create Keystone endpoint
-  run_once: yes
-  shell: keystone endpoint-create --service identity --publicurl {{ public_url }} --adminurl {{ admin_url }} --internalurl {{ internal_url }} --region {{ common.region }}
-  environment:
-    OS_SERVICE_TOKEN: "{{ keystone.admin_token }}"
-    OS_USERNAME: "admin"
-    OS_SERVICE_ENDPOINT: "{{ admin_url }}"
-    OS_TENANT_NAME: "admin"
-    OS_REGION_NAME: "{{ common.region }}"
-  when: keystone_endpoint.stdout == "missing"
+- name: Create Keystone Service And Endpoint
+  keystone_service:
+    name: keystone
+    type: identity
+    description: "Keystone Identity Service"
+    publicurl: "{{ public_url }}"
+    internalurl: "{{ internal_url }}"
+    adminurl: "{{ admin_url }}"
+    endpoint: "{{ admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    region: "{{ common.region }}"
