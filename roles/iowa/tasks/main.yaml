@@ -5,7 +5,7 @@
 ##- include: mysql.yml
 ##- include: rabbitmq.yml
 ##- include: mongodb.yml
-##- include: keystone.yml tags=keystone
+- include: keystone.yml tags=keystone
 - include: glance.yml tags=glance
 - include: cinder.yml tags=cinder
 - include: cinder-volume.yml tags=cinder

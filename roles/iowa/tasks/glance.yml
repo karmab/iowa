@@ -137,7 +137,7 @@
 - name: Configure Glance Store
   ini_file: 
     dest: "/etc/glance/glance-api.conf"
-    section: DEFAULT
+    section: glance_store
     option: filesystem_store_datadir
     value: /var/lib/glance/images
   notify:

@@ -21,7 +21,7 @@
     dest: /etc/keystone/keystone.conf
     section: database
     option: connection
-    value: mysql://{{ keystone.dbuser}}:{{keystone.dbpassword}}@{{ mysql.controller_host}}/{{ keystone.dbname }}
+    value: mysql://{{ keystone.dbuser}}:{{keystone.dbpassword}}@{{ common.mysql_host}}/{{ keystone.dbname }}
   notify:
     - Restart Keystone
 
