@@ -5,15 +5,16 @@
 ##- include: mysql.yml
 ##- include: rabbitmq.yml
 ##- include: mongodb.yml
-- include: keystone.yml tags=keystone
-- include: glance.yml tags=glance
-- include: cinder.yml tags=cinder
-- include: cinder-volume.yml tags=cinder
-- include: neutron.yml tags=neutron
-- include: neutron-dhcp.yml tags=neutron
-- include: neutron-ovs.yml tags=neutron
-- include: neutron-l3.yml tags=neutron
-##- include: nova.yml
+##- include: keystone.yml tags=keystone
+##- include: glance.yml tags=glance
+##- include: cinder.yml tags=cinder
+##- include: cinder-volume.yml tags=cinder
+##- include: neutron.yml tags=neutron
+##- include: neutron-dhcp.yml tags=neutron
+##- include: neutron-ovs.yml tags=neutron,compute
+##- include: neutron-l3.yml tags=neutron
+##- include: nova.yml tags=nova
+- include: nova-compute.yml tags=nova,compute
 ##- include: heat.yml
 ##- include: ceilometer.yml
 ##- include: dashboard.yml

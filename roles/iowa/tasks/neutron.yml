@@ -14,7 +14,7 @@
     tenant_type: "{{ neutron.tenant_type | default('gre') }}"
     network_vlan_ranges: "{{ neutron.network_vlan_ranges | default('physnet1:1000:2999,physnet2:3000:3999') }}"
     type_drivers: "{{ neutron.type_drivers | default(['local,flat,vlan,gre,vxlan']) }}"
-    mechanism_drivers: "{{ neutron.mechanism_drivers | default(['l2population']) }}"
+    mechanism_drivers: "{{ neutron.mechanism_drivers | default(['openvswitch,l2population']) }}"
 
 - name: Install Neutron
   yum: 

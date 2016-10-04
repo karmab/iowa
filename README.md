@@ -15,6 +15,10 @@
  - grab tenant id and inject it in the conf
  - set tunneling ip stuff and create br-tun
 
+## NOVA
+ - documento nova.novncproxy_url as it cant be set in defaults var file
+
+
 ## RUN SPECIFIC COMPONENT
 
 ##OVERRIDE VARIABLES

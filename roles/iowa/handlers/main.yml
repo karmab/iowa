@@ -34,3 +34,18 @@
 
 - name: Restart Neutron Openvswitch
   service: name=openvswitch state=restarted
+
+- name: Restart Nova
+  service: name=openstack-nova-api state=restarted
+
+- name: Restart Nova Compute
+  service: name=openstack-nova-compute state=restarted
+
+- name: Restart Nova Conductor
+  service: name=openstack-nova-conductor state=restarted
+
+- name: Restart Nova Scheduler
+  service: name=openstack-nova-scheduler state=restarted
+
+- name: Restart Nova VncProxy
+  service: name=openstack-nova-novncproxy state=restarted

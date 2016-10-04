@@ -57,6 +57,7 @@ nova:
  dbpassword: nova
  dbname: nova
  password: nova
+ metadata_secret: changeme
 
 heat:
  dbuser: heat
