@@ -6,6 +6,7 @@
     internal_url: "{{ glance.internal_url | default('http://' ~ common.controller_host ~ ':9292') }}"
     admin_url: "{{ glance.admin_url | default('http://' ~ common.controller_host ~ ':9292') }}"
     keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
+    identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
 
 - name: Install Glance
   yum: 
@@ -19,9 +20,9 @@
 - name: Configure Glance SQL Connection
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
-    section: DEFAULT
-    option: sql_connection
-    value: "mysql://{{ glance.dbuser}}:{{glance.dbpassword}}@{{ common.controller_host}}/{{ glance.dbname }}"
+    section: database
+    option: connection
+    value: "mysql://{{ glance.dbuser}}:{{glance.dbpassword}}@{{ common.mysql_host}}/{{ glance.dbname }}"
   with_items:
     - 'api'
     - 'registry'
@@ -40,7 +41,7 @@
 - name: Configure Glance Rabbit
   ini_file: 
     dest: /etc/glance/glance-api.conf
-    section: DEFAULT
+    section: oslo_messaging_rabbit
     option: rabbit_hosts
     value: "{{ common.rabbit_hosts | append(':5672') | join(',')}}"
   notify:
@@ -49,7 +50,7 @@
 - name: Configure Glance Rabbit
   ini_file: 
     dest: /etc/glance/glance-api.conf
-    section: DEFAULT
+    section: oslo_messaging_rabbit
     option: rabbit_userid
     value: "{{ common.rabbit_user }}"
   notify:
@@ -58,7 +59,7 @@
 - name: Configure Glance Rabbit
   ini_file: 
     dest: /etc/glance/glance-api.conf
-    section: DEFAULT
+    section: oslo_messaging_rabbit
     option: rabbit_password
     value: "{{ common.rabbit_password }}"
   notify:
@@ -67,7 +68,7 @@
 - name: Configure Glance Rabbit
   ini_file: 
     dest: /etc/glance/glance-api.conf
-    section: DEFAULT
+    section: oslo_messaging_rabbit
     option: rabbit_virtual_host
     value: /
   notify:
@@ -85,36 +86,12 @@
   notify:
     - Restart Glance
 
-- name: Configure Glance Keystone
+- name: Configure Glance Keystone Uri
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
     section: keystone_authtoken
-    option: auth_host
-    value: "{{ common.controller_host }}"
-  with_items:
-    - 'api'
-    - 'registry'
-  notify:
-    - Restart Glance
-
-- name: Configure Glance Keystone
-  ini_file: 
-    dest: "/etc/glance/glance-{{ item }}.conf"
-    section: keystone_authtoken
-    option: auth_port
-    value: 35357
-  with_items:
-    - 'api'
-    - 'registry'
-  notify:
-    - Restart Glance
-
-- name: Configure Glance Keystone
-  ini_file: 
-    dest: "/etc/glance/glance-{{ item }}.conf"
-    section: keystone_authtoken
-    option: auth_protocol
-    value: http
+    option: identity_uri
+    value: "{{ identity_uri }}"
   with_items:
     - 'api'
     - 'registry'

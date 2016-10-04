@@ -19,9 +19,9 @@
 - name: Configure Keystone SQL Connection 
   ini_file: 
     dest: /etc/keystone/keystone.conf
-    section: sql
+    section: database
     option: connection
-    value: mysql://{{ keystone.dbuser}}:{{keystone.dbpassword}}@{{ common.controller_host}}/{{ keystone.dbname }}
+    value: mysql://{{ keystone.dbuser}}:{{keystone.dbpassword}}@{{ mysql.controller_host}}/{{ keystone.dbname }}
   notify:
     - Restart Keystone
 

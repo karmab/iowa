@@ -3,6 +3,7 @@ defaults:
 
 common:
  controller_host: 127.0.0.1
+ mysql_host: 127.0.0.1
  region: RegionOne
  rabbit_user: guest
  rabbit_password: guest

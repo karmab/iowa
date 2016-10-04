@@ -6,9 +6,9 @@
 ##- include: rabbitmq.yml
 ##- include: mongodb.yml
 ##- include: keystone.yml tags=keystone
-##- include: glance.yml tags=glance
-##- include: cinder.yml tags=cinder
-##- include: cinder-volume.yml tags=cinder
+- include: glance.yml tags=glance
+- include: cinder.yml tags=cinder
+- include: cinder-volume.yml tags=cinder
 - include: neutron.yml tags=neutron
 - include: neutron-dhcp.yml tags=neutron
 - include: neutron-ovs.yml tags=neutron

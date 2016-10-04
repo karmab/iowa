@@ -6,6 +6,7 @@
     internal_url: "{{ neutron.internal_url | default('http://' ~ common.controller_host ~ ':9696') }}"
     admin_url: "{{ neutron.admin_url | default('http://' ~ common.controller_host ~ ':9696') }}"
     keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
+    identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
     keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ common.controller_host ~ ':35357/v2.0') }}"
     bridge_mappings: "{{ neutron.bridge_mappings | default('') }}"
 

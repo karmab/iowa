@@ -6,6 +6,8 @@
     internal_url: "{{ cinder.internal_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
     admin_url: "{{ cinder.admin_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
     keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
+    identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
+
 
 - name: Install Cinder
   yum: 
@@ -20,9 +22,9 @@
 - name: Configure Cinder SQL Connection
   ini_file: 
     dest: /etc/cinder/cinder.conf
-    section: DEFAULT
-    option: sql_connection
-    value: "mysql://{{ cinder.dbuser}}:{{cinder.dbpassword}}@{{ common.controller_host}}/{{ cinder.dbname }}"
+    section: database
+    option: connection
+    value: "mysql://{{ cinder.dbuser}}:{{cinder.dbpassword}}@{{ common.mysql_host}}/{{ cinder.dbname }}"
   notify:
    - Restart Cinder
    - Restart Cinder Scheduler
@@ -41,7 +43,7 @@
 - name: Configure Cinder Rabbit
   ini_file: 
     dest: /etc/cinder/cinder.conf
-    section: DEFAULT
+    section: oslo_messaging_rabbit
     option: rabbit_hosts
     value: "{{ common.rabbit_hosts | append(':5672') | join(',')}}"
   notify:
@@ -51,7 +53,7 @@
 - name: Configure Cinder Rabbit
   ini_file: 
     dest: /etc/cinder/cinder.conf
-    section: DEFAULT
+    section: oslo_messaging_rabbit
     option: rabbit_userid
     value: "{{ common.rabbit_user }}"
   notify:
@@ -61,7 +63,7 @@
 - name: Configure Cinder Rabbit
   ini_file: 
     dest: /etc/cinder/cinder.conf
-    section: DEFAULT
+    section: oslo_messaging_rabbit
     option: rabbit_password
     value: "{{ common.rabbit_password }}"
   notify:
@@ -71,7 +73,7 @@
 - name: Configure Cinder Rabbit
   ini_file: 
     dest: /etc/cinder/cinder.conf
-    section: DEFAULT
+    section: oslo_messaging_rabbit
     option: rabbit_virtual_host
     value: /
   notify:
@@ -88,32 +90,12 @@
    - Restart Cinder
    - Restart Cinder Scheduler
 
-- name: Configure Cinder Keystone
+- name: Configure Cinder Keystone Uri
   ini_file: 
     dest: "/etc/cinder/cinder.conf"
     section: keystone_authtoken
-    option: auth_host
-    value: "{{ common.controller_host }}"
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder Keystone
-  ini_file: 
-    dest: "/etc/cinder/cinder.conf"
-    section: keystone_authtoken
-    option: auth_port
-    value: 35357
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder Keystone
-  ini_file: 
-    dest: "/etc/cinder/cinder.conf"
-    section: keystone_authtoken
-    option: auth_protocol
-    value: http
+    option: identity_uri
+    value: "{{ identity_uri }}"
   notify:
    - Restart Cinder
    - Restart Cinder Scheduler
