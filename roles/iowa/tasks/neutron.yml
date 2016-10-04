@@ -254,7 +254,7 @@
   ini_file: 
     dest: "/etc/neutron/neutron.conf"
     section: nova
-    option: nova_region_name
+    option: region_name
     value: "{{ common.region }}"
   notify:
    - Restart Neutron
