@@ -5,6 +5,9 @@
 - name: Restart Glance
   service: name=openstack-glance-api state=restarted
 
+- name: Restart Glance Registry
+  service: name=openstack-glance-registry state=restarted
+
 - name: Restart Cinder
   service: name=openstack-cinder-api state=restarted
 

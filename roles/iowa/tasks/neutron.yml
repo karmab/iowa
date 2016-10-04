@@ -27,6 +27,15 @@
     - 'openstack-utils'
     - 'openstack-selinux'
 
+- name: Configure Neutron Debug
+  ini_file:
+    dest: /etc/neutron/neutron.conf
+    section: DEFAULT
+    option: debug
+    value: "{{ common.debug }}"
+  notify:
+    - Restart Neutron
+
 - name: Configure Neutron SQL Connection
   ini_file: 
     dest: /etc/neutron/neutron.conf

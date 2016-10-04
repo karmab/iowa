@@ -8,7 +8,6 @@
     keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
     identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
 
-
 - name: Install Cinder
   yum: 
     name: '{{ item }}'
@@ -19,6 +18,16 @@
     - 'openstack-selinux'
     - 'device-mapper-multipath'
 
+- name: Configure Cinder Debug
+  ini_file:
+    dest: /etc/cinder/cinder.conf
+    section: DEFAULT
+    option: debug
+    value: "{{ common.debug }}"
+  notify:
+   - Restart Cinder
+   - Restart Cinder Scheduler
+
 - name: Configure Cinder SQL Connection
   ini_file: 
     dest: /etc/cinder/cinder.conf
@@ -28,7 +37,6 @@
   notify:
    - Restart Cinder
    - Restart Cinder Scheduler
-
 
 - name: Configure Cinder Rabbit
   ini_file: 

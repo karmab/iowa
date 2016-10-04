@@ -17,6 +17,19 @@
     - 'openstack-utils'
     - 'openstack-selinux'
 
+- name: Configure Glance Debug
+  ini_file:
+    dest: "/etc/glance/glance-{{ item }}.conf"
+    section: DEFAULT
+    option: debug
+    value: "{{ common.debug }}"
+  with_items:
+    - 'api'
+    - 'registry'
+  notify:
+    - Restart Glance
+    - Restart Glance Registry
+
 - name: Configure Glance SQL Connection
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
@@ -28,6 +41,7 @@
     - 'registry'
   notify:
     - Restart Glance
+    - Restart Glance Registry
 
 - name: Configure Glance Rabbit
   ini_file: 
@@ -85,6 +99,7 @@
     - 'registry'
   notify:
     - Restart Glance
+    - Restart Glance Registry
 
 - name: Configure Glance Keystone Uri
   ini_file: 
@@ -97,6 +112,7 @@
     - 'registry'
   notify:
     - Restart Glance
+    - Restart Glance Registry
 
 - name: Configure Glance Keystone
   ini_file: 
@@ -109,6 +125,7 @@
     - 'registry'
   notify:
     - Restart Glance
+    - Restart Glance Registry
 
 - name: Configure Glance Keystone
   ini_file: 
@@ -121,6 +138,7 @@
     - 'registry'
   notify:
     - Restart Glance
+    - Restart Glance Registry
 
 - name: Configure Glance Keystone
   ini_file: 
@@ -133,6 +151,7 @@
     - 'registry'
   notify:
     - Restart Glance
+    - Restart Glance Registry
 
 - name: Configure Glance Store
   ini_file: 

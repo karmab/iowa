@@ -1,7 +1,7 @@
-defaults:
- debug: true
+---
 
 common:
+ debug: false
  controller_host: 127.0.0.1
  mysql_host: 127.0.0.1
  region: RegionOne
@@ -38,6 +38,8 @@ cinder:
  dbpassword: cinder
  dbname: cinder
  password: cinder
+ volume_group: cinder-volumes
+ nfs_shares_config: /etc/cinder/nfs_shares
  volume_driver: cinder.volume.drivers.nfs.NfsDriver
  nfs_shares:
   - 127.0.0.1:/cinder
@@ -47,6 +49,8 @@ neutron:
  dbpassword: neutron
  dbname: neutron
  password: neutron
+ bridge_mappings: ''
+ core_plugin: ml2
 
 nova:
  dbuser: nova

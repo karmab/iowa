@@ -1,0 +1,73 @@
+---
+
+defaults:
+ debug: true
+
+common:
+ controller_host: 127.0.0.1
+ mysql_host: 127.0.0.1
+ region: RegionOne
+ rabbit_user: guest
+ rabbit_password: guest
+ rabbit_hosts:
+  - 127.0.0.1
+
+databases:
+ - keystone
+ - cinder
+ - glance
+ - nova
+ - neutron
+ - heat
+ - ceilometer
+
+keystone:
+ dbuser: keystone
+ dbpassword: keystone
+ dbname: keystone
+ admin_token: XXXXXX
+ admin_password: unix1234
+ public_url: http://127.0.0.1:5000/v2.0
+
+glance:
+ dbuser: glance
+ dbpassword: glance
+ dbname: glance
+ password: glance
+
+cinder:
+ dbuser: cinder
+ dbpassword: cinder
+ dbname: cinder
+ password: cinder
+ volume_group: cinder-volumes
+ nfs_shares_config: /etc/cinder/nfs_shares
+ volume_driver: cinder.volume.drivers.nfs.NfsDriver
+ nfs_shares:
+  - 127.0.0.1:/cinder
+
+neutron:
+ dbuser: neutron
+ dbpassword: neutron
+ dbname: neutron
+ password: neutron
+ bridge_mappings: ''
+ core_plugin: ml2
+
+nova:
+ dbuser: nova
+ dbpassword: nova
+ dbname: nova
+ password: nova
+
+heat:
+ dbuser: heat
+ dbpassword: heat
+ dbname: heat
+ password: heat
+
+ceilometer:
+ dbuser: ceilometer
+ dbpassword: ceilometer
+ dbname: ceilometer
+ password: ceilometer
