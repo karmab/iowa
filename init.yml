@@ -1,6 +1,6 @@
 ---
 - name: Install Openstack
-  hosts: kk
+  hosts: zz
   remote_user: cloud-user
   gather_facts: true
   become: yes

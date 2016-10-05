@@ -1,7 +1,7 @@
 ---
 
 common:
- debug: false
+ debug: true
  controller_host: 127.0.0.1
  mysql_host: 127.0.0.1
  region: RegionOne

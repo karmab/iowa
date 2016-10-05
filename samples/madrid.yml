@@ -1,9 +1,7 @@
 ---
 
-defaults:
- debug: true
-
 common:
+ debug: true
  controller_host: 127.0.0.1
  mysql_host: 127.0.0.1
  region: RegionOne
@@ -11,6 +9,7 @@ common:
  rabbit_password: guest
  rabbit_hosts:
   - 127.0.0.1
+ 
 
 databases:
  - keystone

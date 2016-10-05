@@ -14,19 +14,20 @@
    enabled: yes
    state: started
 
+- name: Create Dbs
+  mysql_db:
+   name: "{{ item }}" 
+   state: "present"
+  with_items: "{{ databases }}"
+
 - name: Create Db Users
   mysql_user:
    name: "{{ vars[item[0]]['dbuser'] }}"
    password: "{{ vars[item[0]]['dbpassword'] }}"
    priv: "*.*:ALL,GRANT"
    state: "present"
-   host: "item[1]"
+   host: "{{ item[1] }}"
   with_nested:
    - "{{ databases}}"
    - ['localhost', '%' ]
 
-- name: Create Dbs
-  mysql_db:
-   name: "{{ item }}" 
-   state: "present"
-  with_items: "{{ databases }}"

@@ -1,10 +1,13 @@
-- add debug parameter everywhere
-
 - document cinder enabled backends
 
 - add ldap support in keystone? keystone v3 ?
 
 - document how to run the role with a custom variables files ( and with a specific component through tags)
+
+##KEYSTONE
+ make sure /var/log/keystone/keystone.log belongs to keystone !!!!!
+ seems two db_sync are needed for keystone ????
+
 
 ## CINDER
  - volume_driver can be either 
