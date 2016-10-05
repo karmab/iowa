@@ -1,16 +1,6 @@
 ---
 
-- name: Set Neutron Ovs Variables
-  set_fact:
-    public_url: "{{ neutron.public_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    internal_url: "{{ neutron.internal_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    admin_url: "{{ neutron.admin_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
-    identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
-    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ common.controller_host ~ ':35357/v2.0') }}"
-    bridge_mappings: "{{ neutron.bridge_mappings | default('') }}"
-
-- name: Install Neutron Ovs
+- name: Install Neutron Ovs Packages
   yum: 
     name: '{{ item }}'
     state: latest
@@ -50,10 +40,10 @@
     dest: "/etc/neutron/plugin.ini"
     section: OVS
     option: bridge_mappings
-    value: "{{ bridge_mappings }}"
+    value: "{{ neutron.bridge_mappings }}"
   notify:
    - Restart Neutron
-  when: bridge_mappings != '' 
+  when: neutron.bridge_mappings != '' 
 
 - name: Enable Neutron Ovs Services
   service:

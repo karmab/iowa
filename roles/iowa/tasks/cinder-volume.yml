@@ -8,7 +8,7 @@
     keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
     identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
 
-- name: Install Cinder
+- name: Install Cinder Volume Packages
   yum: 
     name: '{{ item }}'
     state: latest
@@ -36,7 +36,7 @@
   notify:
     - Restart Cinder Volume
 
-- name: Configure Cinder Volume Rabbit
+- name: Configure Cinder Volume Rabbit Backend
   ini_file: 
     dest: /etc/cinder/cinder.conf
     section: DEFAULT
@@ -45,7 +45,7 @@
   notify:
     - Restart Cinder Volume
 
-- name: Configure Cinder Volume Rabbit
+- name: Configure Cinder Volume Rabbit Hosts
   ini_file: 
     dest: /etc/cinder/cinder.conf
     section: oslo_messaging_rabbit
@@ -54,7 +54,7 @@
   notify:
     - Restart Cinder Volume
 
-- name: Configure Cinder Volume Rabbit
+- name: Configure Cinder Volume Rabbit User
   ini_file: 
     dest: /etc/cinder/cinder.conf
     section: oslo_messaging_rabbit
@@ -63,7 +63,7 @@
   notify:
     - Restart Cinder Volume
 
-- name: Configure Cinder Volume Rabbit
+- name: Configure Cinder Volume Rabbit Password
   ini_file: 
     dest: /etc/cinder/cinder.conf
     section: oslo_messaging_rabbit
@@ -72,7 +72,7 @@
   notify:
     - Restart Cinder Volume
 
-- name: Configure Cinder Volume Rabbit
+- name: Configure Cinder Volume Rabbit Virtual Host
   ini_file: 
     dest: /etc/cinder/cinder.conf
     section: oslo_messaging_rabbit
@@ -81,7 +81,7 @@
   notify:
     - Restart Cinder Volume
 
-- name: Configure Cinder Volume Keystone
+- name: Configure Cinder Volume Keystone Strategy
   ini_file: 
     dest: "/etc/cinder/cinder.conf"
     section: DEFAULT
@@ -99,7 +99,7 @@
   notify:
     - Restart Cinder Volume
 
-- name: Configure Cinder Volume Keystone
+- name: Configure Cinder Volume Keystone Tenant
   ini_file: 
     dest: "/etc/cinder/cinder.conf"
     section: keystone_authtoken
@@ -108,7 +108,7 @@
   notify:
     - Restart Cinder Volume
 
-- name: Configure Cinder Volume Keystone
+- name: Configure Cinder Volume Keystone User
   ini_file: 
     dest: "/etc/cinder/cinder.conf"
     section: keystone_authtoken
@@ -117,7 +117,7 @@
   notify:
     - Restart Cinder Volume
 
-- name: Configure Cinder Volume Keystone
+- name: Configure Cinder Volume Keystone Password
   ini_file: 
     dest: "/etc/cinder/cinder.conf"
     section: keystone_authtoken

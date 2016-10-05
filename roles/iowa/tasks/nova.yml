@@ -1,0 +1,356 @@
+---
+
+- name: Set Nova Host
+  set_fact:
+      keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+      neutron_host: "{{ [neutron.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+      nova_host: "{{ [nova.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+
+- name: Set Nova Variables
+  set_fact:
+    public_url: "{{ nova.public_url | default('http://' ~ nova_host ~ ':8774/v2/%(tenant_id)s') }}"
+    internal_url: "{{ nova.internal_url | default('http://' ~ nova_host ~ ':8774/v2/%(tenant_id)s') }}"
+    admin_url: "{{ nova.admin_url | default('http://' ~ nova_host ~ ':8774/v2/%(tenant_id)s') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
+    keystone_adminurl: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':35357/v2.0') }}"
+    neutron_url: "{{ neutron.internal_url | default('http://' ~ neutron_host ~ ':9696') }}"
+    identity_uri: "{{ 'http://' ~ keystone_host ~ ':35357/' }}"
+    novncproxy_url: "{{ nova.novncproxy_url | default('http://' ~ nova_host ~ ':6080/vnc_auto.html') }}"
+
+- name: Install Nova Packages
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'openstack-nova-api'
+    - 'openstack-nova-conductor'
+    - 'openstack-nova-scheduler'
+    - 'openstack-nova-novncproxy'
+    - 'openstack-nova-console'
+    - 'openstack-utils'
+    - 'python-cinderclient'
+    - 'openstack-selinux'
+
+- name: Configure Nova Debug
+  ini_file:
+    dest: /etc/nova/nova.conf
+    section: DEFAULT
+    option: debug
+    value: "{{ common.debug }}"
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova SQL Connection
+  ini_file: 
+    dest: /etc/nova/nova.conf
+    section: database
+    option: connection
+    value: "mysql://{{ nova.dbuser}}:{{nova.dbpassword}}@{{ common.mysql_host}}/{{ nova.dbname }}"
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Rabbit Backend
+  ini_file: 
+    dest: /etc/nova/nova.conf
+    section: DEFAULT
+    option:  rpc_backend
+    value: nova.openstack.common.rpc.impl_kombu
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Rabbit Hosts
+  ini_file: 
+    dest: /etc/nova/nova.conf
+    section: oslo_messaging_rabbit
+    option: rabbit_hosts
+    value: "{{ common.rabbit_hosts | append(':5672') | join(',')}}"
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Rabbit User
+  ini_file: 
+    dest: /etc/nova/nova.conf
+    section: oslo_messaging_rabbit
+    option: rabbit_userid
+    value: "{{ common.rabbit_user }}"
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Rabbit Password
+  ini_file: 
+    dest: /etc/nova/nova.conf
+    section: oslo_messaging_rabbit
+    option: rabbit_password
+    value: "{{ common.rabbit_password }}"
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Rabbit Virtual Host
+  ini_file: 
+    dest: /etc/nova/nova.conf
+    section: oslo_messaging_rabbit
+    option: rabbit_virtual_host
+    value: /
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Keystone Strategy
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: auth_strategy
+    value: keystone
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Keystone Uri
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: keystone_authtoken
+    option: identity_uri
+    value: "{{ identity_uri }}"
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Keystone Tenant
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: keystone_authtoken
+    option: admin_tenant_name
+    value: services
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Keystone User
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: keystone_authtoken
+    option: admin_user
+    value: nova
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Keystone Password
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: keystone_authtoken
+    option: admin_password
+    value: "{{ nova.password }}" 
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Communication With Neutron Class
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: network_api_class
+    value: "nova.network.neutronv2.api.API"
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Communication With Neutron Url
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: url
+    value: "{{ neutron_url }}" 
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Communication With Neutron Tenant
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: admin_tenant_name
+    value: services
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Communication With Neutron User
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: admin_username
+    value: neutron
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Communication With Neutron Password
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: admin_password
+    value: "{{ neutron.password }}"
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Communication With Neutron Url
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: admin_auth_url
+    value: "{{ keystone_adminurl }}"
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Metadata Service
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: service_metadata_proxy
+    value: true
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Metadata Secret
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: metadata_proxy_shared_secret
+    value: "{{ nova.metadata_secret }}"
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova Virtual Device Plugging
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: libvirt
+    option: vif_driver
+    value: nova.virt.libvirt.vif.LibvirtGenericVIFDriver
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Configure Nova VncProxy Host
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: novncproxy_host
+    value: 0.0.0.0
+  notify:
+   - Restart Nova VncProxy
+
+- name: Configure Nova VncProxy Url
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: novncproxy_base_url
+    value: "{{ novncproxy_url }}"
+  notify:
+   - Restart Nova VncProxy
+
+- name: Configure Nova To Use Security Groups
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: security_group_api
+    value: neutron
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+- name: Disable Nova Firewall Driver
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: firewall_driver
+    value: nova.virt.firewall.NoopFirewallDriver
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+#- name: Check Nova Database Version
+#  shell: nova-manage db version
+#  register: nova_db_version
+#  changed_when: false
+
+- name: Populate Nova Database
+  run_once: yes
+  shell: nova-manage db sync
+#  when: nova_db_version.stdout == "0"
+
+- name: Create Nova User
+  keystone_user:
+    state: present
+    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    token: "{{ keystone.admin_token }}"
+    user: nova
+    tenant: services
+    password: "{{ nova.password }}"
+
+- name: Grant Nova Admin Role
+  keystone_user:
+    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    user: nova
+    role: admin
+
+- name: Create Nova Service And Endpoint
+  keystone_service: 
+    name: nova
+    type: compute
+    description: "Nova Volume Service"
+    publicurl: "{{ public_url }}"
+    internalurl: "{{ internal_url }}"
+    adminurl: "{{ admin_url }}"
+    endpoint: "{{ keystone_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
+- name: Enable Nova Services
+  service:
+    name: "openstack-nova-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+   - api
+   - console
+   - scheduler
+   - conductor
+   - novncproxy

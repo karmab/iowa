@@ -1,0 +1,279 @@
+---
+
+- name: Set Nova Compute Variables
+  set_fact:
+    public_url: "{{ nova.public_url | default('http://' ~ common.controller_host ~ ':8774/v2/%(tenant_id)s') }}"
+    internal_url: "{{ nova.internal_url | default('http://' ~ common.controller_host ~ ':8774/v2/%(tenant_id)s') }}"
+    admin_url: "{{ nova.admin_url | default('http://' ~ common.controller_host ~ ':8774/v2/%(tenant_id)s') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
+    keystone_adminurl: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
+    neutron_url: "{{ neutron.internal_url | default('http://' ~ common.controller_host ~ ':9696') }}"
+    identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
+
+- name: Install Nova Compute Packages
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'openstack-nova-compute'
+    - 'openstack-utils'
+    - 'python-cinderclient'
+    - 'openstack-selinux'
+
+- name: Enable Nova bridge module
+  modprobe:
+    name: bridge
+    state: present
+
+- name: Set Nova Sysctl Ip Forward
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    state: present
+
+- name: Set Nova Sysctl All Rp Filter
+  sysctl:
+    name: net.ipv4.conf.all.rp_filter
+    value: 0
+    state: present
+
+- name: Set Nova Sysctl Default Rp Filter
+  sysctl:
+    name: net.ipv4.conf.default.rp_filter
+    value: 0
+    state: present
+
+- name: Set Nova Sysctl Call Arptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-arptables
+    value: 1
+    state: present
+
+- name: Set Nova Sysctl Call Ip6tables
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+    state: present
+
+- name: Set Nova Sysctl Call Iptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+
+- name: Configure Nova Compute Debug
+  ini_file:
+    dest: /etc/nova/nova.conf
+    section: DEFAULT
+    option: debug
+    value: "{{ common.debug }}"
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute SQL Connection
+  ini_file: 
+    dest: /etc/nova/nova.conf
+    section: database
+    option: connection
+    value: "mysql://{{ nova.dbuser}}:{{nova.dbpassword}}@{{ common.mysql_host}}/{{ nova.dbname }}"
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Rabbit Backend
+  ini_file: 
+    dest: /etc/nova/nova.conf
+    section: DEFAULT
+    option:  rpc_backend
+    value: nova.openstack.common.rpc.impl_kombu
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Rabbit Hosts
+  ini_file: 
+    dest: /etc/nova/nova.conf
+    section: oslo_messaging_rabbit
+    option: rabbit_hosts
+    value: "{{ common.rabbit_hosts | append(':5672') | join(',')}}"
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Rabbit User
+  ini_file: 
+    dest: /etc/nova/nova.conf
+    section: oslo_messaging_rabbit
+    option: rabbit_userid
+    value: "{{ common.rabbit_user }}"
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Rabbit Password
+  ini_file: 
+    dest: /etc/nova/nova.conf
+    section: oslo_messaging_rabbit
+    option: rabbit_password
+    value: "{{ common.rabbit_password }}"
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Rabbit Virtual Host
+  ini_file: 
+    dest: /etc/nova/nova.conf
+    section: oslo_messaging_rabbit
+    option: rabbit_virtual_host
+    value: /
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Keystone Strategy
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: auth_strategy
+    value: keystone
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Keystone Uri
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: keystone_authtoken
+    option: identity_uri
+    value: "{{ identity_uri }}"
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Keystone Tenant
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: keystone_authtoken
+    option: admin_tenant_name
+    value: services
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Keystone User
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: keystone_authtoken
+    option: admin_user
+    value: nova
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Keystone Password
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: keystone_authtoken
+    option: admin_password
+    value: "{{ nova.password }}" 
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Communication With Neutron Class
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: network_api_class
+    value: "nova.network.neutronv2.api.API"
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Communication With Neutron Url
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: url
+    value: "{{ neutron_url }}" 
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Communication With Neutron Tenant
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: admin_tenant_name
+    value: services
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Communication With Neutron User
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: admin_username
+    value: neutron
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Communication With Neutron Password
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: admin_password
+    value: "{{ neutron.password }}"
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Communication With Neutron Url
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: admin_auth_url
+    value: "{{ keystone_adminurl }}"
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Metadata Service
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: service_metadata_proxy
+    value: true
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Metadata Secret
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: neutron
+    option: metadata_proxy_shared_secret
+    value: "{{ nova.metadata_secret }}"
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute Virtual Device Plugging
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: libvirt
+    option: vif_driver
+    value: nova.virt.libvirt.vif.LibvirtGenericVIFDriver
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Compute To Use Security Groups
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: security_group_api
+    value: neutron
+  notify:
+   - Restart Nova Compute
+
+- name: Disable Nova Compute Firewall Driver
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: firewall_driver
+    value: nova.virt.firewall.NoopFirewallDriver
+  notify:
+   - Restart Nova Compute
+
+- name: Enable Nova Compute Services
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+   - messagebus
+   - libvirtd
+   - openstack-nova-compute

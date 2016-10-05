@@ -1,14 +1,19 @@
 ---
 
+- name: Set Cinder Host
+  set_fact:
+      cinder_host: "{{ [cinder.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+      keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+
 - name: Set Cinder Variables
   set_fact:
-    public_url: "{{ cinder.public_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
-    internal_url: "{{ cinder.internal_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
-    admin_url: "{{ cinder.admin_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
-    identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
+    public_url: "{{ cinder.public_url | default('http://' ~ cinder_host ~ ':8776/v1/%(tenant_id)s') }}"
+    internal_url: "{{ cinder.internal_url | default('http://' ~ cinder_host ~ ':8776/v1/%(tenant_id)s') }}"
+    admin_url: "{{ cinder.admin_url | default('http://' ~ cinder_host ~ ':8776/v1/%(tenant_id)s') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
+    identity_uri: "{{ 'http://' ~ keystone_host ~ ':35357/' }}"
 
-- name: Install Cinder
+- name: Install Cinder Packages
   yum: 
     name: '{{ item }}'
     state: latest
@@ -38,7 +43,7 @@
    - Restart Cinder
    - Restart Cinder Scheduler
 
-- name: Configure Cinder Rabbit
+- name: Configure Cinder Rabbit Backend
   ini_file: 
     dest: /etc/cinder/cinder.conf
     section: DEFAULT
@@ -48,7 +53,7 @@
    - Restart Cinder
    - Restart Cinder Scheduler
 
-- name: Configure Cinder Rabbit
+- name: Configure Cinder Rabbit Hosts
   ini_file: 
     dest: /etc/cinder/cinder.conf
     section: oslo_messaging_rabbit
@@ -58,7 +63,7 @@
    - Restart Cinder
    - Restart Cinder Scheduler
 
-- name: Configure Cinder Rabbit
+- name: Configure Cinder Rabbit User
   ini_file: 
     dest: /etc/cinder/cinder.conf
     section: oslo_messaging_rabbit
@@ -68,7 +73,7 @@
    - Restart Cinder
    - Restart Cinder Scheduler
 
-- name: Configure Cinder Rabbit
+- name: Configure Cinder Rabbit Password
   ini_file: 
     dest: /etc/cinder/cinder.conf
     section: oslo_messaging_rabbit
@@ -78,7 +83,7 @@
    - Restart Cinder
    - Restart Cinder Scheduler
 
-- name: Configure Cinder Rabbit
+- name: Configure Cinder Rabbit Virtual Host
   ini_file: 
     dest: /etc/cinder/cinder.conf
     section: oslo_messaging_rabbit
@@ -88,7 +93,7 @@
    - Restart Cinder
    - Restart Cinder Scheduler
 
-- name: Configure Cinder Keystone
+- name: Configure Cinder Keystone Strategy
   ini_file: 
     dest: "/etc/cinder/cinder.conf"
     section: DEFAULT
@@ -108,7 +113,7 @@
    - Restart Cinder
    - Restart Cinder Scheduler
 
-- name: Configure Cinder Keystone
+- name: Configure Cinder Keystone Tenant
   ini_file: 
     dest: "/etc/cinder/cinder.conf"
     section: keystone_authtoken
@@ -118,7 +123,7 @@
    - Restart Cinder
    - Restart Cinder Scheduler
 
-- name: Configure Cinder Keystone
+- name: Configure Cinder Keystone User
   ini_file: 
     dest: "/etc/cinder/cinder.conf"
     section: keystone_authtoken
@@ -128,7 +133,7 @@
    - Restart Cinder
    - Restart Cinder Scheduler
 
-- name: Configure Cinder Keystone
+- name: Configure Cinder Keystone Password
   ini_file: 
     dest: "/etc/cinder/cinder.conf"
     section: keystone_authtoken
@@ -151,7 +156,7 @@
 - name: Create Cinder User
   keystone_user:
     state: present
-    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    endpoint: "http://{{ keystone_host }}:35357/v2.0"
     token: "{{ keystone.admin_token }}"
     user: cinder
     tenant: services
@@ -159,7 +164,7 @@
 
 - name: Grant Cinder Admin Role
   keystone_user:
-    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    endpoint: "http://{{ keystone_host }}:35357/v2.0"
     token: "{{ keystone.admin_token }}"
     tenant: services
     user: cinder

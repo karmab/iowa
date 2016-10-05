@@ -1,22 +1,28 @@
 ---
 
+- name: Set Neutron Host
+  set_fact:
+      neutron_host: "{{ [neutron.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+      keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+      nova_host: "{{ [nova.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+
 - name: Set Neutron Variables
   set_fact:
-    public_url: "{{ neutron.public_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    internal_url: "{{ neutron.internal_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    admin_url: "{{ neutron.admin_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
-    identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
-    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ common.controller_host ~ ':35357/v2.0') }}"
-    nova_url: "{{ nova.internal_url | default('http://' ~ common.controller_host ~ ':8774/v2') }}"
+    public_url: "{{ neutron.public_url | default('http://' ~ neutron_host ~ ':9696') }}"
+    internal_url: "{{ neutron.internal_url | default('http://' ~ neutron_host ~ ':9696') }}"
+    admin_url: "{{ neutron.admin_url | default('http://' ~ neutron_host ~ ':9696') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
+    identity_uri: "{{ 'http://' ~ keystone_host ~ ':35357/' }}"
+    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ keystone_host ~ ':35357/v2.0') }}"
+    nova_url: "{{ nova.internal_url | default('http://' ~ nova_host ~ ':8774/v2') }}"
     core_plugin: "{{ neutron.core_plugin | default('ml2') }}"
     service_plugins: "{{ neutron.service_plugins | default(['router']) }}"
-    tenant_type: "{{ neutron.tenant_type | default('gre') }}"
+    tenant_type: "{{ neutron.tenant_type | default('vxlan') }}"
     network_vlan_ranges: "{{ neutron.network_vlan_ranges | default('physnet1:1000:2999,physnet2:3000:3999') }}"
     type_drivers: "{{ neutron.type_drivers | default(['local,flat,vlan,gre,vxlan']) }}"
     mechanism_drivers: "{{ neutron.mechanism_drivers | default(['openvswitch,l2population']) }}"
 
-- name: Install Neutron
+- name: Install Neutron Packages
   yum: 
     name: '{{ item }}'
     state: latest
@@ -46,7 +52,7 @@
    - Restart Neutron
 
 
-- name: Configure Neutron Rabbit
+- name: Configure Neutron Rabbit Backend
   ini_file: 
     dest: /etc/neutron/neutron.conf
     section: DEFAULT
@@ -55,7 +61,7 @@
   notify:
    - Restart Neutron
 
-- name: Configure Neutron Rabbit
+- name: Configure Neutron Rabbit Hosts
   ini_file: 
     dest: /etc/neutron/neutron.conf
     section: oslo_messaging_rabbit
@@ -64,7 +70,7 @@
   notify:
    - Restart Neutron
 
-- name: Configure Neutron Rabbit
+- name: Configure Neutron Rabbit User
   ini_file: 
     dest: /etc/neutron/neutron.conf
     section: oslo_messaging_rabbit
@@ -73,7 +79,7 @@
   notify:
    - Restart Neutron
 
-- name: Configure Neutron Rabbit
+- name: Configure Neutron Rabbit Password
   ini_file: 
     dest: /etc/neutron/neutron.conf
     section: oslo_messaging_rabbit
@@ -82,7 +88,7 @@
   notify:
    - Restart Neutron
 
-- name: Configure Neutron Rabbit
+- name: Configure Neutron Rabbit Virtual Host
   ini_file: 
     dest: /etc/neutron/neutron.conf
     section: oslo_messaging_rabbit
@@ -91,7 +97,7 @@
   notify:
    - Restart Neutron
 
-- name: Configure Neutron Keystone
+- name: Configure Neutron Keystone Strategy
   ini_file: 
     dest: "/etc/neutron/neutron.conf"
     section: DEFAULT
@@ -109,7 +115,7 @@
   notify:
    - Restart Neutron
 
-- name: Configure Neutron Keystone
+- name: Configure Neutron Keystone Tenant
   ini_file: 
     dest: "/etc/neutron/neutron.conf"
     section: keystone_authtoken
@@ -118,7 +124,7 @@
   notify:
    - Restart Neutron
 
-- name: Configure Neutron Keystone
+- name: Configure Neutron Keystone User
   ini_file: 
     dest: "/etc/neutron/neutron.conf"
     section: keystone_authtoken
@@ -127,7 +133,7 @@
   notify:
    - Restart Neutron
 
-- name: Configure Neutron Keystone
+- name: Configure Neutron Keystone Password
   ini_file: 
     dest: "/etc/neutron/neutron.conf"
     section: keystone_authtoken
@@ -157,8 +163,8 @@
 - name: Configure Neutron Ml2 Plugin File
   file:
     state: link
-    src: "/etc/neutron/plugin.ini"
-    dest: "/etc/neutron/plugins/ml2/ml2_conf.ini"
+    dest: "/etc/neutron/plugin.ini"
+    src: "/etc/neutron/plugins/ml2/ml2_conf.ini"
     force: yes
   when: core_plugin == 'ml2'
   notify:
@@ -214,7 +220,16 @@
   notify:
    - Restart Neutron
 
-- name: Configure Neutron Communication to Nova
+- name: Configure Neutron Communication to Nova Region
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: DEFAULT
+    option: nova_region_name
+    value: "{{ common.region }}"
+
+  notify:
+   - Restart Neutron
+- name: Configure Neutron Communication to Nova Url
   ini_file: 
     dest: "/etc/neutron/neutron.conf"
     section: DEFAULT
@@ -223,7 +238,7 @@
   notify:
    - Restart Neutron
 
-- name: Configure Neutron Communication to Nova
+- name: Configure Neutron Communication to Nova User
   ini_file: 
     dest: "/etc/neutron/neutron.conf"
     section: DEFAULT
@@ -232,7 +247,7 @@
   notify:
    - Restart Neutron
 
-- name: Configure Neutron Communication to Nova
+- name: Configure Neutron Communication to Nova Password
   ini_file: 
     dest: "/etc/neutron/neutron.conf"
     section: DEFAULT
@@ -241,16 +256,35 @@
   notify:
    - Restart Neutron
 
-#- name: Configure Neutron Communication to Nova
-#  ini_file: 
-#    dest: "/etc/neutron/neutron.conf"
-#    section: DEFAULT
-#    option: nova_admin_tenant_id
-#    value: services
-#  notify:
-#   - Restart Neutron
+- name: Configure Neutron Communication to Nova Tenant
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: DEFAULT
+    option: nova_admin_tenant_name
+    value: services
+  notify:
+   - Restart Neutron
 
-- name: Configure Neutron Communication to Nova
+- name: Configure Neutron Communication to Nova Notify On Port Status
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: DEFAULT
+    option: notify_nova_on_port_status_changes
+    value: True
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron Communication to Nova Notify On Port Data
+  ini_file: 
+    dest: "/etc/neutron/neutron.conf"
+    section: DEFAULT
+    option: notify_nova_on_port_data_changes
+    value: True
+  notify:
+   - Restart Neutron
+
+
+- name: Configure Neutron Communication to Nova Auth Url
   ini_file: 
     dest: "/etc/neutron/neutron.conf"
     section: DEFAULT
@@ -259,7 +293,7 @@
   notify:
    - Restart Neutron
 
-- name: Configure Neutron Communication to Nova
+- name: Configure Neutron Communication to Nova Region
   ini_file: 
     dest: "/etc/neutron/neutron.conf"
     section: nova
@@ -281,7 +315,7 @@
 - name: Create Neutron User
   keystone_user:
     state: present
-    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    endpoint: "http://{{ keystone_host }}:35357/v2.0"
     token: "{{ keystone.admin_token }}"
     user: neutron
     tenant: services
@@ -289,7 +323,7 @@
 
 - name: Grant Neutron Admin Role
   keystone_user:
-    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    endpoint: "http://{{ keystone_host }}:35357/v2.0"
     token: "{{ keystone.admin_token }}"
     tenant: services
     user: neutron

@@ -1,15 +1,21 @@
 ---
 
+- name: Set Neutron Host
+  set_fact:
+      neutron_host: "{{ [neutron.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+      keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+      nova_host: "{{ [nova.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+
 - name: Set Neutron L3 Variables
   set_fact:
-    public_url: "{{ neutron.public_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    internal_url: "{{ neutron.internal_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    admin_url: "{{ neutron.admin_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
-    identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
-    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ common.controller_host ~ ':35357/v2.0') }}"
+    public_url: "{{ neutron.public_url | default('http://' ~ neutron_host ~ ':9696') }}"
+    internal_url: "{{ neutron.internal_url | default('http://' ~ neutron_host ~ ':9696') }}"
+    admin_url: "{{ neutron.admin_url | default('http://' ~ neutron_host ~ ':9696') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
+    identity_uri: "{{ 'http://' ~ keystone_host ~ ':35357/' }}"
+    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ keystone_host ~ ':35357/v2.0') }}"
 
-- name: Install Neutron L3
+- name: Install Neutron L3 Packages
   yum: 
     name: '{{ item }}'
     state: latest
@@ -20,7 +26,7 @@
     - 'openstack-utils'
     - 'openstack-selinux'
 
-- name: Configure Neutron L3 Keystone
+- name: Configure Neutron L3 Keystone Strategy
   ini_file: 
     dest: "/etc/neutron/metadata_agent.ini"
     section: DEFAULT
@@ -40,7 +46,7 @@
    - Restart Neutron L3
    - Restart Neutron Metadata
 
-- name: Configure Neutron L3 Keystone
+- name: Configure Neutron L3 Keystone Tenant
   ini_file: 
     dest: "/etc/neutron/metadata_agent.ini"
     section: keystone_authtoken
@@ -50,7 +56,7 @@
    - Restart Neutron L3
    - Restart Neutron Metadata
 
-- name: Configure Neutron L3 Keystone
+- name: Configure Neutron L3 Keystone User
   ini_file: 
     dest: "/etc/neutron/metadata_agent.ini"
     section: keystone_authtoken
@@ -60,7 +66,7 @@
    - Restart Neutron L3
    - Restart Neutron Metadata
 
-- name: Configure Neutron L3 Keystone
+- name: Configure Neutron L3 Keystone Password
   ini_file: 
     dest: "/etc/neutron/metadata_agent.ini"
     section: keystone_authtoken
@@ -70,22 +76,22 @@
    - Restart Neutron L3
    - Restart Neutron Metadata
 
-- name: Configure Neutron L3 Keystone
-  ini_file: 
-    dest: "/etc/neutron/metadata_agent.ini"
-    section: keystone_authtoken
-    option: admin_password
-    value: "{{ neutron.password }}" 
-  notify:
-   - Restart Neutron L3
-   - Restart Neutron Metadata
-
-- name: Configure Neutron L3 Communication With Nova
+- name: Configure Neutron L3 Communication With Nova IP
   ini_file: 
     dest: "/etc/neutron/metadata_agent.ini"
     section: DEFAULT
     option: nova_metadata_ip
-    value: "{{ common.controller_host }}" 
+    value: "{{ nova_host }}" 
+  notify:
+   - Restart Neutron L3
+   - Restart Neutron Metadata
+
+- name: Configure Neutron L3 Communication With Nova Secret
+  ini_file: 
+    dest: "/etc/neutron/metadata_agent.ini"
+    section: DEFAULT
+    option: metadata_proxy_shared_secret
+    value: "{{ nova.metadata_secret }}" 
   notify:
    - Restart Neutron L3
    - Restart Neutron Metadata

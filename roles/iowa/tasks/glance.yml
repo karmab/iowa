@@ -1,14 +1,19 @@
 ---
 
+- name: Set Glance Host
+  set_fact:
+      glance_host: "{{ [glance.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+      keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+
 - name: Set Glance Variables
   set_fact:
-    public_url: "{{ glance.public_url | default('http://' ~ common.controller_host ~ ':9292') }}"
-    internal_url: "{{ glance.internal_url | default('http://' ~ common.controller_host ~ ':9292') }}"
-    admin_url: "{{ glance.admin_url | default('http://' ~ common.controller_host ~ ':9292') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
-    identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
+    public_url: "{{ glance.public_url | default('http://' ~ glance_host ~ ':9292') }}"
+    internal_url: "{{ glance.internal_url | default('http://' ~ glance_host ~ ':9292') }}"
+    admin_url: "{{ glance.admin_url | default('http://' ~ glance_host ~ ':9292') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
+    identity_uri: "{{ 'http://' ~ keystone_host ~ ':35357/' }}"
 
-- name: Install Glance
+- name: Install Glance Packages
   yum: 
     name: '{{ item }}'
     state: latest
@@ -43,7 +48,7 @@
     - Restart Glance
     - Restart Glance Registry
 
-- name: Configure Glance Rabbit
+- name: Configure Glance Rabbit Driver
   ini_file: 
     dest: /etc/glance/glance-api.conf
     section: DEFAULT
@@ -52,7 +57,7 @@
   notify:
     - Restart Glance
 
-- name: Configure Glance Rabbit
+- name: Configure Glance Rabbit Hosts
   ini_file: 
     dest: /etc/glance/glance-api.conf
     section: oslo_messaging_rabbit
@@ -61,7 +66,7 @@
   notify:
     - Restart Glance
 
-- name: Configure Glance Rabbit
+- name: Configure Glance Rabbit User
   ini_file: 
     dest: /etc/glance/glance-api.conf
     section: oslo_messaging_rabbit
@@ -70,7 +75,7 @@
   notify:
     - Restart Glance
 
-- name: Configure Glance Rabbit
+- name: Configure Glance Rabbit Password
   ini_file: 
     dest: /etc/glance/glance-api.conf
     section: oslo_messaging_rabbit
@@ -79,7 +84,7 @@
   notify:
     - Restart Glance
 
-- name: Configure Glance Rabbit
+- name: Configure Glance Rabbit Virtual Host
   ini_file: 
     dest: /etc/glance/glance-api.conf
     section: oslo_messaging_rabbit
@@ -114,7 +119,7 @@
     - Restart Glance
     - Restart Glance Registry
 
-- name: Configure Glance Keystone
+- name: Configure Glance Keystone Tenant
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
     section: keystone_authtoken
@@ -127,7 +132,7 @@
     - Restart Glance
     - Restart Glance Registry
 
-- name: Configure Glance Keystone
+- name: Configure Glance Keystone User
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
     section: keystone_authtoken
@@ -140,7 +145,7 @@
     - Restart Glance
     - Restart Glance Registry
 
-- name: Configure Glance Keystone
+- name: Configure Glance Keystone Password
   ini_file: 
     dest: "/etc/glance/glance-{{ item }}.conf"
     section: keystone_authtoken
@@ -153,7 +158,7 @@
     - Restart Glance
     - Restart Glance Registry
 
-- name: Configure Glance Store
+- name: Configure Glance Store Directory
   ini_file: 
     dest: "/etc/glance/glance-api.conf"
     section: glance_store
@@ -162,7 +167,7 @@
   notify:
     - Restart Glance
 
-- name: Configure Glance Store
+- name: Configure Glance Store Type
   ini_file: 
     dest: "/etc/glance/glance-api.conf"
     section: glance_store
@@ -184,7 +189,7 @@
 - name: Create Glance User
   keystone_user:
     state: present
-    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    endpoint: "http://{{ keystone_host }}:35357/v2.0"
     token: "{{ keystone.admin_token }}"
     user: glance
     tenant: services
@@ -192,7 +197,7 @@
 
 - name: Grant Glance Admin Role
   keystone_user:
-    endpoint: "http://{{ common.controller_host }}:35357/v2.0"
+    endpoint: "http://{{ keystone_host }}:35357/v2.0"
     token: "{{ keystone.admin_token }}"
     tenant: services
     user: glance

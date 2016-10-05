@@ -1,15 +1,21 @@
 ---
 
+- name: Set Neutron Host
+  set_fact:
+      neutron_host: "{{ [neutron.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+      keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+      nova_host: "{{ [nova.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+
 - name: Set Neutron Dhcp Variables
   set_fact:
-    public_url: "{{ neutron.public_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    internal_url: "{{ neutron.internal_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    admin_url: "{{ neutron.admin_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
-    identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
-    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ common.controller_host ~ ':35357/v2.0') }}"
+    public_url: "{{ neutron.public_url | default('http://' ~ neutron_host ~ ':9696') }}"
+    internal_url: "{{ neutron.internal_url | default('http://' ~ neutron_host ~ ':9696') }}"
+    admin_url: "{{ neutron.admin_url | default('http://' ~ neutron_host ~ ':9696') }}"
+    keystone_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
+    identity_uri: "{{ 'http://' ~ keystone_host ~ ':35357/' }}"
+    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ keystone_host ~ ':35357/v2.0') }}"
 
-- name: Install Neutron Dhcp
+- name: Install Neutron Dhcp Packages
   yum: 
     name: '{{ item }}'
     state: latest
@@ -38,7 +44,7 @@
   notify:
    - Restart Neutron Dhcp
 
-- name: Configure Neutron Dhcp Keystone
+- name: Configure Neutron Dhcp Keystone Tenant
   ini_file: 
     dest: "/etc/neutron/dhcp_agent.ini"
     section: keystone_authtoken
@@ -47,7 +53,7 @@
   notify:
    - Restart Neutron Dhcp
 
-- name: Configure Neutron Dhcp Keystone
+- name: Configure Neutron Dhcp Keystone User
   ini_file: 
     dest: "/etc/neutron/dhcp_agent.ini"
     section: keystone_authtoken
@@ -56,7 +62,7 @@
   notify:
    - Restart Neutron Dhcp
 
-- name: Configure Neutron Dhcp Keystone
+- name: Configure Neutron Dhcp Keystone Password
   ini_file: 
     dest: "/etc/neutron/dhcp_agent.ini"
     section: keystone_authtoken

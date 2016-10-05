@@ -3,8 +3,8 @@
 ##- include: preupgrade.yml
 ##- include: haproxy.yml
 ##- include: mongodb.yml
-- include: mysql.yml
-- include: rabbitmq.yml
+##- include: mysql.yml
+##- include: rabbitmq.yml
 - include: keystone.yml tags=keystone
 - include: glance.yml tags=glance
 - include: cinder.yml tags=cinder
