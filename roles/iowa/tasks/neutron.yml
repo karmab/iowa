@@ -1,20 +1,7 @@
 ---
 
-- name: Set Neutron Host
-  set_fact:
-      neutron_host: "{{ [neutron.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-      keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-      nova_host: "{{ [nova.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-
 - name: Set Neutron Variables
   set_fact:
-    public_url: "{{ neutron.public_url | default('http://' ~ neutron_host ~ ':9696') }}"
-    internal_url: "{{ neutron.internal_url | default('http://' ~ neutron_host ~ ':9696') }}"
-    admin_url: "{{ neutron.admin_url | default('http://' ~ neutron_host ~ ':9696') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
-    identity_uri: "{{ 'http://' ~ keystone_host ~ ':35357/' }}"
-    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ keystone_host ~ ':35357/v2.0') }}"
-    nova_url: "{{ nova.internal_url | default('http://' ~ nova_host ~ ':8774/v2') }}"
     core_plugin: "{{ neutron.core_plugin | default('ml2') }}"
     service_plugins: "{{ neutron.service_plugins | default(['router']) }}"
     tenant_type: "{{ neutron.tenant_type | default('vxlan') }}"
@@ -111,7 +98,7 @@
     dest: "/etc/neutron/neutron.conf"
     section: keystone_authtoken
     option: identity_uri
-    value: "{{ identity_uri }}"
+    value: "{{ keystone_identity_uri }}"
   notify:
    - Restart Neutron
 
@@ -234,7 +221,7 @@
     dest: "/etc/neutron/neutron.conf"
     section: DEFAULT
     option: nova_url
-    value: "{{ nova_url }}"
+    value: "{{ nova_internal_url }}"
   notify:
    - Restart Neutron
 
@@ -315,7 +302,7 @@
 - name: Create Neutron User
   keystone_user:
     state: present
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     user: neutron
     tenant: services
@@ -323,7 +310,7 @@
 
 - name: Grant Neutron Admin Role
   keystone_user:
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     tenant: services
     user: neutron
@@ -334,10 +321,10 @@
     name: neutron
     type: network
     description: "Neutron Networking Service"
-    publicurl: "{{ public_url }}"
-    internalurl: "{{ internal_url }}"
-    adminurl: "{{ admin_url }}"
-    endpoint: "{{ keystone_url }}"
+    publicurl: "{{ neutron_public_url }}"
+    internalurl: "{{ neutron_internal_url }}"
+    adminurl: "{{ neutron_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
     login_user: admin
     login_password: "{{ keystone.admin_password }}"
     tenant_name: admin

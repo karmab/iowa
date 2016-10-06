@@ -1,20 +1,7 @@
 ---
 
-- name: Set Nova Host
-  set_fact:
-      keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-      neutron_host: "{{ [neutron.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-      nova_host: "{{ [nova.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-
 - name: Set Nova Variables
   set_fact:
-    public_url: "{{ nova.public_url | default('http://' ~ nova_host ~ ':8774/v2/%(tenant_id)s') }}"
-    internal_url: "{{ nova.internal_url | default('http://' ~ nova_host ~ ':8774/v2/%(tenant_id)s') }}"
-    admin_url: "{{ nova.admin_url | default('http://' ~ nova_host ~ ':8774/v2/%(tenant_id)s') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
-    keystone_adminurl: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':35357/v2.0') }}"
-    neutron_url: "{{ neutron.internal_url | default('http://' ~ neutron_host ~ ':9696') }}"
-    identity_uri: "{{ 'http://' ~ keystone_host ~ ':35357/' }}"
     novncproxy_url: "{{ nova.novncproxy_url | default('http://' ~ nova_host ~ ':6080/vnc_auto.html') }}"
 
 - name: Install Nova Packages
@@ -124,7 +111,7 @@
     dest: "/etc/nova/nova.conf"
     section: keystone_authtoken
     option: identity_uri
-    value: "{{ identity_uri }}"
+    value: "{{ keystone_identity_uri }}"
   notify:
    - Restart Nova
    - Restart Nova Conductor
@@ -179,7 +166,7 @@
     dest: "/etc/nova/nova.conf"
     section: neutron
     option: url
-    value: "{{ neutron_url }}" 
+    value: "{{ neutron_internal_url }}" 
   notify:
    - Restart Nova
    - Restart Nova Conductor
@@ -223,7 +210,7 @@
     dest: "/etc/nova/nova.conf"
     section: neutron
     option: admin_auth_url
-    value: "{{ keystone_adminurl }}"
+    value: "{{ keystone_admin_url }}"
   notify:
    - Restart Nova
    - Restart Nova Conductor
@@ -302,6 +289,17 @@
    - Restart Nova Conductor
    - Restart Nova Scheduler
 
+- name: Configure Nova Glance Servers
+  ini_file: 
+    dest: "/etc/nova/nova.conf"
+    section: glance
+    option: api_servers
+    value: "{{ glance_api_servers | append(':9292') | join(',') }}"
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
 #- name: Check Nova Database Version
 #  shell: nova-manage db version
 #  register: nova_db_version
@@ -315,7 +313,7 @@
 - name: Create Nova User
   keystone_user:
     state: present
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     user: nova
     tenant: services
@@ -323,7 +321,7 @@
 
 - name: Grant Nova Admin Role
   keystone_user:
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     tenant: services
     user: nova
@@ -334,10 +332,10 @@
     name: nova
     type: compute
     description: "Nova Volume Service"
-    publicurl: "{{ public_url }}"
-    internalurl: "{{ internal_url }}"
-    adminurl: "{{ admin_url }}"
-    endpoint: "{{ keystone_url }}"
+    publicurl: "{{ nova_public_url }}"
+    internalurl: "{{ nova_internal_url }}"
+    adminurl: "{{ nova_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
     login_user: admin
     login_password: "{{ keystone.admin_password }}"
     tenant_name: admin

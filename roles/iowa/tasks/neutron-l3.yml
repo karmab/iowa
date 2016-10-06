@@ -1,20 +1,5 @@
 ---
 
-- name: Set Neutron Host
-  set_fact:
-      neutron_host: "{{ [neutron.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-      keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-      nova_host: "{{ [nova.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-
-- name: Set Neutron L3 Variables
-  set_fact:
-    public_url: "{{ neutron.public_url | default('http://' ~ neutron_host ~ ':9696') }}"
-    internal_url: "{{ neutron.internal_url | default('http://' ~ neutron_host ~ ':9696') }}"
-    admin_url: "{{ neutron.admin_url | default('http://' ~ neutron_host ~ ':9696') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
-    identity_uri: "{{ 'http://' ~ keystone_host ~ ':35357/' }}"
-    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ keystone_host ~ ':35357/v2.0') }}"
-
 - name: Install Neutron L3 Packages
   yum: 
     name: '{{ item }}'
@@ -41,7 +26,7 @@
     dest: "/etc/neutron/metadata_agent.ini"
     section: keystone_authtoken
     option: identity_uri
-    value: "{{ identity_uri }}"
+    value: "{{ keystone_identity_uri }}"
   notify:
    - Restart Neutron L3
    - Restart Neutron Metadata

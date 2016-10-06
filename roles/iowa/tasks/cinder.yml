@@ -1,18 +1,5 @@
 ---
 
-- name: Set Cinder Host
-  set_fact:
-      cinder_host: "{{ [cinder.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-      keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-
-- name: Set Cinder Variables
-  set_fact:
-    public_url: "{{ cinder.public_url | default('http://' ~ cinder_host ~ ':8776/v1/%(tenant_id)s') }}"
-    internal_url: "{{ cinder.internal_url | default('http://' ~ cinder_host ~ ':8776/v1/%(tenant_id)s') }}"
-    admin_url: "{{ cinder.admin_url | default('http://' ~ cinder_host ~ ':8776/v1/%(tenant_id)s') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
-    identity_uri: "{{ 'http://' ~ keystone_host ~ ':35357/' }}"
-
 - name: Install Cinder Packages
   yum: 
     name: '{{ item }}'
@@ -108,7 +95,7 @@
     dest: "/etc/cinder/cinder.conf"
     section: keystone_authtoken
     option: identity_uri
-    value: "{{ identity_uri }}"
+    value: "{{ keystone_identity_uri }}"
   notify:
    - Restart Cinder
    - Restart Cinder Scheduler
@@ -156,7 +143,7 @@
 - name: Create Cinder User
   keystone_user:
     state: present
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     user: cinder
     tenant: services
@@ -164,7 +151,7 @@
 
 - name: Grant Cinder Admin Role
   keystone_user:
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     tenant: services
     user: cinder
@@ -175,10 +162,10 @@
     name: cinder
     type: volume
     description: "Cinder Volume Service"
-    publicurl: "{{ public_url }}"
-    internalurl: "{{ internal_url }}"
-    adminurl: "{{ admin_url }}"
-    endpoint: "{{ keystone_url }}"
+    publicurl: "{{ cinder_public_url }}"
+    internalurl: "{{ cinder_internal_url }}"
+    adminurl: "{{ cinder_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
     login_user: admin
     login_password: "{{ keystone.admin_password }}"
     tenant_name: admin

@@ -1,13 +1,5 @@
 ---
 
-- name: Set Cinder Variables
-  set_fact:
-    public_url: "{{ cinder.public_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
-    internal_url: "{{ cinder.internal_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
-    admin_url: "{{ cinder.admin_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':8776/v1/%(tenant_id)s') }}"
-    identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
-
 - name: Install Cinder Volume Packages
   yum: 
     name: '{{ item }}'
@@ -95,7 +87,7 @@
     dest: "/etc/cinder/cinder.conf"
     section: keystone_authtoken
     option: identity_uri
-    value: "{{ identity_uri }}"
+    value: "{{ keystone_identity_uri }}"
   notify:
     - Restart Cinder Volume
 

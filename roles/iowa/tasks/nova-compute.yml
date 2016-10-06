@@ -1,15 +1,5 @@
 ---
 
-- name: Set Nova Compute Variables
-  set_fact:
-    public_url: "{{ nova.public_url | default('http://' ~ common.controller_host ~ ':8774/v2/%(tenant_id)s') }}"
-    internal_url: "{{ nova.internal_url | default('http://' ~ common.controller_host ~ ':8774/v2/%(tenant_id)s') }}"
-    admin_url: "{{ nova.admin_url | default('http://' ~ common.controller_host ~ ':8774/v2/%(tenant_id)s') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
-    keystone_adminurl: "{{ keystone.internal_url | default('http://' ~ common.controller_host ~ ':5000/v2.0') }}"
-    neutron_url: "{{ neutron.internal_url | default('http://' ~ common.controller_host ~ ':9696') }}"
-    identity_uri: "{{ 'http://' ~ common.controller_host ~ ':35357/' }}"
-
 - name: Install Nova Compute Packages
   yum: 
     name: '{{ item }}'
@@ -138,7 +128,7 @@
     dest: "/etc/nova/nova.conf"
     section: keystone_authtoken
     option: identity_uri
-    value: "{{ identity_uri }}"
+    value: "{{ keystone_identity_uri }}"
   notify:
    - Restart Nova Compute
 
@@ -183,7 +173,7 @@
     dest: "/etc/nova/nova.conf"
     section: neutron
     option: url
-    value: "{{ neutron_url }}" 
+    value: "{{ neutron_admin_url }}" 
   notify:
    - Restart Nova Compute
 
@@ -219,7 +209,7 @@
     dest: "/etc/nova/nova.conf"
     section: neutron
     option: admin_auth_url
-    value: "{{ keystone_adminurl }}"
+    value: "{{ keystone_admin_url }}"
   notify:
    - Restart Nova Compute
 
@@ -267,6 +257,17 @@
     value: nova.virt.firewall.NoopFirewallDriver
   notify:
    - Restart Nova Compute
+
+- name: Configure Nova Glance Servers
+  ini_file:
+    dest: "/etc/nova/nova.conf"
+    section: glance
+    option: api_servers
+    value: "{{ glance_api_servers | append(':9292') | join(',') }}"
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
 
 - name: Enable Nova Compute Services
   service:

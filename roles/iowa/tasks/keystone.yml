@@ -1,15 +1,5 @@
 ---
 
-- name: Set Keystone Host
-  set_fact:
-    keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}" 
-
-- name: Set Keystone Variables
-  set_fact:
-    public_url: "{{ keystone.public_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
-    internal_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
-    admin_url: "{{ keystone.admin_url | default('http://' ~ keystone_host ~ ':35357/v2.0') }}"
-
 - name: Install Keystone Packages
   yum: 
     name: '{{ item }}'
@@ -81,7 +71,7 @@
 - name: Create Keystone Admin Tenant
   run_once: yes
   keystone_user:
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     tenant: admin
     tenant_description: "Admin Tenant"
@@ -89,7 +79,7 @@
 - name: Create Keystone Services Tenant
   run_once: yes
   keystone_user:
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     tenant: services
     tenant_description: "Services Tenant"
@@ -97,7 +87,7 @@
 - name: Create Keystone Admin User
   run_once: yes
   keystone_user:
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     tenant: admin
     user: admin
@@ -106,7 +96,7 @@
 - name: Grant Keystone Admin Role
   run_once: yes
   keystone_user:
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     tenant: admin
     user: admin
@@ -115,7 +105,7 @@
 - name: Grant Keystone Member Role
   run_once: yes
   keystone_user:
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     tenant: admin
     user: admin
@@ -126,9 +116,9 @@
     name: keystone
     type: identity
     description: "Keystone Identity Service"
-    publicurl: "{{ public_url }}"
-    internalurl: "{{ internal_url }}"
-    adminurl: "{{ admin_url }}"
-    endpoint: "{{ admin_url }}"
+    publicurl: "{{ keystone_public_url }}"
+    internalurl: "{{ keystone_internal_url }}"
+    adminurl: "{{ keystone_admin_url }}"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     region: "{{ common.region }}"

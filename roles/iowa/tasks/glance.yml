@@ -1,18 +1,5 @@
 ---
 
-- name: Set Glance Host
-  set_fact:
-      glance_host: "{{ [glance.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-      keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
-
-- name: Set Glance Variables
-  set_fact:
-    public_url: "{{ glance.public_url | default('http://' ~ glance_host ~ ':9292') }}"
-    internal_url: "{{ glance.internal_url | default('http://' ~ glance_host ~ ':9292') }}"
-    admin_url: "{{ glance.admin_url | default('http://' ~ glance_host ~ ':9292') }}"
-    keystone_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
-    identity_uri: "{{ 'http://' ~ keystone_host ~ ':35357/' }}"
-
 - name: Install Glance Packages
   yum: 
     name: '{{ item }}'
@@ -111,7 +98,7 @@
     dest: "/etc/glance/glance-{{ item }}.conf"
     section: keystone_authtoken
     option: identity_uri
-    value: "{{ identity_uri }}"
+    value: "{{ keystone_identity_uri }}"
   with_items:
     - 'api'
     - 'registry'
@@ -189,7 +176,7 @@
 - name: Create Glance User
   keystone_user:
     state: present
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     user: glance
     tenant: services
@@ -197,7 +184,7 @@
 
 - name: Grant Glance Admin Role
   keystone_user:
-    endpoint: "http://{{ keystone_host }}:35357/v2.0"
+    endpoint: "{{ keystone_admin_url }}"
     token: "{{ keystone.admin_token }}"
     tenant: services
     user: glance
@@ -208,10 +195,10 @@
     name: glance
     type: image
     description: "Glance Image Service"
-    publicurl: "{{ public_url }}"
-    internalurl: "{{ internal_url }}"
-    adminurl: "{{ admin_url }}"
-    endpoint: "{{ keystone_url }}"
+    publicurl: "{{ glance_public_url }}"
+    internalurl: "{{ glance_internal_url }}"
+    adminurl: "{{ glance_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
     login_user: admin
     login_password: "{{ keystone.admin_password }}"
     tenant_name: admin

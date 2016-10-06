@@ -49,3 +49,18 @@
 
 - name: Restart Nova VncProxy
   service: name=openstack-nova-novncproxy state=restarted
+
+- name: Restart Heat
+  service: name=openstack-heat-api state=restarted
+
+- name: Restart Heat CloudFormation
+  service: name=openstack-heat-api-cfn state=restarted
+
+- name: Restart Heat CloudWatch
+  service: name=openstack-heat-api-cloudwatch state=restarted
+
+- name: Restart Heat Engine
+  service: name=openstack-heat-engine state=restarted
+
+- name: Restart Horizon
+  service: name=httpd state=restarted

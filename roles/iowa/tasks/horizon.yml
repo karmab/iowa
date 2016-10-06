@@ -1,0 +1,37 @@
+---
+
+- name: Install Horizon Packages
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'httpd'
+    - 'mod_wsgi'
+    - 'mod_ssl'
+    - 'memcached'
+    - 'openstack-dashboard'
+
+- name: Configure Horizon Keystone Endpoint
+  lineinfile:
+    dest: /etc/openstack-dashboard/local_settings
+    line: OPENSTACK_KEYSTONE_URL = "{{ keystone_host | quote }}"
+    regexp: ^OPENSTACK_KEYSTONE_URL\s*=
+    state: present
+  notify:
+    - Restart Horizon
+
+- name: Configure Horizon Allowed Hosts
+  lineinfile:
+    dest: /etc/openstack-dashboard/local_settings
+    line: ALLOWED_HOSTS = "['~ horizon_host ~', 'localhost', '127.0.0.1']"
+    regexp: ^ALLOWED_HOSTS\s*=
+    state: present
+  notify:
+    - Restart Horizon
+
+- name: Enable Horizon Service
+  service:
+   name: httpd
+   enabled: yes
+   state: started
+

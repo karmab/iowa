@@ -52,6 +52,7 @@ neutron:
  password: neutron
  bridge_mappings: ''
  core_plugin: ml2
+ tunnel_interface: eth1
 
 nova:
  dbuser: nova
