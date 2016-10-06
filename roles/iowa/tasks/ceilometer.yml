@@ -1,0 +1,322 @@
+---
+
+- name: Set Ceilometer Variables
+  set_fact:
+    mongodb_servers: "{{ ceilometer.mongodb_servers| prepend(ceilometer.dbuser+':'+ceilometer.dbpassword+'@') | append(':27017') | join(',') }}"
+    ceilometer_db_name: "{{ ceilometer.db_name| default('ceilometer') }}"
+
+- name: Install Ceilometer Packages
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'openstack-ceilometer-api'
+    - 'openstack-ceilometer-central'
+    - 'openstack-ceilometer-collector'
+    - 'openstack-ceilometer-common'
+    - 'openstack-ceilometer-compute'
+    - 'openstack-ceilometer-alarm'
+    - 'openstack-ceilometer-notification'
+    - 'openstack-utils'
+    - 'python-ceilometer'
+    - 'python-ceilometerclient'
+    - 'openstack-selinux'
+
+- name: Configure Ceilometer Debug
+  ini_file:
+    dest: /etc/ceilometer/ceilometer.conf
+    section: DEFAULT
+    option: debug
+    value: "{{ common.debug }}"
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer SQL Connection
+  ini_file: 
+    dest: /etc/ceilometer/ceilometer.conf
+    section: database
+    option: connection
+    value: "mongodb://{{ mongodb_servers }}/{{ ceilometer_db_name }}"
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Rabbit Backend
+  ini_file: 
+    dest: /etc/ceilometer/ceilometer.conf
+    section: DEFAULT
+    option:  rpc_backend
+    value: ceilometer.openstack.common.rpc.impl_kombu
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Rabbit Hosts
+  ini_file: 
+    dest: /etc/ceilometer/ceilometer.conf
+    section: oslo_messaging_rabbit
+    option: rabbit_hosts
+    value: "{{ common.rabbit_hosts | append(':5672') | join(',')}}"
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Rabbit User
+  ini_file: 
+    dest: /etc/ceilometer/ceilometer.conf
+    section: oslo_messaging_rabbit
+    option: rabbit_userid
+    value: "{{ common.rabbit_user }}"
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Rabbit Password
+  ini_file: 
+    dest: /etc/ceilometer/ceilometer.conf
+    section: oslo_messaging_rabbit
+    option: rabbit_password
+    value: "{{ common.rabbit_password }}"
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Rabbit Virtual Host
+  ini_file: 
+    dest: /etc/ceilometer/ceilometer.conf
+    section: oslo_messaging_rabbit
+    option: rabbit_virtual_host
+    value: /
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Keystone Strategy
+  ini_file: 
+    dest: "/etc/ceilometer/ceilometer.conf"
+    section: DEFAULT
+    option: auth_strategy
+    value: keystone
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Keystone Uri
+  ini_file: 
+    dest: "/etc/ceilometer/ceilometer.conf"
+    section: keystone_authtoken
+    option: identity_uri
+    value: "{{ keystone_identity_uri }}"
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Keystone Tenant
+  ini_file: 
+    dest: "/etc/ceilometer/ceilometer.conf"
+    section: keystone_authtoken
+    option: admin_tenant_name
+    value: services
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Keystone User
+  ini_file: 
+    dest: "/etc/ceilometer/ceilometer.conf"
+    section: keystone_authtoken
+    option: admin_user
+    value: ceilometer
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Keystone Password
+  ini_file: 
+    dest: "/etc/ceilometer/ceilometer.conf"
+    section: keystone_authtoken
+    option: admin_password
+    value: "{{ ceilometer.password }}" 
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Secret
+  ini_file: 
+    dest: "/etc/ceilometer/ceilometer.conf"
+    section: publisher_rpc
+    option: metering_secret
+    value: "{{ ceilometer.secret }}" 
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Auth Url
+  ini_file: 
+    dest: "/etc/ceilometer/ceilometer.conf"
+    section: DEFAULT
+    option: os_auth_url
+    value: "{{ keystone_admin_url }}" 
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Auth Username
+  ini_file: 
+    dest: "/etc/ceilometer/ceilometer.conf"
+    section: DEFAULT
+    option: os_username
+    value: "ceilometer"
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Auth Tenant Name
+  ini_file: 
+    dest: "/etc/ceilometer/ceilometer.conf"
+    section: DEFAULT
+    option: os_tenant_name
+    value: "services" 
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Configure Ceilometer Auth Password
+  ini_file: 
+    dest: "/etc/ceilometer/ceilometer.conf"
+    section: DEFAULT
+    option: os_password
+    value: "{{ ceilometer.password }}"
+  notify:
+   - Restart Ceilometer
+   - Restart Ceilometer Central
+   - Restart Ceilometer Collector
+   - Restart Ceilometer Alarm Evaluator
+   - Restart Ceilometer Alarm Notifier
+   - Restart Ceilometer Notification
+
+- name: Create Ceilometer User
+  keystone_user:
+    state: present
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    user: ceilometer
+    tenant: services
+    password: "{{ ceilometer.password }}"
+
+- name: Create Ceilometer ResellerAdmin Role
+  run_once: yes
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+#   tenant: admin
+    role: ResellerAdmin
+
+
+- name: Grant Ceilometer Admin Role
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    user: ceilometer
+    role: admin
+
+- name: Grant Ceilometer ResellerAdmin Role
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    user: ceilometer
+    role: ResellerAdmin
+
+- name: Create Ceilometer Service And Endpoint
+  keystone_service: 
+    name: ceilometer
+    type: metering
+    description: "Ceilometer Telemetry Service"
+    publicurl: "{{ ceilometer_public_url }}"
+    internalurl: "{{ ceilometer_internal_url }}"
+    adminurl: "{{ ceilometer_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
+- name: Enable Ceilometer Services
+  service:
+    name: "openstack-ceilometer-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+   - api
+   - central
+   - collector
+   - alarm-evaluator
+   - alarm-notifier
+   - notification

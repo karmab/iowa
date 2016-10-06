@@ -1,5 +1,10 @@
 ---
 
+- name: Set Nova Compute Variables
+  set_fact:
+      nova_vnc_ip: "{{ hostvars[inventory_hostname]['ansible_'+(nova.vnc_interface | default('eth0'))]['ipv4']['address'] }}"
+      nova_ceilometer: "{{ nova.ceilometer | default('False') }}"
+
 - name: Install Nova Compute Packages
   yum: 
     name: '{{ item }}'
@@ -9,6 +14,19 @@
     - 'openstack-utils'
     - 'python-cinderclient'
     - 'openstack-selinux'
+
+- name: Debug Ceilometer here
+  debug: var=nova_ceilometer
+
+- name: Install Nova Ceilometer Compute Packages
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'openstack-ceilometer-compute'
+    - 'python-ceilometer'
+    - 'python-ceilometerclient'
+  when: nova_ceilometer == 'true'
 
 - name: Enable Nova bridge module
   modprobe:
@@ -265,9 +283,75 @@
     option: api_servers
     value: "{{ glance_api_servers | append(':9292') | join(',') }}"
   notify:
-   - Restart Nova
-   - Restart Nova Conductor
-   - Restart Nova Scheduler
+   - Restart Nova Compute
+
+- name: Configure Nova Vnc Listening
+  ini_file:
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: vncserver_listen
+    value: "0.0.0.0"
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Vnc IP
+  ini_file:
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: vncserver_proxyclient_address
+    value: "{{ nova_vnc_ip }}"
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Ceilometer Auditing
+  ini_file:
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: instance_usage_audit
+    value: 'True'
+  when: nova_ceilometer == 'true'
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Ceilometer Auditing Frequency
+  ini_file:
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: instance_usage_audit_period
+    value: 'hour'
+  when: nova_ceilometer == 'True' or nova_ceilometer == 'true'
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Ceilometer Triggering
+  ini_file:
+    dest: "/etc/nova/nova.conf"
+    section: DEFAULT
+    option: notify_on_state_change
+    value: 'vm_and_task_state'
+  when: nova_ceilometer == 'True' or nova_ceilometer == 'true'
+  notify:
+   - Restart Nova Compute
+
+- name: Configure Nova Ceilometer Notification Driver
+  lineinfile:
+    dest: /etc/nova/nova.conf
+    line: notification_driver = messagingv2
+    regexp: ^notification_drivers*=
+    state: present
+  when: nova_ceilometer == 'true'
+  notify:
+    - Restart Nova Compute
+
+- name: Configure Nova Ceilometer Notification Driver
+  lineinfile:
+    dest: /etc/nova/nova.conf
+    line: notification_driver = ceilometer.compute.nova_notifier
+    insertafter: ^notification_drivers = messagingv2
+    state: present
+  when: nova_ceilometer == 'true'
+  notify:
+    - Restart Nova Compute
 
 - name: Enable Nova Compute Services
   service:
@@ -278,3 +362,10 @@
    - messagebus
    - libvirtd
    - openstack-nova-compute
+
+- name: Enable Nova Compute Ceilometer Services
+  service:
+    name: "openstack-ceilometer-compute"
+    enabled: yes
+    state: started
+  when: nova_ceilometer == 'true'

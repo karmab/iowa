@@ -1,6 +1,6 @@
 ---
 
-- name: Install MariaD/Galera
+- name: Install MariaDB
   yum: 
     name: '{{ item }}'
     state: latest

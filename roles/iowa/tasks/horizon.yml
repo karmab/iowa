@@ -14,8 +14,8 @@
 - name: Configure Horizon Keystone Endpoint
   lineinfile:
     dest: /etc/openstack-dashboard/local_settings
-    line: OPENSTACK_KEYSTONE_URL = "{{ keystone_host | quote }}"
-    regexp: ^OPENSTACK_KEYSTONE_URL\s*=
+    line: OPENSTACK_HOST = "{{ keystone_host | quote }}"
+    regexp: ^OPENSTACK_HOST\s*=
     state: present
   notify:
     - Restart Horizon
@@ -23,7 +23,7 @@
 - name: Configure Horizon Allowed Hosts
   lineinfile:
     dest: /etc/openstack-dashboard/local_settings
-    line: ALLOWED_HOSTS = "['~ horizon_host ~', 'localhost', '127.0.0.1']"
+    line: ALLOWED_HOSTS = ['~ horizon_host ~', 'localhost', '127.0.0.1']
     regexp: ^ALLOWED_HOSTS\s*=
     state: present
   notify:

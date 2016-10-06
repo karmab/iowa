@@ -352,3 +352,4 @@
    - scheduler
    - conductor
    - novncproxy
+   - consoleauth

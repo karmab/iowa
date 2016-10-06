@@ -171,6 +171,20 @@
     tenant_name: admin
     region: "{{ common.region }}"
 
+- name: Create Cinder V2 Service And Endpoint
+  keystone_service: 
+    name: cinderv2
+    type: volumev2
+    description: "Cinder Volume Service"
+    publicurl: "{{ cinderv2_public_url }}"
+    internalurl: "{{ cinderv2_internal_url }}"
+    adminurl: "{{ cinderv2_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
 - name: Enable Cinder Service
   service:
     name: "openstack-cinder-{{ item }}"

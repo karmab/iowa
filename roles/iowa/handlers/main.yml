@@ -64,3 +64,24 @@
 
 - name: Restart Horizon
   service: name=httpd state=restarted
+
+- name: Restart MongoDB
+  service: name=mongod state=restarted
+
+- name: Restart Ceilometer
+  service: name=openstack-ceilometer-api state=restarted
+
+- name: Restart Ceilometer Central
+  service: name=openstack-ceilometer-central state=restarted
+
+- name: Restart Ceilometer Collector
+  service: name=openstack-ceilometer-collector state=restarted
+ 
+- name: Restart Ceilometer Alarm Evaluator
+  service: name=openstack-ceilometer-alarm-evaluator state=restarted
+
+- name: Restart Ceilometer Alarm Notifier
+  service: name=openstack-ceilometer-alarm-notifier state=restarted
+
+- name: Restart Ceilometer Notification
+  service: name=openstack-ceilometer-notification state=restarted
