@@ -3,6 +3,8 @@
 common:
  debug: true
  controller_host: 127.0.0.1
+ controller_hosts:
+  - 127.0.0.1
  mysql_host: 127.0.0.1
  region: RegionOne
  rabbit_user: guest
@@ -11,15 +13,13 @@ common:
   - 127.0.0.1
 
 mysql:
- x: false
-
-databases:
- - keystone
- - cinder
- - glance
- - nova
- - neutron
- - heat
+ databases:
+  - keystone
+  - cinder
+  - glance
+  - nova
+  - neutron
+  - heat
 
 keystone:
  dbuser: keystone

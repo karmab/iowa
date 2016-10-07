@@ -18,7 +18,7 @@
   mysql_db:
    name: "{{ item }}" 
    state: "present"
-  with_items: "{{ databases }}"
+  with_items: "{{ mysql.databases }}"
 
 - name: Create Db Users
   mysql_user:
@@ -28,6 +28,6 @@
    state: "present"
    host: "{{ item[1] }}"
   with_nested:
-   - "{{ databases}}"
+   - "{{ mysql.databases}}"
    - ['localhost', '%' ]
 

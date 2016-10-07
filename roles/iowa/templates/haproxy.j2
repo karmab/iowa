@@ -19,7 +19,7 @@ defaults
   timeout  check 10s
 
 listen horizon
-  bind {{ horizon_host }}:80
+  bind *:80
   balance  source
   option  tcpka
   option  httpchk
@@ -29,7 +29,7 @@ listen horizon
   {% endfor %}
 
 listen horizon_ssl
-  bind {{ horizon_host }}:443
+  bind *:443
   balance  source
   option  tcpka
   option  httpchk
@@ -39,7 +39,7 @@ listen horizon_ssl
   {% endfor %}
 
 listen mysql
-  bind {{ mysql_host }}:3306
+  bind *:3306
   balance  source
   option  mysql-check
   {% for host in mysql_hosts %}
@@ -47,7 +47,7 @@ listen mysql
   {% endfor %}
 
 listen glance_api
-  bind {{ glance_host }}:9292
+  bind *:9292
   balance  source
   option  tcpka
   option  httpchk
@@ -57,7 +57,7 @@ listen glance_api
   {% endfor %}
 
 listen glance_registry
-  bind {{ glance_host }}:9191
+  bind *:9191
   balance  source
   option  tcpka
   option  tcplog
@@ -66,7 +66,7 @@ listen glance_registry
   {% endfor %}
 
 listen keystone_admin
-  bind {{ keystone_host }}:35357
+  bind *:35357
   balance  source
   option  tcpka
   option  httpchk
@@ -76,7 +76,7 @@ listen keystone_admin
   {% endfor %}
 
 listen keystone_public_internal
-  bind {{ keystone_host }}:5000
+  bind *:5000
   balance  source
   option  tcpka
   option  httpchk
@@ -86,7 +86,7 @@ listen keystone_public_internal
   {% endfor %}
 
 listen nova_ec2_api
-  bind {{ nova_host }}:8773
+  bind *:8773
   balance  source
   option  tcpka
   option  tcplog
@@ -95,7 +95,7 @@ listen nova_ec2_api
   {% endfor %}
 
 listen nova_compute_api
-  bind {{ nova_host }}:8774
+  bind *:8774
   balance  source
   option  tcpka
   option  httpchk
@@ -105,7 +105,7 @@ listen nova_compute_api
   {% endfor %}
 
 listen nova_metadata_api
-  bind {{ nova_host }}:8775
+  bind *:8775
   balance  source
   option  tcpka
   option  tcplog
@@ -114,7 +114,7 @@ listen nova_metadata_api
   {% endfor %}
 
 listen cinder_api
-  bind {{ cinder_host }}:8776
+  bind *:8776
   balance  source
   option  tcpka
   option  httpchk
@@ -124,7 +124,7 @@ listen cinder_api
   {% endfor %}
 
 listen ceilometer_api
-  bind {{ ceilometer_host }}:8777
+  bind *:8777
   balance  source
   option  tcpka
   option  tcplog
@@ -133,7 +133,7 @@ listen ceilometer_api
   {% endfor %}
 
 listen nova_vncproxy
-  bind {{ nova_host }}:6080
+  bind *:6080
   balance  source
   option  tcpka
   option  tcplog
@@ -142,7 +142,7 @@ listen nova_vncproxy
   {% endfor %}
 
 listen neutron_api
-  bind {{ neutron_host }}:9696
+  bind *:9696
   balance  source
   option  tcpka
   option  httpchk
@@ -152,7 +152,7 @@ listen neutron_api
   {% endfor %}
 
 listen swift_proxy
-  bind {{ swift_host }}:8080
+  bind *:8080
   balance  source
   option  tcplog
   option  tcpka
@@ -161,7 +161,7 @@ listen swift_proxy
   {% endfor %}
 
 listen heat
-  bind {{ heat_host }}:8004
+  bind *:8004
   balance  source
   option  tcplog
   option  tcpka
