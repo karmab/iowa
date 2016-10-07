@@ -75,3 +75,8 @@ ceilometer:
  secret: BIGSECRET
  mongodb_servers:
   - 127.0.0.1
+
+swift:
+ password: swift
+ devices:
+  - /dev/vdb1

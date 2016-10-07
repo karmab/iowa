@@ -9,6 +9,7 @@
     nova_host: "{{ [nova.host, common.controller_host] | first_found | default('127.0.0.1') }}"
     heat_host: "{{ [heat.host, common.controller_host] | first_found | default('127.0.0.1') }}"
     ceilometer_host: "{{ [ceilometer.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    swift_host: "{{ [swift.host, common.controller_host] | first_found | default('127.0.0.1') }}"
 
 - name: Set Variables
   set_fact:
@@ -41,3 +42,9 @@
     ceilometer_public_url: "{{ ceilometer.public_url | default('http://' ~ ceilometer_host ~ ':8777') }}"
     ceilometer_internal_url: "{{ ceilometer.internal_url | default('http://' ~ ceilometer_host ~ ':8777') }}"
     ceilometer_admin_url: "{{ ceilometer.admin_url | default('http://' ~ ceilometer_host ~ ':8777') }}"
+    swift_public_url: "{{ swift.public_url | default('http://' ~ swift_host ~ ':8080/v1/AUTH_%(tenant_id)s') }}"
+    swift_internal_url: "{{ swift.internal_url | default('http://' ~ swift_host ~ ':8080/v1/AUTH_%(tenant_id)s') }}"
+    swift_admin_url: "{{ swift.admin_url | default('http://' ~ swift_host ~ ':8080') }}"
+    swift_fstype: "{{ swift.fstype | default('ee83091ec3680190d215')}}"
+    swift_prefix: "{{ swift.prefix | default('ee83091ec3680190d215')}}"
+    swift_suffix: "{{ swift.suffix | default('ee83091ec3680190d215')}}"

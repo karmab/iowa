@@ -1,0 +1,110 @@
+---
+
+- name: Install Swift Storage Packages
+  yum: 
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - 'rsync'
+    - 'xinetd'
+    - 'openstack-swift-object'
+    - 'openstack-swift-container'
+    - 'openstack-swift-account'
+    - 'python-swiftclient'
+
+- name: Create Swift Storage Mount Points
+  file:
+    path: "/srv/node/d{{ item.0 }}"
+    state: directory
+    recurse: yes
+    owner: swift
+    group: swift
+  with_items: "{{ swift.devices }}"
+
+- name: Mount Swift Storage Devices
+  mount:
+    name: "/srv/node/d{{ item.0 }}"
+    src: "{{ item }}"
+    fstype: "{{ swift_fstype }}"
+    state: present
+  with_items: "{{ swift.devices }}"
+    
+
+- name: Configure Swift Storage Xinetd
+  copy:
+    src: rsync
+    dest: /etc/xinetd.d/rsync
+  notify:
+   - Restart Xinetd
+
+- name: Configure Swift Storage Rsync
+  copy:
+    src: rsyncd.conf
+    dest: /etc/rsyncd.conf
+  notify:
+   - Restart Xinetd
+
+- name: Configure Swift Storage Object
+  ini_file:
+    dest: "/etc/swift/object-server.conf"
+    section: DEFAULT
+    option: bind_ip
+    value: 0.0.0.0
+  notify:
+   - Restart Swift Object
+
+- name: Configure Swift Storage Container
+  ini_file:
+    dest: "/etc/swift/container-server.conf"
+    section: DEFAULT
+    option: bind_ip
+    value: 0.0.0.0
+  notify:
+   - Restart Swift Container
+
+- name: Configure Swift Storage Account
+  ini_file:
+    dest: "/etc/swift/account-server.conf"
+    section: DEFAULT
+    option: bind_ip
+    value: 0.0.0.0
+  notify:
+   - Restart Swift Account
+
+- name: Configure Swift Storage Hash Prefix
+  ini_file:
+    dest: "/etc/swift/swift.conf"
+    section: swift-hash
+    option: swift_hash_path_prefix 
+    value: "{{ swift_prefix }}"
+  notify:
+    value: "{{ swift_suffix }}"
+  notify:
+   - Restart Swift Object
+   - Restart Swift Account
+   - Restart Swift Container
+
+- name: Configure Swift Storage Hash Suffix
+  ini_file:
+    dest: "/etc/swift/swift.conf"
+    section: swift-hash
+    option: swift_hash_path_suffix 
+    value: "{{ swift_suffix }}"
+  notify:
+   - Restart Swift Object
+   - Restart Swift Account
+   - Restart Swift Container
+
+- name: Enable Swift Storage Service
+  service:
+   name: "{{ item }}"
+   enabled: yes
+   state: started
+  with_items:
+   - 'xinetd'
+   - 'openstack-swift-object'
+   - 'openstack-swift-container'
+   - 'openstack-swift-account'
+
+
+

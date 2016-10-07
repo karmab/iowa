@@ -85,3 +85,18 @@
 
 - name: Restart Ceilometer Notification
   service: name=openstack-ceilometer-notification state=restarted
+
+- name: Restart Xinetd
+  service: name=xinetd state=restarted
+
+- name: Restart Swift Object
+  service: name=openstack-swift-object state=restarted
+
+- name: Restart Swift Account
+  service: name=openstack-swift-account state=restarted
+
+- name: Restart Swift Container
+  service: name=openstack-swift-container state=restarted
+
+- name: Restart Swift Proxy
+  service: name=openstack-swift-proxy state=restarted

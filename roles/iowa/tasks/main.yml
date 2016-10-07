@@ -6,7 +6,7 @@
 ##- include: mongodb.yml
 ##- include: mysql.yml
 ##- include: rabbitmq.yml
-- include: mongodb.yml
+##- include: mongodb.yml
 #- include: keystone.yml tags=keystone
 #- include: glance.yml tags=glance
 ##- include: cinder.yml tags=cinder
@@ -16,8 +16,10 @@
 #- include: neutron-ovs.yml tags=neutron,compute
 #- include: neutron-l3.yml tags=neutron
 ##- include: nova.yml tags=nova
-- include: nova-compute.yml tags=nova,compute
+##- include: nova-compute.yml tags=nova,compute
 #- include: heat.yml
 ##- include: horizon.yml
-- include: ceilometer.yml
+##- include: ceilometer.yml
+- include: swift-storage.yml
+- include: swift.yml
 ##- include: postupgrade.yml
