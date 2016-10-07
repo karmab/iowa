@@ -46,6 +46,7 @@
 - name: Populate Keystone Database
   run_once: yes
   shell: su - keystone -s /bin/bash -c 'keystone-manage db_sync'
+  run_once: true
   when: keystone_db_version.stdout == "0"
 
 - name: Configure Keystone Admin Token 

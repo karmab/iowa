@@ -308,6 +308,7 @@
 - name: Populate Nova Database
   run_once: yes
   shell: nova-manage db sync
+  run_once: true
 #  when: nova_db_version.stdout == "0"
 
 - name: Create Nova User

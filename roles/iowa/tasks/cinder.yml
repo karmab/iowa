@@ -138,6 +138,7 @@
 - name: Populate Cinder Database
   run_once: yes
   shell: cinder-manage db sync
+  run_once: true
   when: cinder_db_version.stdout == "0"
 
 - name: Create Cinder User

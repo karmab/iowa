@@ -22,9 +22,15 @@
    enabled: yes
    state: started
 
+- name: Check MongoDB Database And User
+  shell: mongo --quiet --eval 'db = db.getSiblingDB("ceilometer"); db.getUser("{{ ceilometer.dbuser }}")'
+  register: mongodb_database
+
 - name: Create MongoDB Database And User
-  shell: mongo --eval ' db = db.getSiblingDB("ceilometer"); db.addUser(\{user: "{{ ceilometer.dbuser }}", pwd: "{{ ceilometer. dbpassword }}", roles: [ "readWrite", "dbAdmin" ]\})'
-  ignore_errors: yes
+  #shell: mongo --eval 'db = db.getSiblingDB("ceilometer"); db.addUser("{"user: "{{ ceilometer.dbuser }}", pwd: "{{ ceilometer. dbpassword }}", roles: [ "readWrite", "dbAdmin" ]"}")'
+  shell: mongo --eval 'db = db.getSiblingDB("ceilometer"); db.addUser("{{ ceilometer.dbuser }}","{{ ceilometer. dbpassword }}", true)'
+  run_once: true
+  when: "mongodb_database.stdout == 'null'"
 
 #- name: Create MongoDB Database User
 #  mongodb_user: 

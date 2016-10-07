@@ -171,6 +171,7 @@
 - name: Populate Glance Database
   run_once: yes
   shell: su - glance -s /bin/bash -c 'glance-manage db_sync db_version'
+  run_once: true
   when: glance_db_version.stdout == "0"
 
 - name: Create Glance User

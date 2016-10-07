@@ -297,6 +297,7 @@
 - name: Populate Neutron Database
   run_once: yes
   shell: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugin.ini current
+  run_once: true
   when: "'OK' not in neutron_db_version"
 
 - name: Create Neutron User

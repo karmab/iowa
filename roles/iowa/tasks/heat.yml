@@ -221,6 +221,7 @@
 - name: Populate Heat Database
   run_once: yes
   shell: heat-manage db_sync
+  run_once: true
 #  when: heat_db_version.stdout == "0"
 
 - name: Create Heat User

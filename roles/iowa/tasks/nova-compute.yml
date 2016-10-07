@@ -3,7 +3,7 @@
 - name: Set Nova Compute Variables
   set_fact:
       nova_vnc_ip: "{{ hostvars[inventory_hostname]['ansible_'+(nova.vnc_interface | default('eth0'))]['ipv4']['address'] }}"
-      nova_ceilometer: "{{ nova.ceilometer | default('False') }}"
+      nova_ceilometer: "{{ nova.ceilometer | default('False')  | bool }}"
 
 - name: Install Nova Compute Packages
   yum: 
@@ -26,7 +26,7 @@
     - 'openstack-ceilometer-compute'
     - 'python-ceilometer'
     - 'python-ceilometerclient'
-  when: nova_ceilometer == 'true'
+  when: nova_ceilometer
 
 - name: Enable Nova bridge module
   modprobe:
@@ -309,7 +309,7 @@
     section: DEFAULT
     option: instance_usage_audit
     value: 'True'
-  when: nova_ceilometer == 'true'
+  when: nova_ceilometer
   notify:
    - Restart Nova Compute
 
@@ -319,7 +319,7 @@
     section: DEFAULT
     option: instance_usage_audit_period
     value: 'hour'
-  when: nova_ceilometer == 'True' or nova_ceilometer == 'true'
+  when: nova_ceilometer
   notify:
    - Restart Nova Compute
 
@@ -329,7 +329,7 @@
     section: DEFAULT
     option: notify_on_state_change
     value: 'vm_and_task_state'
-  when: nova_ceilometer == 'True' or nova_ceilometer == 'true'
+  when: nova_ceilometer
   notify:
    - Restart Nova Compute
 
@@ -339,7 +339,7 @@
     line: notification_driver = messagingv2
     regexp: ^notification_drivers*=
     state: present
-  when: nova_ceilometer == 'true'
+  when: nova_ceilometer
   notify:
     - Restart Nova Compute
 
@@ -349,7 +349,7 @@
     line: notification_driver = ceilometer.compute.nova_notifier
     insertafter: ^notification_drivers = messagingv2
     state: present
-  when: nova_ceilometer == 'true'
+  when: nova_ceilometer
   notify:
     - Restart Nova Compute
 
@@ -368,4 +368,4 @@
     name: "openstack-ceilometer-compute"
     enabled: yes
     state: started
-  when: nova_ceilometer == 'true'
+  when: nova_ceilometer
