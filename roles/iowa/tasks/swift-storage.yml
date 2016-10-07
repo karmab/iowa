@@ -12,22 +12,25 @@
     - 'openstack-swift-account'
     - 'python-swiftclient'
 
+- name: Storage Nodes
+  debug: var=swift.storage_nodes
+
 - name: Create Swift Storage Mount Points
   file:
-    path: "/srv/node/d{{ item.0 }}"
+    path: "/srv/node/{{ item }}"
     state: directory
     recurse: yes
     owner: swift
     group: swift
-  with_items: "{{ swift.devices }}"
+  with_items: "{{ swift.storage_nodes[inventory_hostname]['devices'] }}"
 
 - name: Mount Swift Storage Devices
   mount:
-    name: "/srv/node/d{{ item.0 }}"
-    src: "{{ item }}"
+    name: "/srv/node/{{ item }}"
+    src: "/dev/{{ item }}"
     fstype: "{{ swift_fstype }}"
-    state: present
-  with_items: "{{ swift.devices }}"
+    state: mounted
+  with_items: "{{ swift.storage_nodes[inventory_hostname]['devices'] }}"
     
 
 - name: Configure Swift Storage Xinetd
@@ -78,8 +81,6 @@
     option: swift_hash_path_prefix 
     value: "{{ swift_prefix }}"
   notify:
-    value: "{{ swift_suffix }}"
-  notify:
    - Restart Swift Object
    - Restart Swift Account
    - Restart Swift Container
@@ -94,6 +95,32 @@
    - Restart Swift Object
    - Restart Swift Account
    - Restart Swift Container
+
+- name: Create Swift Storage Ring Objects
+  shell: "swift-ring-builder /etc/swift/{{ item }}.builder create {{ swift_partition }} {{ swift_replicas }} 1"
+  with_items:
+   - 'object'
+   - 'account'
+   - 'container'
+
+- name: Add Swift Storage Ring Objects Devices
+  shell: "swift-ring-builder /etc/swift/object.builder add z1-{{ item.value.ip }}:6201/{{ item.value.devices.0 }} 100"
+  with_dict: "{{ swift.storage_nodes }}"
+
+- name: Add Swift Storage Ring Container Devices
+  shell: "swift-ring-builder /etc/swift/container.builder add z1-{{ item.value.ip }}:6202/{{ item.value.devices.0 }} 100"
+  with_dict: "{{ swift.storage_nodes }}"
+
+- name: Add Swift Storage Ring Account Devices
+  shell: "swift-ring-builder /etc/swift/account.builder add z1-{{ item.value.ip }}:6200/{{ item.value.devices.0 }} 100"
+  with_dict: "{{ swift.storage_nodes }}"
+
+- name: Rebalance Storage Swift Rings
+  shell: "swift-ring-builder /etc/swift/{{ item }}.builder rebalance"
+  with_items:
+   - 'object'
+   - 'account'
+   - 'container'
 
 - name: Enable Swift Storage Service
   service:

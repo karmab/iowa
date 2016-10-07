@@ -78,5 +78,10 @@ ceilometer:
 
 swift:
  password: swift
- devices:
-  - /dev/vdb1
+# devices:
+#  - /dev/vdb1
+ storage_nodes:
+  zz:
+   devices:
+    - vdb1
+   ip: 127.0.0.1

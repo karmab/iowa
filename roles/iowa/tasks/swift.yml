@@ -63,6 +63,32 @@
   notify:
    - Restart Swift Proxy
 
+- name: Create Swift Ring Objects
+  shell: "swift-ring-builder /etc/swift/{{ item }}.builder create {{ swift_partition }} {{ swift_replicas }} 1"
+  with_items:
+   - 'object'
+   - 'account'
+   - 'container'
+
+- name: Add Swift Ring Objects Devices
+  shell: "swift-ring-builder /etc/swift/object.builder add z1-{{ item.value.ip }}:6201/{{ item.value.devices.0 }} 100"
+  with_dict: "{{ swift.storage_nodes }}"
+
+- name: Add Swift Ring Container Devices
+  shell: "swift-ring-builder /etc/swift/container.builder add z1-{{ item.value.ip }}:6202/{{ item.value.devices.0 }} 100"
+  with_dict: "{{ swift.storage_nodes }}"
+
+- name: Add Swift Ring Account Devices
+  shell: "swift-ring-builder /etc/swift/account.builder add z1-{{ item.value.ip }}:6200/{{ item.value.devices.0 }} 100"
+  with_dict: "{{ swift.storage_nodes }}"
+
+- name: Rebalance Swift Rings
+  shell: "swift-ring-builder /etc/swift/{{ item }}.builder rebalance"
+  with_items:
+   - 'object'
+   - 'account'
+   - 'container'
+
 - name: Create Swift User
   keystone_user:
     state: present
