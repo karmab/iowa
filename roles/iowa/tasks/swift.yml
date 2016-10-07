@@ -20,7 +20,7 @@
 
 - name: Configure Swift Keystone Ip
   ini_file:
-    dest: "/etc/swift/swift.conf"
+    dest: "/etc/swift/proxy-server.conf"
     section: filter:authtoken
     option: auth_host
     value: "{{ keystone_host }}"
@@ -29,7 +29,7 @@
 
 - name: Configure Swift Keystone Ip
   ini_file:
-    dest: "/etc/swift/swift.conf"
+    dest: "/etc/swift/proxy-server.conf"
     section: "filter:authtoken"
     option: auth_host
     value: "{{ keystone_host }}"
@@ -38,7 +38,7 @@
 
 - name: Configure Swift Keystone Tenant
   ini_file:
-    dest: "/etc/swift/swift.conf"
+    dest: "/etc/swift/proxy-server.conf"
     section: "filter:authtoken"
     option: admin_tenant_name
     value: services
@@ -47,7 +47,7 @@
 
 - name: Configure Swift Keystone User
   ini_file:
-    dest: "/etc/swift/swift.conf"
+    dest: "/etc/swift/proxy-server.conf"
     section: "filter:authtoken"
     option: admin_user
     value: swift
@@ -56,7 +56,7 @@
 
 - name: Configure Swift Keystone Password
   ini_file:
-    dest: "/etc/swift/swift.conf"
+    dest: "/etc/swift/proxy-server.conf"
     section: "filter:authtoken"
     option: admin_password
     value: " {{swift.password }} "
@@ -71,15 +71,15 @@
    - 'container'
 
 - name: Add Swift Ring Objects Devices
-  shell: "swift-ring-builder /etc/swift/object.builder add z1-{{ item.value.ip }}:6201/{{ item.value.devices.0 }} 100"
+  shell: "swift-ring-builder /etc/swift/object.builder add z1-{{ item.value.ip }}:6200/{{ item.value.devices.0 }} 100"
   with_dict: "{{ swift.storage_nodes }}"
 
 - name: Add Swift Ring Container Devices
-  shell: "swift-ring-builder /etc/swift/container.builder add z1-{{ item.value.ip }}:6202/{{ item.value.devices.0 }} 100"
+  shell: "swift-ring-builder /etc/swift/container.builder add z1-{{ item.value.ip }}:6200/{{ item.value.devices.0 }} 100"
   with_dict: "{{ swift.storage_nodes }}"
 
 - name: Add Swift Ring Account Devices
-  shell: "swift-ring-builder /etc/swift/account.builder add z1-{{ item.value.ip }}:6200/{{ item.value.devices.0 }} 100"
+  shell: "swift-ring-builder /etc/swift/account.builder add z1-{{ item.value.ip }}:6202/{{ item.value.devices.0 }} 100"
   with_dict: "{{ swift.storage_nodes }}"
 
 - name: Rebalance Swift Rings

@@ -12,9 +12,6 @@
     - 'openstack-swift-account'
     - 'python-swiftclient'
 
-- name: Storage Nodes
-  debug: var=swift.storage_nodes
-
 - name: Create Swift Storage Mount Points
   file:
     path: "/srv/node/{{ item }}"
