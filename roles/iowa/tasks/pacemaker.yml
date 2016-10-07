@@ -1,0 +1,113 @@
+---
+
+- name: Install Pacemaker
+  yum: 
+    name: "{{ item }}"
+    state: latest
+  with_items:
+   - 'pacemaker'
+   - 'pcs'
+   - 'cman'
+
+- name: Setup Pacemaker
+  shell: "pcs cluster setup --name cluster {{ pacemaker.members | join(' ') }}"
+
+- name: Setup Pacemaker VIP
+  shell: "pcs resource create vip IPaddr2 ip={{ pacemaker.vip }} cidr_netmask={{ pacemaker.prefix }}"
+  when: pacemaker.vip is defined
+
+- name: Setup Pacemaker Keystone
+  shell: "pcs resource create openstack-keystone lsb:openstack-keystone --clone"
+  when: pacemaker.keystone is True
+
+- name: Setup Pacemaker Glance
+  shell: "pcs resource create {{ item }} lsb:{{ item }} --clone"
+  when: pacemaker.glance is True
+  with_items:
+   - 'openstack-glance-api'
+   - 'openstack-glance-registry'
+
+- name: Setup Pacemaker Cinder
+  shell: "pcs resource create {{ item }} lsb:{{ item }} --clone"
+  when: pacemaker.cinder is True
+  with_items:
+   - 'openstack-cinder-api'
+   - 'openstack-cinder-scheduler'
+
+- name: Setup Pacemaker Cinder Volume
+  shell: "pcs resource create {{ item }} lsb:{{ item }}"
+  when: pacemaker.cinder_volume is True
+  with_items:
+   - 'openstack-cinder-volume'
+
+- name: Setup Pacemaker Neutron
+  shell: "pcs resource create {{ item }} lsb:{{ item }} --clone"
+  when: pacemaker.neutron is True
+  with_items:
+   - 'neutron-server'
+
+- name: Setup Pacemaker Neutron L3
+  shell: "pcs resource create {{ item }} lsb:{{ item }} --clone"
+  when: pacemaker.neutron_l3 is True
+  with_items:
+   - 'neutron-l3-agent'
+   - 'neutron-metadata-agent'
+
+- name: Setup Pacemaker Neutron Dhcp
+  shell: "pcs resource create {{ item }} lsb:{{ item }} --clone"
+  when: pacemaker.neutron_dhcp is True
+  with_items:
+   - 'neutron-dhcp-agent'
+
+- name: Setup Pacemaker Nova
+  shell: "pcs resource create {{ item }} lsb:{{ item }} --clone"
+  when: pacemaker.nova is True
+  with_items:
+   - 'openstack-nova-api'
+   - 'openstack-nova-conductor'
+   - 'openstack-nova-scheduler'
+   - 'openstack-nova-novncproxy'
+
+- name: Setup Pacemaker Heat
+  shell: "pcs resource create {{ item }} lsb:{{ item }} --clone"
+  when: pacemaker.heat is True
+  with_items:
+   - 'openstack-heat-api'
+   - 'openstack-heat-api-cfn'
+   - 'openstack-heat-api-cloudwatch'
+   - 'openstack-heat-engine'
+
+- name: Setup Pacemaker Horizon
+  shell: "pcs resource create {{ item }} lsb:{{ item }} --clone"
+  when: pacemaker.horizon is True
+  with_items:
+   - 'httpd'
+
+- name: Setup Pacemaker Ceilometer
+  shell: "pcs resource create {{ item }} lsb:{{ item }} --clone"
+  when: pacemaker.ceilometer is True
+  with_items:
+   - 'openstack-ceilometer-api'
+   - 'openstack-ceilometer-central'
+   - 'openstack-ceilometer-collector'
+   - 'openstack-ceilometer-alarm-evaluator'
+   - 'openstack-ceilometer-alarm-notifier'
+   - 'openstack-ceilometer-notification'
+
+- name: Setup Pacemaker Swift
+  shell: "pcs resource create {{ item }} lsb:{{ item }} --clone"
+  when: pacemaker.swift is True
+  with_items:
+   - 'openstack-swift-proxy'
+
+- name: Setup Pacemaker Haproxy
+  shell: "pcs resource create {{ item }} lsb:{{ item }} --clone"
+  when: pacemaker.haroxy is True
+  with_items:
+   - 'haproxy'
+
+- name: Enable Pacemaker Service
+  service:
+   name: pacemaker
+   enabled: yes
+   state: started
