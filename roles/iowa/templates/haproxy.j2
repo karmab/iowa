@@ -1,0 +1,170 @@
+global
+  chroot  /var/lib/haproxy
+  daemon
+  group  haproxy
+  maxconn  4000
+  pidfile  /var/run/haproxy.pid
+  user  haproxy
+
+defaults
+  log  global
+  maxconn  4000
+  option  redispatch
+  retries  3
+  timeout  http-request 10s
+  timeout  queue 1m
+  timeout  connect 10s
+  timeout  client 1m
+  timeout  server 1m
+  timeout  check 10s
+
+listen horizon
+  bind {{ horizon.host }}:80
+  balance  source
+  option  tcpka
+  option  httpchk
+  option  tcplog
+  {% for host in horizon.hosts %}
+  server {{ host }} {{ host}}:80 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen horizon_ssl
+  bind {{ horizon.host }}:443
+  balance  source
+  option  tcpka
+  option  httpchk
+  option  tcplog
+  {% for host in horizon.hosts %}
+  server {{ host }} {{ host}}:443 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen mysql
+  bind {{ mysql.host }}:3306
+  balance  source
+  option  mysql-check
+  {% for host in mysql.hosts %}
+  server {{ host }} {{ host }}:3306 check port 9200 inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen glance_api
+  bind {{ glance.host }}:9292
+  balance  source
+  option  tcpka
+  option  httpchk
+  option  tcplog
+  {% for host in glance.hosts %}
+  server {{ host }} {{ host }}:9292 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen glance_registry
+  bind {{ glance.host }}:9191
+  balance  source
+  option  tcpka
+  option  tcplog
+  {% for host in glance.hosts %}
+  server {{ host }} {{ host }}:9191 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen keystone_admin
+  bind {{ keystone.host }}:35357
+  balance  source
+  option  tcpka
+  option  httpchk
+  option  tcplog
+  {% for host in keystone.hosts %}
+  server {{ host }} {{ host }}:35357 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen keystone_public_internal
+  bind {{ keystone.host }}:5000
+  balance  source
+  option  tcpka
+  option  httpchk
+  option  tcplog
+  {% for host in keystone.hosts %}
+  server {{ host }} {{ host }}:5000 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen nova_ec2_api
+  bind {{ nova.host }}:8773
+  balance  source
+  option  tcpka
+  option  tcplog
+  {% for host in nova.hosts %}
+  server {{ host }} {{ host }}:8773 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen nova_compute_api
+  bind {{ nova.host }}:8774
+  balance  source
+  option  tcpka
+  option  httpchk
+  option  tcplog
+  {% for host in nova.hosts %}
+  server {{ host }} {{ host }}:8774 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen nova_metadata_api
+  bind {{ nova.host }}:8775
+  balance  source
+  option  tcpka
+  option  tcplog
+  {% for host in nova.hosts %}
+  server {{ host }} {{ host }}:8775 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen cinder_api
+  bind {{ cinder.host }}:8776
+  balance  source
+  option  tcpka
+  option  httpchk
+  option  tcplog
+  {% for host in cinder.hosts %}
+  server {{ host }} {{ host }}:8776 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen ceilometer_api
+  bind {{ ceilometer.host }}:8777
+  balance  source
+  option  tcpka
+  option  tcplog
+  {% for host in ceilometer.hosts %}
+  server {{ host }} {{ host }}:8777 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen nova_vncproxy
+  bind {{ nova.host }}:6080
+  balance  source
+  option  tcpka
+  option  tcplog
+  {% for host in nova.hosts %}
+  server {{ host }} {{ host }}:6080 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen neutron_api
+  bind {{ neutron.host }}:9696
+  balance  source
+  option  tcpka
+  option  httpchk
+  option  tcplog
+  {% for host in neutron.hosts %}
+  server {{ host }} {{ host }}:9696 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen swift_proxy
+  bind {{ swift.host }}:8080
+  balance  source
+  option  tcplog
+  option  tcpka
+  {% for host in swift.hosts %}
+  server {{ host }} {{ host }}:8080 check inter 2000 rise 2 fall 5
+  {% endfor %}
+
+listen heat
+  bind {{ heat.host }}:8004
+  balance  source
+  option  tcplog
+  option  tcpka
+  {% for host in heat.hosts %}
+  server {{ host }} {{ host }}:8004 check inter 2000 rise 2 fall 5
+  {% endfor %}

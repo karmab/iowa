@@ -10,6 +10,7 @@
     heat_host: "{{ [heat.host, common.controller_host] | first_found | default('127.0.0.1') }}"
     ceilometer_host: "{{ [ceilometer.host, common.controller_host] | first_found | default('127.0.0.1') }}"
     swift_host: "{{ [swift.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    horizon_host: "{{ [horizon.host, common.controller_host] | first_found | default('127.0.0.1') }}"
 
 - name: Set Variables
   set_fact:

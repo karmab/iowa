@@ -100,3 +100,6 @@
 
 - name: Restart Swift Proxy
   service: name=openstack-swift-proxy state=restarted
+
+- name: Restart Haproxy
+  service: name=haproxy state=restarted

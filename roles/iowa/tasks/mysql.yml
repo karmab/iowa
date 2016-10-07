@@ -8,7 +8,7 @@
     - 'mariadb-galera-server'
     - 'MySQL-python'
 
-- name: Enable MariadDB service
+- name: Enable MariadDB Service
   service:
    name: mariadb
    enabled: yes

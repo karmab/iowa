@@ -1,0 +1,25 @@
+---
+
+- name: Install Haproxy
+  yum: 
+    name: 'haproxy'
+    state: latest
+
+- name: Set Haproxy Sysctl NonLocal Bind
+  sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: 1
+    state: present
+
+- name: Configure Haproxy
+  template:
+   src: haproxy.j2 
+   dest: /etc/haproxy/haproxy.cfg
+  notify:
+   - Restart Haproxy
+
+- name: Enable Haproxy Service
+  service:
+   name: haproxy
+   enabled: yes
+   state: started
