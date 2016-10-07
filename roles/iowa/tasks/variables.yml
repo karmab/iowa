@@ -3,14 +3,25 @@
 - name: Set Hosts
   set_fact:
     keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    keystone_hosts: "{{ [keystone.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     glance_host: "{{ [glance.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    glance_hosts: "{{ [glance.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     cinder_host: "{{ [cinder.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    cinder_hosts: "{{ [cinder.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     neutron_host: "{{ [neutron.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    neutron_hosts: "{{ [neutron.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     nova_host: "{{ [nova.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    nova_hosts: "{{ [nova.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     heat_host: "{{ [heat.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    heat_hosts: "{{ [heat.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     ceilometer_host: "{{ [ceilometer.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    ceilometer_hosts: "{{ [ceilometer.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     swift_host: "{{ [swift.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    swift_hosts: "{{ [swift.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     horizon_host: "{{ [horizon.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    horizon_hosts: "{{ [horizon.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
+    mysql_host: "{{ [mysql.host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    mysql_hosts: "{{ [mysql.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
 
 - name: Set Variables
   set_fact:
