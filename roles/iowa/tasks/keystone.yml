@@ -66,7 +66,7 @@
 
 - name: Create Keystone Client File
   template:
-    src: keystonerc_admin.j2
+    src: keystone/keystonerc_admin.j2
     dest: /root/keystonerc_admin
 
 - name: Create Keystone Admin Tenant

@@ -13,7 +13,7 @@
 
 - name: Configure Haproxy
   template:
-   src: haproxy.j2 
+   src: haproxy/haproxy.cfg.j2 
    dest: /etc/haproxy/haproxy.cfg
   notify:
    - Restart Haproxy

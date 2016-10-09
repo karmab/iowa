@@ -149,7 +149,7 @@
 
 - name: Configure Cinder Volume NFS Shares
   template: 
-    src: nfs_shares_config.j2
+    src: cinder/nfs_shares_config.j2
     dest: "{{ cinder.nfs_shares_config }}"
     owner: cinder
     group: cinder
