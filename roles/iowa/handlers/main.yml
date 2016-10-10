@@ -62,7 +62,7 @@
 - name: Restart Heat Engine
   service: name=openstack-heat-engine state=restarted
 
-- name: Restart Horizon
+- name: Restart Apache
   service: name=httpd state=restarted
 
 - name: Restart MongoDB

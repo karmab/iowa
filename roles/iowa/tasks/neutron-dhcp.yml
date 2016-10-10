@@ -11,57 +11,11 @@
     - 'openstack-utils'
     - 'openstack-selinux'
 
-- name: Configure Neutron Dhcp Keystone
-  ini_file: 
+- name: Configure Neutron Dhcp
+  template:
+    src: "neutron/dhcp_agent.ini.{{version}}"
     dest: "/etc/neutron/dhcp_agent.ini"
-    section: DEFAULT
-    option: auth_strategy
-    value: keystone
-  notify:
-   - Restart Neutron Dhcp
-
-- name: Configure Neutron Dhcp Keystone Uri
-  ini_file: 
-    dest: "/etc/neutron/dhcp_agent.ini"
-    section: keystone_authtoken
-    option: identity_uri
-    value: "{{ keystone_identity_uri }}"
-  notify:
-   - Restart Neutron Dhcp
-
-- name: Configure Neutron Dhcp Keystone Tenant
-  ini_file: 
-    dest: "/etc/neutron/dhcp_agent.ini"
-    section: keystone_authtoken
-    option: admin_tenant_name
-    value: services
-  notify:
-   - Restart Neutron Dhcp
-
-- name: Configure Neutron Dhcp Keystone User
-  ini_file: 
-    dest: "/etc/neutron/dhcp_agent.ini"
-    section: keystone_authtoken
-    option: admin_user
-    value: neutron
-  notify:
-   - Restart Neutron Dhcp
-
-- name: Configure Neutron Dhcp Keystone Password
-  ini_file: 
-    dest: "/etc/neutron/dhcp_agent.ini"
-    section: keystone_authtoken
-    option: admin_password
-    value: "{{ neutron.password }}" 
-  notify:
-   - Restart Neutron Dhcp
-
-- name: Configure Neutron Dhcp Interface Driver
-  ini_file: 
-    dest: "/etc/neutron/dhcp_agent.ini"
-    section: DEFAULT
-    option: interface_driver
-    value: neutron.agent.linux.interface.OVSInterfaceDriver
+    backup: yes
   notify:
    - Restart Neutron Dhcp
 

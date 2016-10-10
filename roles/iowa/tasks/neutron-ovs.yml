@@ -39,24 +39,13 @@
     src: "{{ role_path }}/files/ifcfg-br-int"
     dest: /etc/sysconfig/network-scripts/ifcfg-br-int
 
-- name: Configure Neutron Ovs Bridge Mappings
-  ini_file:
-    dest: "/etc/neutron/plugin.ini"
-    section: OVS
-    option: bridge_mappings
-    value: "{{ neutron.bridge_mappings }}"
+- name: Configure Neutron Ovs
+  template:
+    src: "neutron/neutron.conf.{{ version }}"
+    dest: "/etc/neutron/plugins/opensvwitch/ovs_neutron_plugin.ini"
+    backup: yes
   notify:
-   - Restart Neutron Openvswitch
-  when: neutron.bridge_mappings != '' 
-
-- name: Configure Neutron Ovs Local Ip Tunneling
-  ini_file:
-    dest: "/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini"
-    section: ovs
-    option: local_ip
-    value: "{{ tunnel_ip }}"
-  notify:
-   - Restart Neutron Openvswitch
+    - Restart Neutron Openvswitch
 
 - name: Enable Neutron Ovs Services
   service:

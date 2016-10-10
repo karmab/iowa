@@ -18,48 +18,11 @@
     owner: root
     group: swift
 
-- name: Configure Swift Keystone Ip
-  ini_file:
+- name: Configure Swift Proxy
+  template:
+    src: "swift/proxy-server.conf.{{ version }}"
     dest: "/etc/swift/proxy-server.conf"
-    section: filter:authtoken
-    option: auth_host
-    value: "{{ keystone_host }}"
-  notify:
-   - Restart Swift Proxy
-
-- name: Configure Swift Keystone Ip
-  ini_file:
-    dest: "/etc/swift/proxy-server.conf"
-    section: "filter:authtoken"
-    option: auth_host
-    value: "{{ keystone_host }}"
-  notify:
-   - Restart Swift Proxy
-
-- name: Configure Swift Keystone Tenant
-  ini_file:
-    dest: "/etc/swift/proxy-server.conf"
-    section: "filter:authtoken"
-    option: admin_tenant_name
-    value: services
-  notify:
-   - Restart Swift Proxy
-
-- name: Configure Swift Keystone User
-  ini_file:
-    dest: "/etc/swift/proxy-server.conf"
-    section: "filter:authtoken"
-    option: admin_user
-    value: swift
-  notify:
-   - Restart Swift Proxy
-
-- name: Configure Swift Keystone Password
-  ini_file:
-    dest: "/etc/swift/proxy-server.conf"
-    section: "filter:authtoken"
-    option: admin_password
-    value: " {{swift.password }} "
+    backup: yes
   notify:
    - Restart Swift Proxy
 

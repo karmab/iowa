@@ -9,23 +9,11 @@
     - 'openstack-utils'
     - 'openstack-selinux'
 
-- name: Configure Keystone Debug
-  ini_file: 
+- name: Configure Keystone
+  template:
+    src: keystone/keystone.conf
     dest: /etc/keystone/keystone.conf
-    section: DEFAULT
-    option: debug
-    value: "{{ common.debug }}"
-  notify:
-    - Restart Keystone
-
-- name: Configure Keystone SQL Connection 
-  ini_file: 
-    dest: /etc/keystone/keystone.conf
-    section: database
-    option: connection
-    value: mysql://{{ keystone.dbuser}}:{{keystone.dbpassword}}@{{ common.mysql_host}}/{{ keystone.dbname }}
-  notify:
-    - Restart Keystone
+    backup: yes
 
 - name: Configure Keystone token_flush Cron
   cron:
@@ -48,15 +36,6 @@
   shell: su - keystone -s /bin/bash -c 'keystone-manage db_sync'
   run_once: true
   when: keystone_db_version.stdout == "0"
-
-- name: Configure Keystone Admin Token 
-  ini_file: 
-    dest: /etc/keystone/keystone.conf
-    section: DEFAULT
-    option: admin_token
-    value: '{{ keystone.admin_token }}'
-  notify:
-    - Restart Keystone
 
 - name: Enable Keystone Service
   service:

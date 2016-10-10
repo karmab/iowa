@@ -1,0 +1,63 @@
+[DEFAULT]
+bind_port = 8080
+workers = 8
+user = swift
+
+[pipeline:main]
+pipeline = catch_errors gatekeeper healthcheck proxy-logging cache authtoken keystone slo dlo proxy-logging proxy-server
+
+[app:proxy-server]
+use = egg:swift#proxy
+allow_account_management = true
+account_autocreate = true
+
+[filter:healthcheck]
+use = egg:swift#healthcheck
+
+[filter:cache]
+use = egg:swift#memcache
+memcache_servers = 127.0.0.1:11211
+
+[filter:catch_errors]
+use = egg:swift#catch_errors
+
+[filter:proxy-logging]
+use = egg:swift#proxy_logging
+#
+# Note: The double proxy-logging in the pipeline is not a mistake. The
+# left-most proxy-logging is there to log requests that were handled in
+# middleware and never made it through to the right-most middleware (and
+# proxy server). Double logging is prevented for normal requests. See
+# proxy-logging docs.
+
+# Note: Put after auth and staticweb in the pipeline.
+[filter:slo]
+use = egg:swift#slo
+
+# Note: Put after auth and staticweb in the pipeline.
+[filter:dlo]
+use = egg:swift#dlo
+
+[filter:gatekeeper]
+use = egg:swift#gatekeeper
+
+[filter:proxy-logging]
+use = egg:swift#proxy_logging
+
+[filter:keystone]
+use = egg:swift#keystoneauth
+operator_roles = admin, SwiftOperator
+is_admin = true
+cache = swift.cache
+
+[filter:authtoken]
+paste.filter_factory = keystonemiddleware.auth_token:filter_factory
+admin_tenant_name = {{ common.tenant }}
+admin_user = {{ swift.username }}
+admin_password =  {{ swift.password }}
+#
+identity_uri = http://localhost:35357/
+auth_uri = http://localhost:5000/
+#
+signing_dir = /tmp/keystone-signing-swift
+auth_host = {{ keystone_host }}
