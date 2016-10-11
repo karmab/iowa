@@ -1,10 +1,5 @@
 ---
 
-- name: Set Ceilometer Variables
-  set_fact:
-    mongodb_servers: "{{ ceilometer.mongodb_servers| prepend(ceilometer.dbuser+':'+ceilometer.dbpassword+'@') | append(':27017') | join(',') }}"
-    ceilometer_db_name: "{{ ceilometer.db_name| default('ceilometer') }}"
-
 - name: Install Ceilometer Packages
   yum: 
     name: '{{ item }}'

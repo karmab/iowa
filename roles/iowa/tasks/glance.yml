@@ -11,7 +11,7 @@
 
 - name: Configure Glance
   template:
-    src: "glance/glance-{{ item }}.conf"
+    src: "glance/glance-{{ item }}.conf.{{ version}}"
     dest: "/etc/glance/glance-{{ item }}.conf"
     backup: yes
   with_items:
@@ -21,16 +21,15 @@
     - Restart Glance
     - Restart Glance Registry
 
-- name: Check Glance Database Version
-  shell: su - glance -s /bin/bash -c 'glance-manage db_version'
-  register: glance_db_version
-  changed_when: false
+#- name: Check Glance Database Version
+#  shell: su - glance -s /bin/bash -c 'glance-manage db_version'
+#  register: glance_db_version
+#  changed_when: false
 
 - name: Populate Glance Database
   run_once: yes
-  shell: su - glance -s /bin/bash -c 'glance-manage db_sync db_version'
-  run_once: true
-  when: glance_db_version.stdout == "0"
+  shell: su - glance -s /bin/bash -c 'glance-manage db_sync'
+#  when: glance_db_version.stdout == "0"
 
 - name: Create Glance User
   keystone_user:

@@ -810,7 +810,7 @@ connection = mongodb://{{ mongodb_servers }}/{{ ceilometer_db_name }}
 # Complete admin Identity API endpoint. This should specify
 # the unversioned root endpoint e.g. https://localhost:35357/
 # (string value)
-identity_uri = {{ keystone_identity_url }}
+identity_uri = {{ keystone_identity_uri }}
 
 # API version of the admin Identity API endpoint (string
 # value)
@@ -1182,7 +1182,7 @@ metering_secret = {{ ceilometer.secret }}
 
 
 [oslo_messaging_rabbit]
-rabbit_hosts = {{ common.rabbit_hosts | append(':5672') | join(',')}}
-rabbit_userid = {{ common.rabbit_username }}
+rabbit_hosts = {{ rabbit_hosts }}
+rabbit_userid = {{ common.rabbit_userid }}
 rabbit_password = {{ common.rabbit_password }}
 rabbit_virtual_host = {{ common.rabbit_virtual_host }}

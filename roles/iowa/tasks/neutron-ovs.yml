@@ -1,9 +1,5 @@
 ---
 
-- name: Set Neutron Ovs Tunnel ip
-  set_fact:
-   tunnel_ip: "{{ hostvars[inventory_hostname]['ansible_'+(neutron.tunnel_interface | default('eth0'))]['ipv4']['address'] }}"
-
 - name: Install Neutron Ovs Packages
   yum: 
     name: '{{ item }}'
@@ -42,7 +38,7 @@
 - name: Configure Neutron Ovs
   template:
     src: "neutron/neutron.conf.{{ version }}"
-    dest: "/etc/neutron/plugins/opensvwitch/ovs_neutron_plugin.ini"
+    dest: "/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini"
     backup: yes
   notify:
     - Restart Neutron Openvswitch

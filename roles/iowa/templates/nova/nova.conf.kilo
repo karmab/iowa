@@ -3960,7 +3960,7 @@ admin_auth_url = {{ keystone_admin_url }}
 
 # RabbitMQ HA cluster host:port pairs. (list value)
 # Deprecated group;name - DEFAULT;rabbit_hosts
-rabbit_hosts = {{ common.rabbit_hosts | append(':5672') | join(',')}}
+rabbit_hosts = {{ rabbit_hosts }}
 
 # Connect over SSL for RabbitMQ. (boolean value)
 # Deprecated group;name - DEFAULT;rabbit_use_ssl
@@ -3968,7 +3968,7 @@ rabbit_hosts = {{ common.rabbit_hosts | append(':5672') | join(',')}}
 
 # The RabbitMQ userid. (string value)
 # Deprecated group;name - DEFAULT;rabbit_userid
-rabbit_userid = {{ common.rabbit_user }}
+rabbit_userid = {{ common.rabbit_userid }}
 
 # The RabbitMQ password. (string value)
 # Deprecated group;name - DEFAULT;rabbit_password

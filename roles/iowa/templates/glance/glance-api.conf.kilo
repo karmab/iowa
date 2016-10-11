@@ -815,7 +815,7 @@ filesystem_store_datadir = {{ glance.datadir }}
 # Allow to perform insecure SSL requests to the target system (boolean value)
 #vmware_api_insecure=False
 [oslo_messaging_rabbit]
-rabbit_hosts = {{ common.rabbit_hosts | append(':5672') | join(',')}}
-rabbit_userid = {{ common.rabbit_user }}
+rabbit_hosts = {{ rabbit_hosts }}
+rabbit_userid = {{ common.rabbit_userid }}
 rabbit_password = {{ common.rabbit_password }}
 rabbit_virtual_host = {{ common.rabbit_virtual_host }}

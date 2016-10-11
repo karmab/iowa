@@ -1,10 +1,5 @@
 ---
 
-- name: Set Nova Compute Variables
-  set_fact:
-      nova_vnc_ip: "{{ hostvars[inventory_hostname]['ansible_'+(nova.vnc_interface | default('eth0'))]['ipv4']['address'] }}"
-      nova_ceilometer: "{{ nova.ceilometer | default('False')  | bool }}"
-
 - name: Install Nova Compute Packages
   yum: 
     name: '{{ item }}'
@@ -14,9 +9,6 @@
     - 'openstack-utils'
     - 'python-cinderclient'
     - 'openstack-selinux'
-
-- name: Debug Ceilometer here
-  debug: var=nova_ceilometer
 
 - name: Install Nova Ceilometer Compute Packages
   yum: 

@@ -1,14 +1,5 @@
 ---
 
-- name: Set Neutron Variables
-  set_fact:
-    core_plugin: "{{ neutron.core_plugin | default('ml2') }}"
-    service_plugins: "{{ neutron.service_plugins | default(['router']) }}"
-    tenant_type: "{{ neutron.tenant_type | default('vxlan') }}"
-    network_vlan_ranges: "{{ neutron.network_vlan_ranges | default('physnet1:1000:2999,physnet2:3000:3999') }}"
-    type_drivers: "{{ neutron.type_drivers | default(['local,flat,vlan,gre,vxlan']) }}"
-    mechanism_drivers: "{{ neutron.mechanism_drivers | default(['openvswitch,l2population']) }}"
-
 - name: Install Neutron Packages
   yum: 
     name: '{{ item }}'
@@ -28,22 +19,22 @@
   notify:
     - Restart Neutron
 
-- name: Configure Neutron Ml2 Plugin File
+- name: Configure Neutron Ml2 Plugin Link
   file:
     state: link
     dest: "/etc/neutron/plugin.ini"
     src: "/etc/neutron/plugins/ml2/ml2_conf.ini"
     force: yes
-  when: core_plugin == 'ml2'
+  when: neutron_core_plugin == 'ml2'
   notify:
    - Restart Neutron
 
-- name: Configure Neutron
+- name: Configure Neutron M2l Plugin File
   template:
-    src: "neutron/ml2/ml2_conf.ini.{{ version }}"
+    src: "neutron/ml2/ml2_conf.ini"
     dest: "/etc/neutron/plugins/ml2/ml2_conf.ini"
     backup: yes
-  when: core_plugin == 'ml2'
+  when: neutron_core_plugin == 'ml2'
   notify:
     - Restart Neutron
 
@@ -55,7 +46,6 @@
 - name: Populate Neutron Database
   run_once: yes
   shell: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugin.ini current
-  run_once: true
   when: "'OK' not in neutron_db_version"
 
 - name: Create Neutron User

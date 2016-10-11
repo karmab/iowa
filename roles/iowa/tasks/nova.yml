@@ -1,9 +1,5 @@
 ---
 
-- name: Set Nova Variables
-  set_fact:
-    novncproxy_url: "{{ nova.novncproxy_url | default('http://' ~ nova_host ~ ':6080/vnc_auto.html') }}"
-
 - name: Install Nova Packages
   yum: 
     name: '{{ item }}'
@@ -36,7 +32,6 @@
 - name: Populate Nova Database
   run_once: yes
   shell: nova-manage db sync
-  run_once: true
 #  when: nova_db_version.stdout == "0"
 
 - name: Create Nova User

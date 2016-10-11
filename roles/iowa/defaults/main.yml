@@ -9,7 +9,7 @@ common:
   - 127.0.0.1
  mysql_host: 127.0.0.1
  region: RegionOne
- rabbit_user: guest
+ rabbit_userid: guest
  rabbit_password: guest
  rabbit_virtual_host: /
  rabbit_hosts:
@@ -66,13 +66,14 @@ neutron:
  password: neutron
  bridge_mappings: ''
  core_plugin: ml2
- tunnel_interface: eth1
+ tunnel_interface: eth0
  rpc_backend: neutron.openstack.common.rpc.impl_kombu
  notify_nova_on_port_status_changes: True
  notify_nova_on_port_data_changes: True
  auth_type: password
  interface_driver: neutron.agent.linux.interface.OVSInterfaceDriver
  external_network_bridge: ''
+ service_metadata_proxy: true
 
 nova:
  dbuser: nova
@@ -81,11 +82,10 @@ nova:
  username: nova
  password: nova
  metadata_secret: changeme
- vnc_interface: eth1
+ vnc_interface: eth0
  ceilometer: True
  rpc_backend: nova.openstack.common.rpc.impl_kombu
- network_api_class: nova.network.neutronv2.api.APIa
- service_metadata_proxy: true
+ network_api_class: nova.network.neutronv2.api.API
  vif_driver: nova.virt.libvirt.vif.LibvirtGenericVIFDriver
  novncproxy_host: 0.0.0.0
  security_group_api: neutron
@@ -117,12 +117,10 @@ ceilometer:
 swift:
  username: swift
  password: swift
-# devices:
-#  - /dev/vdb1
  storage_nodes:
-  zz:
+  xx:
    devices:
-    - vdb1
+    - vdb
    ip: 127.0.0.1
 
 horizon:
