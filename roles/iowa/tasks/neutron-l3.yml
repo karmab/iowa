@@ -11,94 +11,20 @@
     - 'openstack-utils'
     - 'openstack-selinux'
 
-- name: Configure Neutron L3 Keystone Strategy
-  ini_file: 
-    dest: "/etc/neutron/metadata_agent.ini"
-    section: DEFAULT
-    option: auth_strategy
-    value: keystone
-  notify:
-   - Restart Neutron L3
-   - Restart Neutron Metadata
-
-- name: Configure Neutron L3 Keystone Uri
-  ini_file: 
-    dest: "/etc/neutron/metadata_agent.ini"
-    section: keystone_authtoken
-    option: identity_uri
-    value: "{{ keystone_identity_uri }}"
-  notify:
-   - Restart Neutron L3
-   - Restart Neutron Metadata
-
-- name: Configure Neutron L3 Keystone Tenant
-  ini_file: 
-    dest: "/etc/neutron/metadata_agent.ini"
-    section: keystone_authtoken
-    option: admin_tenant_name
-    value: services
-  notify:
-   - Restart Neutron L3
-   - Restart Neutron Metadata
-
-- name: Configure Neutron L3 Keystone User
-  ini_file: 
-    dest: "/etc/neutron/metadata_agent.ini"
-    section: keystone_authtoken
-    option: admin_user
-    value: neutron
-  notify:
-   - Restart Neutron L3
-   - Restart Neutron Metadata
-
-- name: Configure Neutron L3 Keystone Password
-  ini_file: 
-    dest: "/etc/neutron/metadata_agent.ini"
-    section: keystone_authtoken
-    option: admin_password
-    value: "{{ neutron.password }}" 
-  notify:
-   - Restart Neutron L3
-   - Restart Neutron Metadata
-
-- name: Configure Neutron L3 Communication With Nova IP
-  ini_file: 
-    dest: "/etc/neutron/metadata_agent.ini"
-    section: DEFAULT
-    option: nova_metadata_ip
-    value: "{{ nova_host }}" 
-  notify:
-   - Restart Neutron L3
-   - Restart Neutron Metadata
-
-- name: Configure Neutron L3 Communication With Nova Secret
-  ini_file: 
-    dest: "/etc/neutron/metadata_agent.ini"
-    section: DEFAULT
-    option: metadata_proxy_shared_secret
-    value: "{{ nova.metadata_secret }}" 
-  notify:
-   - Restart Neutron L3
-   - Restart Neutron Metadata
-
-- name: Configure Neutron L3 Interface Driver
-  ini_file: 
+- name: Configure Neutron L3 Agent
+  template:
+    src: "neutron/l3_agent.ini.{{ version }}"
     dest: "/etc/neutron/l3_agent.ini"
-    section: DEFAULT
-    option: interface_driver
-    value: neutron.agent.linux.interface.OVSInterfaceDriver
+    backup: yes
   notify:
    - Restart Neutron L3
-   - Restart Neutron Metadata
 
-- name: Disable Neutron external_network_bridge
-  ini_file: 
-    dest: "/etc/neutron/l3_agent.ini"
-    section: DEFAULT
-    option: external_network_bridge
-    value: ''
+- name: Configure Neutron L3 Metadata
+  template:
+    src: "neutron/metadata_agent.ini.{{ version }}"
+    dest: "/etc/neutron/metadata_agent.ini"
+    backup: yes
   notify:
-   - Restart Neutron L3
    - Restart Neutron Metadata
 
 - name: Enable Neutron L3 Services

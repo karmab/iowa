@@ -9,23 +9,11 @@
     - 'openstack-utils'
     - 'openstack-selinux'
 
-- name: Configure Keystone Debug
-  ini_file: 
-    dest: /etc/keystone/keystone.conf
-    section: DEFAULT
-    option: debug
-    value: "{{ common.debug }}"
-  notify:
-    - Restart Keystone
-
-- name: Configure Keystone SQL Connection 
-  ini_file: 
-    dest: /etc/keystone/keystone.conf
-    section: database
-    option: connection
-    value: mysql://{{ keystone.dbuser}}:{{keystone.dbpassword}}@{{ common.mysql_host}}/{{ keystone.dbname }}
-  notify:
-    - Restart Keystone
+- name: Configure Keystone
+  template:
+    src: "keystone/keystone.conf.{{ common.version }}"
+    dest: "/etc/keystone/keystone.conf"
+    backup: yes
 
 - name: Configure Keystone token_flush Cron
   cron:
@@ -34,29 +22,19 @@
     hour: 0,8,12,16,20
     job: keystone-manage token_flush
 
-- name: Check Keystone Database Version
-#  shell: keystone-manage db_version
-  register: keystone_db_version
-  shell: su - keystone -s /bin/bash -c 'keystone-manage db_version'
-#  become: true
-#  become_user: keystone
-#  become_flags: '-s /bin/bash'
-  changed_when: false
+#- name: Check Keystone Database Version
+##  shell: keystone-manage db_version
+#  register: keystone_db_version
+#  shell: su - keystone -s /bin/bash -c 'keystone-manage db_version'
+##  become: true
+##  become_user: keystone
+##  become_flags: '-s /bin/bash'
+#  changed_when: false
 
 - name: Populate Keystone Database
   run_once: yes
   shell: su - keystone -s /bin/bash -c 'keystone-manage db_sync'
-  run_once: true
-  when: keystone_db_version.stdout == "0"
-
-- name: Configure Keystone Admin Token 
-  ini_file: 
-    dest: /etc/keystone/keystone.conf
-    section: DEFAULT
-    option: admin_token
-    value: '{{ keystone.admin_token }}'
-  notify:
-    - Restart Keystone
+#  when: keystone_db_version.stdout == "0" or keystone_db_version.stdout == '43'
 
 - name: Enable Keystone Service
   service:

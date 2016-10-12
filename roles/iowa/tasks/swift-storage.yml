@@ -71,23 +71,11 @@
   notify:
    - Restart Swift Account
 
-- name: Configure Swift Storage Hash Prefix
-  ini_file:
+- name: Configure Swift
+  template:
+    src: "swift/swift.conf"
     dest: "/etc/swift/swift.conf"
-    section: swift-hash
-    option: swift_hash_path_prefix 
-    value: "{{ swift_prefix }}"
-  notify:
-   - Restart Swift Object
-   - Restart Swift Account
-   - Restart Swift Container
-
-- name: Configure Swift Storage Hash Suffix
-  ini_file:
-    dest: "/etc/swift/swift.conf"
-    section: swift-hash
-    option: swift_hash_path_suffix 
-    value: "{{ swift_suffix }}"
+    backup: yes
   notify:
    - Restart Swift Object
    - Restart Swift Account

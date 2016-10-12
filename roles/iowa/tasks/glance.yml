@@ -9,12 +9,11 @@
     - 'openstack-utils'
     - 'openstack-selinux'
 
-- name: Configure Glance Debug
-  ini_file:
+- name: Configure Glance
+  template:
+    src: "glance/glance-{{ item }}.conf.{{ version}}"
     dest: "/etc/glance/glance-{{ item }}.conf"
-    section: DEFAULT
-    option: debug
-    value: "{{ common.debug }}"
+    backup: yes
   with_items:
     - 'api'
     - 'registry'
@@ -22,157 +21,15 @@
     - Restart Glance
     - Restart Glance Registry
 
-- name: Configure Glance SQL Connection
-  ini_file: 
-    dest: "/etc/glance/glance-{{ item }}.conf"
-    section: database
-    option: connection
-    value: "mysql://{{ glance.dbuser}}:{{glance.dbpassword}}@{{ common.mysql_host}}/{{ glance.dbname }}"
-  with_items:
-    - 'api'
-    - 'registry'
-  notify:
-    - Restart Glance
-    - Restart Glance Registry
-
-- name: Configure Glance Rabbit Driver
-  ini_file: 
-    dest: /etc/glance/glance-api.conf
-    section: DEFAULT
-    option: notification_driver
-    value: messsaging
-  notify:
-    - Restart Glance
-
-- name: Configure Glance Rabbit Hosts
-  ini_file: 
-    dest: /etc/glance/glance-api.conf
-    section: oslo_messaging_rabbit
-    option: rabbit_hosts
-    value: "{{ common.rabbit_hosts | append(':5672') | join(',')}}"
-  notify:
-    - Restart Glance
-
-- name: Configure Glance Rabbit User
-  ini_file: 
-    dest: /etc/glance/glance-api.conf
-    section: oslo_messaging_rabbit
-    option: rabbit_userid
-    value: "{{ common.rabbit_user }}"
-  notify:
-    - Restart Glance
-
-- name: Configure Glance Rabbit Password
-  ini_file: 
-    dest: /etc/glance/glance-api.conf
-    section: oslo_messaging_rabbit
-    option: rabbit_password
-    value: "{{ common.rabbit_password }}"
-  notify:
-    - Restart Glance
-
-- name: Configure Glance Rabbit Virtual Host
-  ini_file: 
-    dest: /etc/glance/glance-api.conf
-    section: oslo_messaging_rabbit
-    option: rabbit_virtual_host
-    value: /
-  notify:
-    - Restart Glance
-
-- name: Configure Glance Keystone
-  ini_file: 
-    dest: "/etc/glance/glance-{{ item }}.conf"
-    section: paste_deploy
-    option: flavor
-    value: keystone
-  with_items:
-    - 'api'
-    - 'registry'
-  notify:
-    - Restart Glance
-    - Restart Glance Registry
-
-- name: Configure Glance Keystone Uri
-  ini_file: 
-    dest: "/etc/glance/glance-{{ item }}.conf"
-    section: keystone_authtoken
-    option: identity_uri
-    value: "{{ keystone_identity_uri }}"
-  with_items:
-    - 'api'
-    - 'registry'
-  notify:
-    - Restart Glance
-    - Restart Glance Registry
-
-- name: Configure Glance Keystone Tenant
-  ini_file: 
-    dest: "/etc/glance/glance-{{ item }}.conf"
-    section: keystone_authtoken
-    option: admin_tenant_name
-    value: services
-  with_items:
-    - 'api'
-    - 'registry'
-  notify:
-    - Restart Glance
-    - Restart Glance Registry
-
-- name: Configure Glance Keystone User
-  ini_file: 
-    dest: "/etc/glance/glance-{{ item }}.conf"
-    section: keystone_authtoken
-    option: admin_user
-    value: glance
-  with_items:
-    - 'api'
-    - 'registry'
-  notify:
-    - Restart Glance
-    - Restart Glance Registry
-
-- name: Configure Glance Keystone Password
-  ini_file: 
-    dest: "/etc/glance/glance-{{ item }}.conf"
-    section: keystone_authtoken
-    option: admin_password
-    value: "{{ glance.password }}" 
-  with_items:
-    - 'api'
-    - 'registry'
-  notify:
-    - Restart Glance
-    - Restart Glance Registry
-
-- name: Configure Glance Store Directory
-  ini_file: 
-    dest: "/etc/glance/glance-api.conf"
-    section: glance_store
-    option: filesystem_store_datadir
-    value: /var/lib/glance/images
-  notify:
-    - Restart Glance
-
-- name: Configure Glance Store Type
-  ini_file: 
-    dest: "/etc/glance/glance-api.conf"
-    section: glance_store
-    option: stores
-    value: glance.store.filesystem.Store
-  notify:
-    - Restart Glance
-
-- name: Check Glance Database Version
-  shell: su - glance -s /bin/bash -c 'glance-manage db_version'
-  register: glance_db_version
-  changed_when: false
+#- name: Check Glance Database Version
+#  shell: su - glance -s /bin/bash -c 'glance-manage db_version'
+#  register: glance_db_version
+#  changed_when: false
 
 - name: Populate Glance Database
   run_once: yes
-  shell: su - glance -s /bin/bash -c 'glance-manage db_sync db_version'
-  run_once: true
-  when: glance_db_version.stdout == "0"
+  shell: su - glance -s /bin/bash -c 'glance-manage db_sync'
+#  when: glance_db_version.stdout == "0"
 
 - name: Create Glance User
   keystone_user:

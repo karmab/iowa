@@ -1,16 +1,20 @@
 ---
 
 common:
+ version: kilo
+ tenant: services
  debug: true
  controller_host: 127.0.0.1
  controller_hosts:
   - 127.0.0.1
  mysql_host: 127.0.0.1
  region: RegionOne
- rabbit_user: guest
+ rabbit_userid: guest
  rabbit_password: guest
+ rabbit_virtual_host: /
  rabbit_hosts:
   - 127.0.0.1
+ auth_strategy: keystone
 
 mysql:
  databases:
@@ -33,60 +37,90 @@ glance:
  dbuser: glance
  dbpassword: glance
  dbname: glance
+ username: glance
  password: glance
+ notification_driver: messaging
+ paste_deploy_flavor: keystone
+ datadir: /var/lib/glance/images
+ stores: 
+  - glance.store.filesystem.Store
 
 cinder:
  dbuser: cinder
  dbpassword: cinder
  dbname: cinder
+ username: cinder
  password: cinder
  volume_group: cinder-volumes
  nfs_shares_config: /etc/cinder/nfs_shares
  volume_driver: cinder.volume.drivers.nfs.NfsDriver
  nfs_shares:
   - 127.0.0.1:/cinder
+ rpc_backend: cinder.openstack.common.rpc.impl_kombu
 
 neutron:
  dbuser: neutron
  dbpassword: neutron
  dbname: neutron
+ username: neutron
  password: neutron
  bridge_mappings: ''
  core_plugin: ml2
- tunnel_interface: eth1
+ tunnel_interface: eth0
+ rpc_backend: neutron.openstack.common.rpc.impl_kombu
+ notify_nova_on_port_status_changes: True
+ notify_nova_on_port_data_changes: True
+ auth_type: password
+ interface_driver: neutron.agent.linux.interface.OVSInterfaceDriver
+ external_network_bridge: ''
+ service_metadata_proxy: true
 
 nova:
  dbuser: nova
  dbpassword: nova
  dbname: nova
+ username: nova
  password: nova
  metadata_secret: changeme
- vnc_interface: eth1
+ vnc_interface: eth0
  ceilometer: True
+ rpc_backend: nova.openstack.common.rpc.impl_kombu
+ network_api_class: nova.network.neutronv2.api.API
+ vif_driver: nova.virt.libvirt.vif.LibvirtGenericVIFDriver
+ novncproxy_host: 0.0.0.0
+ security_group_api: neutron
+ firewall_driver: nova.virt.firewall.NoopFirewallDriver
+ vncserver_listen: 0.0.0.0
+
 
 heat:
  dbuser: heat
  dbpassword: heat
  dbname: heat
+ username: heat
  password: heat
+ rpc_backend: rabbit
+ heat_stack_user_role: heat_stack_user
+
 
 ceilometer:
  dbuser: ceilometer
  dbpassword: ceilometer
  dbname: ceilometer
+ username: ceilometer
  password: ceilometer
  secret: BIGSECRET
  mongodb_servers:
   - 127.0.0.1
+ rpc_backend: ceilometer.openstack.common.rpc.impl_kombu
 
 swift:
+ username: swift
  password: swift
-# devices:
-#  - /dev/vdb1
  storage_nodes:
-  zz:
+  xx:
    devices:
-    - vdb1
+    - vdb
    ip: 127.0.0.1
 
 horizon:

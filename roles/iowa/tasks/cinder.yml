@@ -10,125 +10,13 @@
     - 'openstack-selinux'
     - 'device-mapper-multipath'
 
-- name: Configure Cinder Debug
-  ini_file:
-    dest: /etc/cinder/cinder.conf
-    section: DEFAULT
-    option: debug
-    value: "{{ common.debug }}"
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder SQL Connection
-  ini_file: 
-    dest: /etc/cinder/cinder.conf
-    section: database
-    option: connection
-    value: "mysql://{{ cinder.dbuser}}:{{cinder.dbpassword}}@{{ common.mysql_host}}/{{ cinder.dbname }}"
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder Rabbit Backend
-  ini_file: 
-    dest: /etc/cinder/cinder.conf
-    section: DEFAULT
-    option:  rpc_backend
-    value: cinder.openstack.common.rpc.impl_kombu
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder Rabbit Hosts
-  ini_file: 
-    dest: /etc/cinder/cinder.conf
-    section: oslo_messaging_rabbit
-    option: rabbit_hosts
-    value: "{{ common.rabbit_hosts | append(':5672') | join(',')}}"
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder Rabbit User
-  ini_file: 
-    dest: /etc/cinder/cinder.conf
-    section: oslo_messaging_rabbit
-    option: rabbit_userid
-    value: "{{ common.rabbit_user }}"
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder Rabbit Password
-  ini_file: 
-    dest: /etc/cinder/cinder.conf
-    section: oslo_messaging_rabbit
-    option: rabbit_password
-    value: "{{ common.rabbit_password }}"
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder Rabbit Virtual Host
-  ini_file: 
-    dest: /etc/cinder/cinder.conf
-    section: oslo_messaging_rabbit
-    option: rabbit_virtual_host
-    value: /
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder Keystone Strategy
-  ini_file: 
+- name: Configure Cinder
+  template:
+    src: "cinder/cinder.conf.{{ version }}"
     dest: "/etc/cinder/cinder.conf"
-    section: DEFAULT
-    option: auth_strategy
-    value: keystone
+    backup: yes
   notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder Keystone Uri
-  ini_file: 
-    dest: "/etc/cinder/cinder.conf"
-    section: keystone_authtoken
-    option: identity_uri
-    value: "{{ keystone_identity_uri }}"
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder Keystone Tenant
-  ini_file: 
-    dest: "/etc/cinder/cinder.conf"
-    section: keystone_authtoken
-    option: admin_tenant_name
-    value: services
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder Keystone User
-  ini_file: 
-    dest: "/etc/cinder/cinder.conf"
-    section: keystone_authtoken
-    option: admin_user
-    value: cinder
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
-
-- name: Configure Cinder Keystone Password
-  ini_file: 
-    dest: "/etc/cinder/cinder.conf"
-    section: keystone_authtoken
-    option: admin_password
-    value: "{{ cinder.password }}" 
-  notify:
-   - Restart Cinder
-   - Restart Cinder Scheduler
+    - Restart Cinder
 
 - name: Check Cinder Database Version
   shell: cinder-manage db version
@@ -138,7 +26,6 @@
 - name: Populate Cinder Database
   run_once: yes
   shell: cinder-manage db sync
-  run_once: true
   when: cinder_db_version.stdout == "0"
 
 - name: Create Cinder User

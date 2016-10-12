@@ -18,6 +18,7 @@
   mysql_db:
    name: "{{ item }}" 
    state: "present"
+   encoding: utf8
   with_items: "{{ mysql.databases }}"
 
 - name: Create Db Users

@@ -1,9 +1,5 @@
 ---
 
-- name: Set Neutron Ovs Tunnel ip
-  set_fact:
-   tunnel_ip: "{{ hostvars[inventory_hostname]['ansible_'+(neutron.tunnel_interface | default('eth0'))]['ipv4']['address'] }}"
-
 - name: Install Neutron Ovs Packages
   yum: 
     name: '{{ item }}'
@@ -29,34 +25,27 @@
 - name: Restart Openvswitch Now
   meta: flush_handlers
 
-- name: Create Neutron Ovs br-int
+- name: Create Neutron Ovs bridges
   openvswitch_bridge: 
-    bridge: br-int
+    bridge: "{{ item }}"
     state: present
+  with_items:
+   - 'br-int'
+   - 'br-tun'
+   - 'br-ex'
 
 - name: Create Neutron Ovs ifcfg-br-int
   template:
     src: "{{ role_path }}/files/ifcfg-br-int"
     dest: /etc/sysconfig/network-scripts/ifcfg-br-int
 
-- name: Configure Neutron Ovs Bridge Mappings
-  ini_file:
-    dest: "/etc/neutron/plugin.ini"
-    section: OVS
-    option: bridge_mappings
-    value: "{{ neutron.bridge_mappings }}"
-  notify:
-   - Restart Neutron Openvswitch
-  when: neutron.bridge_mappings != '' 
-
-- name: Configure Neutron Ovs Local Ip Tunneling
-  ini_file:
+- name: Configure Neutron Ovs
+  template:
+    src: "neutron/openvswitch/ovs_neutron_plugin.ini"
     dest: "/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini"
-    section: ovs
-    option: local_ip
-    value: "{{ tunnel_ip }}"
+    backup: yes
   notify:
-   - Restart Neutron Openvswitch
+    - Restart Neutron Openvswitch
 
 - name: Enable Neutron Ovs Services
   service:
