@@ -64,7 +64,7 @@ neutron:
  dbname: neutron
  username: neutron
  password: neutron
- bridge_mappings: ''
+ bridge_mappings: 'external:br-ex'
  core_plugin: ml2
  tunnel_interface: eth0
  rpc_backend: neutron.openstack.common.rpc.impl_kombu
@@ -118,7 +118,7 @@ swift:
  username: swift
  password: swift
  storage_nodes:
-  xx:
+  alice:
    devices:
     - vdb
    ip: 127.0.0.1
