@@ -1,6 +1,6 @@
 [DEFAULT]
 # Show debugging output in log (sets DEBUG log level output)
-# debug = False
+debug = {{ common.debug }}
 
 # L3 requires that an interface driver be set. Choose the one that best
 # matches your plugin.
@@ -62,7 +62,8 @@ interface_driver = {{ neutron.interface_driver }}
 # Name of bridge used for external network traffic. This should be set to
 # empty value for the linux bridge. when this parameter is set, each L3 agent
 # can be associated with no more than one external network.
-external_network_bridge = {{ neutron.external_network_bridge }}
+#
+##external_network_bridge = {{ neutron.external_network_bridge }}
 
 # TCP Port used by Neutron metadata server
 # metadata_port = 9697

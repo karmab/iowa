@@ -350,7 +350,7 @@ notify_nova_on_port_data_changes = {{ neutron.notify_nova_on_port_data_changes }
 # notify_nova_on_port_data_changes = False
 
 # URL for connection to nova (Only supports one nova region currently).
-nova_url = {{ nova_internal_url }}
+nova_url = {{ nova_url }}
 
 # Name of nova region to use. Useful if keystone manages more than one region
 nova_region_name = {{ common.region }}
@@ -370,7 +370,7 @@ nova_admin_tenant_name = {{ common.tenant }}
 nova_admin_password = {{ nova.password }}
 
 # Authorization URL for connection to nova in admin context.
-nova_admin_auth_url = http://127.0.0.1:35357/v2.0
+nova_admin_auth_url = {{ keystone_internal_url }}
 
 # CA file for novaclient to verify server certificates
 # nova_ca_certificates_file =
@@ -558,7 +558,6 @@ nova_admin_auth_url = http://127.0.0.1:35357/v2.0
 # drivers include qpid and zmq. (string value)
 rpc_backend = {{ neutron.rpc_backend }}
 ovs_use_veth = False
-
 # The default exchange under which topics are scoped. May be
 # overridden by an exchange name specified in the
 # transport_url option. (string value)
@@ -705,6 +704,7 @@ ovs_use_veth = False
 
 [keystone_authtoken]
 auth_uri = http://127.0.0.1:35357/v2.0/
+auth_uri = {{ keystone_internal_url }}
 identity_uri = {{ keystone_identity_uri }}
 admin_tenant_name = {{ common.tenant }}
 admin_user = {{ neutron.username }}
@@ -798,6 +798,7 @@ username = {{ nova.username }}
 # Defaults to environment variable OSLO_LOCK_PATH. If external locks are used,
 # a lock path must be set.
 # lock_path = $state_path/lock
+lock_path=/var/lib/neutron/lock
 
 # Enables or disables inter-process locks.
 # disable_process_locking = False

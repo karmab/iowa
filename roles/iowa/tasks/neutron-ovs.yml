@@ -25,10 +25,14 @@
 - name: Restart Openvswitch Now
   meta: flush_handlers
 
-- name: Create Neutron Ovs br-int
+- name: Create Neutron Ovs bridges
   openvswitch_bridge: 
-    bridge: br-int
+    bridge: "{{ item }}"
     state: present
+  with_items:
+   - 'br-int'
+   - 'br-tun'
+   - 'br-ex'
 
 - name: Create Neutron Ovs ifcfg-br-int
   template:
@@ -37,7 +41,7 @@
 
 - name: Configure Neutron Ovs
   template:
-    src: "neutron/neutron.conf.{{ version }}"
+    src: "neutron/openvswitch/ovs_neutron_plugin.ini"
     dest: "/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini"
     backup: yes
   notify:
