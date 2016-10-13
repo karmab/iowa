@@ -9,6 +9,7 @@
     - 'openstack-utils'
     - 'openstack-selinux'
     - 'device-mapper-multipath'
+    - 'python-openstackclient'
 
 - name: Configure Cinder
   template:

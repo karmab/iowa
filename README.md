@@ -27,11 +27,30 @@
 ##OVERRIDE VARIABLES
 
 ´´´
-ansible-playbook init.yml --extra-vars "samples/madrid.yaml"
+ansible-playbook init.yml --extra-vars "@samples/madrid.yaml"
 ´´´
 
 ´´´
 ansible-playbook init.yml --tags keystone
 ´´´
+
+# DEPLOYING MULTIPLE NODES WITH ANSIBLE
+
+- make the role visible
+```
+export ANSIBLE_ROLES_PATH=roles
+```
+
+- controller
+```
+ansible-playbook -i ~/CODE/git/KARIM/kcli/extra/klist.py samples/barcelona/controller.yml --extra-vars @samples/barcelona/variables.yml --tags common,controller
+```
+
+- compute
+```
+ansible-playbook -i ~/CODE/git/KARIM/kcli/extra/klist.py samples/barcelona/compute.yml --extra-vars @samples/barcelona/variables.yml --tags common,compute
+```
+
+
 
 

@@ -8,6 +8,7 @@
     - 'openstack-keystone'
     - 'openstack-utils'
     - 'openstack-selinux'
+    - 'python-openstackclient'
 
 - name: Configure Keystone
   template:

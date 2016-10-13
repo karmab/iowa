@@ -16,6 +16,7 @@
     - 'python-ceilometer'
     - 'python-ceilometerclient'
     - 'openstack-selinux'
+    - 'python-openstackclient'
 
 - name: Configure Ceilometer
   template:

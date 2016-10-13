@@ -13,6 +13,7 @@
     - 'heat-cfntools'
     - 'python-heatclient'
     - 'openstack-utils'
+    - 'python-openstackclient'
 
 - name: Configure Heat
   template:

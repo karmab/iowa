@@ -4,16 +4,16 @@ common:
  version: kilo
  tenant: services
  debug: true
- controller_host: 127.0.0.1
+ controller_host:  192.168.5.110
  controller_hosts:
-  - 127.0.0.1
- mysql_host: 127.0.0.1
+  - 192.168.5.110
+ mysql_host: 192.168.5.110
  region: RegionOne
  rabbit_userid: guest
  rabbit_password: guest
  rabbit_virtual_host: /
  rabbit_hosts:
-  - 127.0.0.1
+  - 192.168.5.110
  auth_strategy: keystone
 
 mysql:
@@ -31,7 +31,7 @@ keystone:
  dbname: keystone
  admin_token: XXXXXX
  admin_password: unix1234
- public_url: http://127.0.0.1:5000/v2.0
+ public_url: http://192.168.5.110:5000/v2.0
 
 glance:
  dbuser: glance
@@ -55,7 +55,7 @@ cinder:
  nfs_shares_config: /etc/cinder/nfs_shares
  volume_driver: cinder.volume.drivers.nfs.NfsDriver
  nfs_shares:
-  - 127.0.0.1:/cinder
+  - 192.168.5.110:/cinder
  rpc_backend: cinder.openstack.common.rpc.impl_kombu
 
 neutron:
@@ -111,17 +111,17 @@ ceilometer:
  password: ceilometer
  secret: BIGSECRET
  mongodb_servers:
-  - 127.0.0.1
+  - 192.168.5.110
  rpc_backend: ceilometer.openstack.common.rpc.impl_kombu
 
 swift:
  username: swift
  password: swift
  storage_nodes:
-  alice:
+  cont01:
    devices:
     - vdb
-   ip: 127.0.0.1
+   ip: 192.168.5.110
 
 horizon:
  ssl: false

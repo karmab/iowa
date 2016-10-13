@@ -10,6 +10,7 @@
     - 'openstack-neutron-openvswitch'
     - 'openstack-utils'
     - 'openstack-selinux'
+    - 'python-openstackclient'
 
 - name: Configure Neutron
   template:

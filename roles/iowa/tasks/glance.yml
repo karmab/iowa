@@ -8,6 +8,7 @@
     - 'openstack-glance'
     - 'openstack-utils'
     - 'openstack-selinux'
+    - 'python-openstackclient'
 
 - name: Configure Glance
   template:
