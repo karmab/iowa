@@ -44,6 +44,8 @@ glance:
  datadir: /var/lib/glance/images
  stores: 
   - glance.store.filesystem.Store
+ hosts:
+  - 192.168.5.110
 
 cinder:
  dbuser: cinder
@@ -64,7 +66,8 @@ neutron:
  dbname: neutron
  username: neutron
  password: neutron
- bridge_mappings: 'external:br-ex,nfs:br-ex2'
+ bridge_mappings: 'external:br-ex,nfs:br-ex2,cifs:br-ex3'
+ bridge_ifaces: 'br-ex:eth1'
  core_plugin: ml2
  tunnel_interface: eth0
  rpc_backend: neutron.openstack.common.rpc.impl_kombu

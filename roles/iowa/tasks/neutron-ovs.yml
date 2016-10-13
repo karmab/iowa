@@ -25,19 +25,50 @@
 - name: Restart Openvswitch Now
   meta: flush_handlers
 
-- name: Create Neutron Ovs bridges
+- name: Create Neutron Ovs default bridges
   openvswitch_bridge: 
     bridge: "{{ item }}"
     state: present
   with_items:
    - 'br-int'
    - 'br-tun'
-   - 'br-ex'
+
+- name: Create Neutron Ovs extra bridges
+  openvswitch_bridge: 
+    bridge: "{{ item }}"
+    state: present
+  when: neutron.bridge_mappings is defined
+  with_items: "{{ neutron.bridge_mappings.split(',') | map('regex_replace', '.*:(.*)', '\\1') | list }}"
+
+- name: Add Neutron Ovs ports to extra bridges
+  openvswitch_port: 
+    bridge: "{{ item | regex_replace('(.*):.*', '\\1') }}"
+    port: "{{ item | regex_replace('.*:(.*)', '\\1') }}"
+    state: present
+  when: neutron.bridge_ifaces is defined
+  with_items: "{{ neutron.bridge_ifaces.split(',') }}"
 
 - name: Create Neutron Ovs ifcfg-br-int
   template:
     src: "{{ role_path }}/files/ifcfg-br-int"
     dest: /etc/sysconfig/network-scripts/ifcfg-br-int
+
+- name: Configure Neutron Ovs
+  template:
+    src: "neutron/neutron.conf.{{ version }}"
+    dest: "/etc/neutron/neutron.conf"
+    backup: yes
+  notify:
+    - Restart Neutron Openvswitch
+
+- name: Configure Neutron Ovs Plugin Link
+  file:
+    state: link
+    dest: "/etc/neutron/plugin.ini"
+    src: "/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini"
+    force: yes
+  notify:
+    - Restart Neutron Openvswitch
 
 - name: Configure Neutron Ovs
   template:
