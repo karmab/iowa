@@ -1,14 +1,10 @@
 ---
 
 - name: Install Glance Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'openstack-glance'
-    - 'openstack-utils'
-    - 'openstack-selinux'
-    - 'python-openstackclient'
+  with_items: "{{ glance_packages }}"
 
 - name: Configure Glance
   template:

@@ -63,7 +63,7 @@
   service: name=openstack-heat-engine state=restarted
 
 - name: Restart Apache
-  service: name=httpd state=restarted
+  service: name={{ apache_service }} state=restarted
 
 - name: Restart MongoDB
   service: name=mongod state=restarted

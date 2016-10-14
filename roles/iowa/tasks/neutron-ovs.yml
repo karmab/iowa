@@ -1,16 +1,10 @@
 ---
 
 - name: Install Neutron Ovs Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'openvswitch'
-    - 'openstack-neutron'
-    - 'openstack-neutron-ml2'
-    - 'openstack-neutron-openvswitch'
-    - 'openstack-utils'
-    - 'openstack-selinux'
+  with_items: "{{ neutron_packages }}"
 
 - name: Enable Neutron Ovs Service
   service:

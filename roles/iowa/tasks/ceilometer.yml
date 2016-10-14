@@ -1,22 +1,10 @@
 ---
 
 - name: Install Ceilometer Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'openstack-ceilometer-api'
-    - 'openstack-ceilometer-central'
-    - 'openstack-ceilometer-collector'
-    - 'openstack-ceilometer-common'
-    - 'openstack-ceilometer-compute'
-    - 'openstack-ceilometer-alarm'
-    - 'openstack-ceilometer-notification'
-    - 'openstack-utils'
-    - 'python-ceilometer'
-    - 'python-ceilometerclient'
-    - 'openstack-selinux'
-    - 'python-openstackclient'
+  with_items: "{{ ceilometer_packages }}"
 
 - name: Configure Ceilometer
   template:

@@ -1,19 +1,10 @@
 ---
 
 - name: Install Heat Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'openstack-heat-api'
-    - 'openstack-heat-api-cfn'
-    - 'openstack-heat-common'
-    - 'openstack-heat-engine'
-    - 'openstack-heat-api-cloudwatch'
-    - 'heat-cfntools'
-    - 'python-heatclient'
-    - 'openstack-utils'
-    - 'python-openstackclient'
+  with_items: "{{ heat_packages }}"
 
 - name: Configure Heat
   template:

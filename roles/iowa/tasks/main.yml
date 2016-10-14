@@ -2,9 +2,9 @@
 - include: variables.yml 
   tags:
    - common
-- include: haproxy.yml
-  tags:
-   - haproxy
+#- include: haproxy.yml
+#  tags:
+#   - haproxy
 - include: mongodb.yml
   tags:
    - controller

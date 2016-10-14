@@ -1,12 +1,10 @@
 ---
 
-- name: Install MariaDB
-  yum: 
+- name: Install MariaDB Packages
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'mariadb-galera-server'
-    - 'MySQL-python'
+  with_items: "{{ mysql_packages }}"
 
 - name: Enable MariadDB Service
   service:

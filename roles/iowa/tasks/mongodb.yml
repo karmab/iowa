@@ -1,13 +1,10 @@
 ---
 
-- name: Install MongoDB
-  yum: 
+- name: Install MongoDB Packages
+  package: 
     name: "{{ item }}"
     state: latest
-  with_items:
-   - 'mongodb-server'
-   - 'python-pymongo'
-   - 'mongodb'
+  with_items: "{{ mongodb_packages }}"
 
 - name: Configure MongoBD bind_ip
   lineinfile:

@@ -1,14 +1,10 @@
 ---
 
 - name: Install Cinder Volume Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'openstack-cinder'
-    - 'openstack-utils'
-    - 'openstack-selinux'
-    - 'device-mapper-multipath'
+  with_items: "{{ cinder_packages }}"
 
 - name: Configure Cinder
   template:

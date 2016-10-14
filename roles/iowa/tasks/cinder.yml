@@ -1,15 +1,10 @@
 ---
 
 - name: Install Cinder Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'openstack-cinder'
-    - 'openstack-utils'
-    - 'openstack-selinux'
-    - 'device-mapper-multipath'
-    - 'python-openstackclient'
+  with_items: "{{ cinder_packages }}"
 
 - name: Configure Cinder
   template:

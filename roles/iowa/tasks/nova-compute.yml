@@ -1,23 +1,16 @@
 ---
 
 - name: Install Nova Compute Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'openstack-nova-compute'
-    - 'openstack-utils'
-    - 'python-cinderclient'
-    - 'openstack-selinux'
+  with_items: "{{ nova_compute_packages }}"
 
 - name: Install Nova Ceilometer Compute Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'openstack-ceilometer-compute'
-    - 'python-ceilometer'
-    - 'python-ceilometerclient'
+  with_items: "{{ nova_compute_ceilometer_packages }}"
   when: nova_ceilometer
 
 - name: Enable Nova bridge module

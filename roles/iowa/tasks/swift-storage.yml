@@ -1,16 +1,10 @@
 ---
 
 - name: Install Swift Storage Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'rsync'
-    - 'xinetd'
-    - 'openstack-swift-object'
-    - 'openstack-swift-container'
-    - 'openstack-swift-account'
-    - 'python-swiftclient'
+  with_items: "{{ swift_storage_packages }}"
 
 - name: Create Swift Storage Mount Points
   file:

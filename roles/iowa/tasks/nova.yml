@@ -1,19 +1,10 @@
 ---
 
 - name: Install Nova Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'openstack-nova-api'
-    - 'openstack-nova-conductor'
-    - 'openstack-nova-scheduler'
-    - 'openstack-nova-novncproxy'
-    - 'openstack-nova-console'
-    - 'openstack-utils'
-    - 'python-cinderclient'
-    - 'openstack-selinux'
-    - 'python-openstackclient'
+  with_items: "{{ nova_packages }}"
 
 - name: Configure Nova
   template:

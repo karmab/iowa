@@ -1,20 +1,19 @@
 ---
 
 - name: Install Keystone Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'openstack-keystone'
-    - 'openstack-utils'
-    - 'openstack-selinux'
-    - 'python-openstackclient'
+  with_items: "{{ keystone_packages }}"
 
 - name: Configure Keystone
   template:
     src: "keystone/keystone.conf.{{ common.version }}"
     dest: "/etc/keystone/keystone.conf"
     backup: yes
+  notify:
+   - Restart Apache
+  when: version != 'kilo'
 
 - name: Configure Keystone token_flush Cron
   cron:
@@ -22,6 +21,14 @@
     minute: 0
     hour: 0,8,12,16,20
     job: keystone-manage token_flush
+
+- name: Create Keystone Apache File
+  copy:
+    src: "{{ wsgi_file }}"
+    dest: "{{ apache_dir }}/wsgi-keystone.conf"
+  notify: 
+   - Restart Apache
+  when: version != 'kilo'
 
 #- name: Check Keystone Database Version
 ##  shell: keystone-manage db_version
@@ -36,12 +43,27 @@
   run_once: yes
   shell: su - keystone -s /bin/bash -c 'keystone-manage db_sync'
 #  when: keystone_db_version.stdout == "0" or keystone_db_version.stdout == '43'
-
-- name: Enable Keystone Service
+#
+- name: Enable Keystone Service For Kilo
   service:
    name: openstack-keystone
    enabled: yes
    state: started
+  when: version == 'kilo'
+
+- name: Disable Keystone Service
+  service:
+   name: openstack-keystone
+   enabled: no
+   state: stopped
+  when: version != 'kilo'
+
+- name: Enable Keystone Apache Service
+  service:
+   name: httpd
+   enabled: yes
+   state: started
+  when: version != 'kilo'
 
 - name: Create Keystone Client File
   template:

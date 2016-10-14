@@ -1,0 +1,103 @@
+apache_service: httpd
+apache_dir: /etc/httpd/conf.d
+wsgi_file: keystone/wsgi-keystone.conf.redhat
+haproxy_packages:
+ - 'haproxy'
+mysql_packages:
+ - 'mariadb-galera-server'
+ - 'MySQL-python'
+mongodb_packages:
+ - 'mongodb-server'
+ - 'python-pymongo'
+ - 'mongodb'
+rabbitmq_packages:
+ - 'rabbitmq-server'
+keystone_packages:
+ - 'openstack-keystone'
+ - 'openstack-utils'
+ - 'openstack-selinux'
+ - 'python-openstackclient'
+ - 'python-keystonemiddleware'
+ - 'httpd'
+ - 'mod_wsgi'
+ - 'memcached'
+ - 'python-memcached'
+glance_packages:
+ - 'openstack-glance'
+ - 'openstack-utils'
+ - 'openstack-selinux'
+ - 'python-openstackclient'
+cinder_packages:
+ - 'openstack-cinder'
+ - 'openstack-utils'
+ - 'openstack-selinux'
+ - 'device-mapper-multipath'
+ - 'python-openstackclient'
+neutron_packages:
+ - 'openvswitch'
+ - 'openstack-neutron'
+ - 'openstack-neutron-ml2'
+ - 'openstack-neutron-openvswitch'
+ - 'openstack-utils'
+ - 'openstack-selinux'
+ - 'python-openstackclient'
+nova_packages:
+ - 'openstack-nova-api'
+ - 'openstack-nova-conductor'
+ - 'openstack-nova-scheduler'
+ - 'openstack-nova-novncproxy'
+ - 'openstack-nova-console'
+ - 'openstack-utils'
+ - 'python-cinderclient'
+ - 'openstack-selinux'
+ - 'python-openstackclient'
+nova_compute_packages:
+ - 'openstack-nova-compute'
+ - 'openstack-utils'
+ - 'python-cinderclient'
+ - 'openstack-selinux'
+nova_compute_ceilometer_packages:
+ - 'openstack-ceilometer-compute'
+ - 'python-ceilometer'
+ - 'python-ceilometerclient'
+heat_packages:
+ - 'openstack-heat-api'
+ - 'openstack-heat-api-cfn'
+ - 'openstack-heat-common'
+ - 'openstack-heat-engine'
+ - 'openstack-heat-api-cloudwatch'
+ - 'heat-cfntools'
+ - 'python-heatclient'
+ - 'openstack-utils'
+ - 'python-openstackclient'
+ceilometer_packages:
+ - 'openstack-ceilometer-api'
+ - 'openstack-ceilometer-central'
+ - 'openstack-ceilometer-collector'
+ - 'openstack-ceilometer-common'
+ - 'openstack-ceilometer-compute'
+ - 'openstack-ceilometer-alarm'
+ - 'openstack-ceilometer-notification'
+ - 'openstack-utils'
+ - 'python-ceilometer'
+ - 'python-ceilometerclient'
+ - 'openstack-selinux'
+ - 'python-openstackclient'
+swift_packages:
+ - 'openstack-swift-proxy'
+ - 'openstack-swift-plugin-swift3'
+ - 'memcached'
+ - 'python-swiftclient'
+swift_storage_packages:
+ - 'rsync'
+ - 'xinetd'
+ - 'openstack-swift-object'
+ - 'openstack-swift-container'
+ - 'openstack-swift-account'
+ - 'python-swiftclient'
+horizon_packages:
+ - 'httpd'
+ - 'mod_wsgi'
+ - 'mod_ssl'
+ - 'memcached'
+ - 'openstack-dashboard'

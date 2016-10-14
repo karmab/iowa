@@ -1,9 +1,10 @@
 ---
 
-- name: Install Haproxy
-  yum: 
-    name: 'haproxy'
+- name: Install Haproxy Packages
+  package: 
+    name: "{{ item }}"
     state: latest
+  with_items: "{{ haproxy_packages }}"
 
 - name: Set Haproxy Sysctl NonLocal Bind
   sysctl:

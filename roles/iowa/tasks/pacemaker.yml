@@ -1,7 +1,7 @@
 ---
 
 - name: Install Pacemaker
-  yum: 
+  package: 
     name: "{{ item }}"
     state: latest
   with_items:

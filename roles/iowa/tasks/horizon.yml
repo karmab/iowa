@@ -1,15 +1,10 @@
 ---
 
 - name: Install Horizon Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'httpd'
-    - 'mod_wsgi'
-    - 'mod_ssl'
-    - 'memcached'
-    - 'openstack-dashboard'
+  with_items: "{{ horizon_packages }}"
 
 - name: Configure Horizon
   template:

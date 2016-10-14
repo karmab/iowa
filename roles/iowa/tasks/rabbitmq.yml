@@ -1,9 +1,10 @@
 ---
 
-- name: Install Rabbitmq
-  yum: 
-    name: rabbitmq-server
+- name: Install Rabbitmq Packages
+  package: 
+    name: "{{ item }}"
     state: latest
+  with_items: "{{ rabbitmq_packages }}"
 
 - name: Enable Rabbitmq service
   service:

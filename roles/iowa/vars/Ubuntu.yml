@@ -1,0 +1,93 @@
+apache_service: apache2
+apache_dir: /etc/apache2/sites-available
+wsgi_file: keystone/wsgi-keystone.conf.debian
+haproxy_packages_
+ - 'haproxy'
+mysql_packages:
+ - 'mariadb-server'
+ - 'python-mysqldb'
+mongodb_packages:
+ - 'mongodb-server'
+ - 'mongodb-clients'
+ - 'python-pymongo'
+rabbitmq_packages:
+ - 'rabbitmq-server'
+keystone_packages:
+ - 'keystone'
+ - 'python-openstackclient'
+ - 'apache2'
+ - 'libapache2-mod-wsgi'
+ - 'memcached'
+ - 'python-memcache'
+glance_packages:
+ - 'glance'
+ - 'python-glanceclient'
+ - 'python-openstackclient'
+cinder_packages:
+ - 'cinder-api'
+ - 'cinder-scheduler'
+ - 'python-cinderclient'
+ - 'python-openstackclient'
+ - 'cinder-volume'
+ - 'python-mysqldb'
+neutron_packages:
+ - 'neutron-server'
+ - 'neutron-plugin-ml2'
+ - 'neutron-plugin-openvswitch-agent'
+ - 'neutron-l3-agent'
+ - 'neutron-dhcp-agent'
+ - 'neutron-metadata-agent'
+ - 'python-neutronclient'
+ - 'python-openstackclient'
+nova_packages:
+ - 'nova-api'
+ - 'nova-cert'
+ - 'nova-conductor'
+ - 'nova-consoleauth'
+ - 'nova-novncproxy'
+ - 'nova-scheduler'
+ - 'python-novaclient'
+ - 'python-openstackclient'
+nova_compute_packages:
+ - 'nova-compute'
+ - 'sysfsutils'
+ - 'neutron-plugin-ml2'
+ - 'neutron-plugin-openvswitch-agent'
+nova_compute_ceilometer_packages:
+ - 'ceilometer-agent-compute'
+heat_packages:
+ - 'heat-api'
+ - 'heat-api-cfn'
+ - 'heat-engine'
+ - 'python-heatclient'
+ - 'python-openstackclient'
+ceilometer_packages:
+ - 'ceilometer-api'
+ - 'ceilometer-collector'
+ - 'ceilometer-agent-central'
+ - 'ceilometer-agent-notification'
+ - 'ceilometer-alarm-evaluator'
+ - 'ceilometer-alarm-notifier'
+ - 'python-ceilometerclient'
+ - 'python-openstackclient'
+swift_packages:
+ - 'swift'
+ - 'swift-proxy'
+ - 'python-swiftclient'
+ - 'python-keystoneclient'
+ - 'python-keystonemiddleware'
+ - 'memcached'
+ - 'python-openstackclient'
+swift_storage_packages:
+ - 'rsync'
+ - 'xinetd'
+ - 'swift' 
+ - 'swift-account'
+ - 'swift-container'
+ - 'swift-object'
+horizon_packages:
+ - 'apache2'
+ - 'libapache2-mod-wsgi'
+ - 'memcached'
+ - 'python-memcache'
+ - 'openstack-dashboard'

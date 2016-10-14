@@ -1,14 +1,10 @@
 ---
 
 - name: Install Swift Packages
-  yum: 
+  package: 
     name: '{{ item }}'
     state: latest
-  with_items:
-    - 'openstack-swift-proxy'
-    - 'openstack-swift-plugin-swift3'
-    - 'memcached'
-    - 'python-swiftclient'
+  with_items: "{{ swift_packages }}"
 
 - name: Ensure Swift Ownership
   file:
