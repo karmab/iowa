@@ -19,6 +19,7 @@
     recurse: yes
     owner: swift
     group: swift
+    setype: swift_data_t
   with_items: "{{ swift.storage_nodes[inventory_hostname]['devices'] }}"
   when: swift.storage_nodes[inventory_hostname] is defined and swift.storage_nodes[inventory_hostname]['devices'] is defined
 
@@ -27,6 +28,7 @@
     name: "/srv/node/{{ item }}"
     src: "/dev/{{ item }}"
     fstype: "{{ swift_fstype }}"
+    # opts: 'context="system_u:object_r:swift_data_t:s0'
     state: mounted
   with_items: "{{ swift.storage_nodes[inventory_hostname]['devices'] }}"
   when: swift.storage_nodes[inventory_hostname] is defined and swift.storage_nodes[inventory_hostname]['devices'] is defined
