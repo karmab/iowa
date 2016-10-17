@@ -1,0 +1,79 @@
+---
+
+- name: Install Cinder Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ cinder_packages }}"
+
+- name: Configure Cinder
+  template:
+    src: "cinder.conf.{{ version }}"
+    dest: "/etc/cinder/cinder.conf"
+    backup: yes
+  notify:
+    - Restart Cinder
+
+- name: Check Cinder Database Version
+  shell: cinder-manage db version
+  register: cinder_db_version
+  changed_when: false
+
+- name: Populate Cinder Database
+  run_once: yes
+  shell: cinder-manage db sync
+  when: cinder_db_version.stdout == "0"
+
+- name: Create Cinder User
+  keystone_user:
+    state: present
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    user: cinder
+    tenant: services
+    password: "{{ cinder.password }}"
+
+- name: Grant Cinder Admin Role
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    user: cinder
+    role: admin
+
+- name: Create Cinder Service And Endpoint
+  keystone_service: 
+    name: cinder
+    type: volume
+    description: "Cinder Volume Service"
+    publicurl: "{{ cinder_public_url }}"
+    internalurl: "{{ cinder_internal_url }}"
+    adminurl: "{{ cinder_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
+- name: Create Cinder V2 Service And Endpoint
+  keystone_service: 
+    name: cinderv2
+    type: volumev2
+    description: "Cinder Volume Service"
+    publicurl: "{{ cinderv2_public_url }}"
+    internalurl: "{{ cinderv2_internal_url }}"
+    adminurl: "{{ cinderv2_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
+- name: Enable Cinder Service
+  service:
+    name: "openstack-cinder-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+   - api
+   - scheduler

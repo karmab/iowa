@@ -41,16 +41,17 @@ ansible-playbook init.yml --tags keystone
 export ANSIBLE_ROLES_PATH=roles
 ```
 
-- controller
+- allinone
 ```
-ansible-playbook -i ~/CODE/git/KARIM/kcli/extra/klist.py samples/barcelona/controller.yml --extra-vars @samples/barcelona/variables.yml --tags common,controller
+ansible-playbook -i ~/klist.py controller.yml --extra-vars @samples/barcelona.yml
+```
+
+- api only
+```
+ansible-playbook -i ~/klist.py controller.yml --extra-vars @samples/barcelona.yml --tags api
 ```
 
 - compute
 ```
-ansible-playbook -i ~/CODE/git/KARIM/kcli/extra/klist.py samples/barcelona/compute.yml --extra-vars @samples/barcelona/variables.yml --tags common,compute
+ansible-playbook -i ~/klist.py compute.yml --extra-vars @samples/barcelona.yml --tags compute
 ```
-
-
-
-

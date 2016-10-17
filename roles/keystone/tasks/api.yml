@@ -1,0 +1,127 @@
+---
+
+- name: Install Keystone Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ keystone_packages }}"
+
+- name: Configure Keystone
+  template:
+    src: "keystone.conf.{{ common.version }}"
+    dest: "/etc/keystone/keystone.conf"
+    backup: yes
+  notify:
+   - Restart Apache
+  when: version != 'kilo'
+
+- name: Configure Keystone token_flush Cron
+  cron:
+    name: token_flush
+    minute: 0
+    hour: 0,8,12,16,20
+    job: keystone-manage token_flush
+
+- name: Create Keystone Apache File
+  copy:
+    src: "{{ wsgi_file }}"
+    dest: "{{ apache_dir }}/wsgi-keystone.conf"
+  notify: 
+   - Restart Apache
+  when: version != 'kilo'
+
+- name: Create Keystone Ssl Directory
+  copy:
+    src: "ssl"
+    dest: "/etc/keystone/ssl"
+    owner: keystone
+    group: keystone
+  notify: 
+   - Restart Apache
+  when: keystone_hosts | length > 1
+
+- name: Populate Keystone Database
+  run_once: yes
+  shell: su - keystone -s /bin/bash -c 'keystone-manage db_sync'
+#  when: keystone_db_version.stdout == "0" or keystone_db_version.stdout == '43'
+#
+- name: Enable Keystone Service For Kilo
+  service:
+   name: openstack-keystone
+   enabled: yes
+   state: started
+  when: version == 'kilo'
+
+- name: Disable Keystone Service
+  service:
+   name: openstack-keystone
+   enabled: no
+   state: stopped
+  when: version != 'kilo'
+
+- name: Enable Keystone Apache Service
+  service:
+   name: httpd
+   enabled: yes
+   state: started
+  when: version != 'kilo'
+
+- name: Create Keystone Client File
+  template:
+    src: keystonerc_admin.j2
+    dest: /root/keystonerc_admin
+
+- name: Create Keystone Admin Tenant
+  run_once: yes
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: admin
+    tenant_description: "Admin Tenant"
+
+- name: Create Keystone Services Tenant
+  run_once: yes
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    tenant_description: "Services Tenant"
+
+- name: Create Keystone Admin User
+  run_once: yes
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: admin
+    user: admin
+    password: "{{ keystone.admin_password }}"
+
+- name: Grant Keystone Admin Role
+  run_once: yes
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: admin
+    user: admin
+    role: admin 
+
+- name: Grant Keystone Member Role
+  run_once: yes
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: admin
+    user: admin
+    role: _member_
+
+- name: Create Keystone Service And Endpoint
+  keystone_service:
+    name: keystone
+    type: identity
+    description: "Keystone Identity Service"
+    publicurl: "{{ keystone_public_url }}"
+    internalurl: "{{ keystone_internal_url }}"
+    adminurl: "{{ keystone_admin_url }}"
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    region: "{{ common.region }}"

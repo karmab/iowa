@@ -1,0 +1,81 @@
+---
+
+- name: Install Neutron Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ neutron_packages }}"
+
+- name: Configure Neutron
+  template:
+    src: "neutron.conf.{{ version }}"
+    dest: "/etc/neutron/neutron.conf"
+    backup: yes
+  notify:
+    - Restart Neutron
+
+- name: Configure Neutron Ml2 Plugin Link
+  file:
+    state: link
+    dest: "/etc/neutron/plugin.ini"
+    src: "/etc/neutron/plugins/ml2/ml2_conf.ini"
+    force: yes
+  when: neutron_core_plugin == 'ml2'
+  notify:
+   - Restart Neutron
+
+- name: Configure Neutron M2l Plugin File
+  template:
+    src: "ml2/ml2_conf.ini"
+    dest: "/etc/neutron/plugins/ml2/ml2_conf.ini"
+    backup: yes
+  when: neutron_core_plugin == 'ml2'
+  notify:
+    - Restart Neutron
+
+- name: Check Neutron Database Version
+  shell: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugin.ini upgrade head
+  register: neutron_db_version
+  changed_when: false
+
+- name: Populate Neutron Database
+  run_once: yes
+  shell: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugin.ini current
+  when: "'OK' not in neutron_db_version"
+
+- name: Create Neutron User
+  keystone_user:
+    state: present
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    user: neutron
+    tenant: services
+    password: "{{ neutron.password }}"
+
+- name: Grant Neutron Admin Role
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    user: neutron
+    role: admin
+
+- name: Create Neutron Service And Endpoint
+  keystone_service: 
+    name: neutron
+    type: network
+    description: "Neutron Networking Service"
+    publicurl: "{{ neutron_public_url }}"
+    internalurl: "{{ neutron_internal_url }}"
+    adminurl: "{{ neutron_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
+- name: Enable Neutron Service
+  service:
+    name: "neutron-server"
+    enabled: yes
+    state: started

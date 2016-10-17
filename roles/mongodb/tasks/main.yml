@@ -1,0 +1,4 @@
+- include: service.yml
+  tags:
+   - allinone
+   - mongodb

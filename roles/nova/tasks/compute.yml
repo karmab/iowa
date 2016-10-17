@@ -1,0 +1,80 @@
+---
+
+- name: Install Nova Compute Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ nova_compute_packages }}"
+
+- name: Install Nova Ceilometer Compute Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ nova_compute_ceilometer_packages }}"
+  when: nova_ceilometer
+
+- name: Enable Nova bridge module
+  modprobe:
+    name: bridge
+    state: present
+
+- name: Set Nova Sysctl Ip Forward
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    state: present
+
+- name: Set Nova Sysctl All Rp Filter
+  sysctl:
+    name: net.ipv4.conf.all.rp_filter
+    value: 0
+    state: present
+
+- name: Set Nova Sysctl Default Rp Filter
+  sysctl:
+    name: net.ipv4.conf.default.rp_filter
+    value: 0
+    state: present
+
+- name: Set Nova Sysctl Call Arptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-arptables
+    value: 1
+    state: present
+
+- name: Set Nova Sysctl Call Ip6tables
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+    state: present
+
+- name: Set Nova Sysctl Call Iptables
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+
+- name: Configure Nova Compute
+  template:
+    src: "nova.conf.{{ version }}"
+    dest: "/etc/nova/nova.conf"
+    backup: yes
+  notify:
+   - Restart Nova Compute
+
+- name: Enable Nova Compute Services
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+   - messagebus
+   - libvirtd
+   - openstack-nova-compute
+
+- name: Enable Nova Compute Ceilometer Services
+  service:
+    name: "openstack-ceilometer-compute"
+    enabled: yes
+    state: started
+  when: nova_ceilometer

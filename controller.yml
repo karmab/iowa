@@ -1,0 +1,21 @@
+---
+- name: Install Controller
+  hosts: cont01
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - mongodb
+    - mysql
+    - rabbitmq
+    - keystone
+    - glance
+    - cinder
+    - neutron
+    - nova
+    - heat
+    - horizon
+    - ceilometer
+    - swift

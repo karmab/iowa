@@ -1,0 +1,9 @@
+- include: api.yml
+  tags:
+   - allinone
+   - api
+   - cinder
+- include: volume.yml
+  tags:
+   - allinone
+   - volume

@@ -1,0 +1,8 @@
+- include: storage.yml
+  tags:
+   - swift-storage
+- include: api.yml
+  tags:
+   - api
+   - controller
+   - swift

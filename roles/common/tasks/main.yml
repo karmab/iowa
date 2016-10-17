@@ -1,0 +1,21 @@
+- include: variables.yml
+  tags:
+   - allinone
+   - api
+   - ceilometer
+   - cinder
+   - common
+   - compute
+   - debug
+   - glance
+   - haproxy
+   - heat
+   - horizon
+   - keystone
+   - mongodb
+   - mysql
+   - neutron
+   - nova
+   - pacemaker
+   - rabbitmq
+   - swift

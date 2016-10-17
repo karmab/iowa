@@ -1,0 +1,71 @@
+---
+
+- name: Install Nova Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ nova_packages }}"
+
+- name: Configure Nova
+  template:
+    src: "nova.conf.{{ version }}"
+    dest: "/etc/nova/nova.conf"
+    backup: yes
+  notify:
+   - Restart Nova
+   - Restart Nova Conductor
+   - Restart Nova Scheduler
+
+#- name: Check Nova Database Version
+#  shell: nova-manage db version
+#  register: nova_db_version
+#  changed_when: false
+
+- name: Populate Nova Database
+  run_once: yes
+  shell: nova-manage db sync
+#  when: nova_db_version.stdout == "0"
+
+- name: Create Nova User
+  keystone_user:
+    state: present
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    user: nova
+    tenant: services
+    password: "{{ nova.password }}"
+
+- name: Grant Nova Admin Role
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    user: nova
+    role: admin
+
+- name: Create Nova Service And Endpoint
+  keystone_service: 
+    name: nova
+    type: compute
+    description: "Nova Volume Service"
+    publicurl: "{{ nova_public_url }}"
+    internalurl: "{{ nova_internal_url }}"
+    adminurl: "{{ nova_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
+- name: Enable Nova Services
+  service:
+    name: "openstack-nova-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+   - api
+   - console
+   - scheduler
+   - conductor
+   - novncproxy
+   - consoleauth

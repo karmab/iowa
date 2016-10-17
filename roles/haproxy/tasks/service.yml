@@ -1,0 +1,26 @@
+---
+
+- name: Install Haproxy Packages
+  package: 
+    name: "{{ item }}"
+    state: latest
+  with_items: "{{ haproxy_packages }}"
+
+- name: Set Haproxy Sysctl NonLocal Bind
+  sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: 1
+    state: present
+
+- name: Configure Haproxy
+  template:
+   src: haproxy.cfg.j2 
+   dest: /etc/haproxy/haproxy.cfg
+  notify:
+   - Restart Haproxy
+
+- name: Enable Haproxy Service
+  service:
+   name: haproxy
+   enabled: yes
+   state: started

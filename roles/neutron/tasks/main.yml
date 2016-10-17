@@ -1,0 +1,18 @@
+- include: api.yml
+  tags:
+   - controller
+   - neutron
+   - api
+- include: dhcp.yml
+  tags:
+   - controller
+   - neutron
+- include: ovs.yml
+  tags:
+   - controller
+   - compute
+   - neutron
+- include: l3.yml
+  tags:
+   - controller
+   - neutron

@@ -1,0 +1,21 @@
+---
+
+- name: Install Horizon Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ horizon_packages }}"
+
+- name: Configure Horizon
+  template:
+    src: "local_settings.{{ version }}"
+    dest: "/etc/openstack-dashboard/local_settings"
+    backup: yes
+  notify:
+    - Restart Apache
+
+- name: Enable Apache Service
+  service:
+   name: httpd
+   enabled: yes
+   state: started

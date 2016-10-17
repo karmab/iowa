@@ -1,0 +1,69 @@
+---
+
+- name: Install Glance Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ glance_packages }}"
+
+- name: Configure Glance
+  template:
+    src: "glance-{{ item }}.conf.{{ version}}"
+    dest: "/etc/glance/glance-{{ item }}.conf"
+    backup: yes
+  with_items:
+    - 'api'
+    - 'registry'
+  notify:
+    - Restart Glance
+    - Restart Glance Registry
+
+#- name: Check Glance Database Version
+#  shell: su - glance -s /bin/bash -c 'glance-manage db_version'
+#  register: glance_db_version
+#  changed_when: false
+
+- name: Populate Glance Database
+  run_once: yes
+  shell: su - glance -s /bin/bash -c 'glance-manage db_sync'
+#  when: glance_db_version.stdout == "0"
+
+- name: Create Glance User
+  keystone_user:
+    state: present
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    user: glance
+    tenant: services
+    password: "{{ glance.password }}"
+
+- name: Grant Glance Admin Role
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    user: glance
+    role: admin
+
+- name: Create Glance Service And Endpoint
+  keystone_service: 
+    name: glance
+    type: image
+    description: "Glance Image Service"
+    publicurl: "{{ glance_public_url }}"
+    internalurl: "{{ glance_internal_url }}"
+    adminurl: "{{ glance_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
+- name: Enable Glance Service
+  service:
+    name: "openstack-glance-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - 'api'
+    - 'registry'

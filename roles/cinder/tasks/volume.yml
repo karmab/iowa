@@ -1,0 +1,31 @@
+---
+
+- name: Install Cinder Volume Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ cinder_packages }}"
+
+- name: Configure Cinder
+  template:
+    src: "cinder.conf.{{ version }}"
+    dest: "/etc/cinder/cinder.conf"
+    backup: yes
+  notify:
+    - Restart Cinder Volume
+
+- name: Configure Cinder Volume NFS Shares
+  template: 
+    src: nfs_shares_config.j2
+    dest: "{{ cinder.nfs_shares_config }}"
+    owner: cinder
+    group: cinder
+  when: cinder.volume_driver == 'cinder.volume.drivers.nfs.NfsDriver' 
+  notify:
+    - Restart Cinder Volume
+
+- name: Enable Cinder Volume Service
+  service:
+    name: "openstack-cinder-volume"
+    enabled: yes
+    state: started

@@ -1,0 +1,10 @@
+---
+- name: Install Keystone
+  hosts: cont01
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - keystone
