@@ -33,6 +33,7 @@ cinder_packages:
  - 'openstack-selinux'
  - 'device-mapper-multipath'
  - 'python-openstackclient'
+ - 'python-oslo-log'
 neutron_packages:
  - 'openvswitch'
  - 'openstack-neutron'
@@ -52,6 +53,7 @@ nova_packages:
  - 'openstack-selinux'
  - 'python-openstackclient'
 nova_compute_packages:
+ - 'libvirt-daemon'
  - 'openstack-nova-compute'
  - 'openstack-utils'
  - 'python-cinderclient'
