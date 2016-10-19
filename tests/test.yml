@@ -1,0 +1,16 @@
+---
+- name: Install Openstack
+  hosts: localhost
+  remote_user: root
+  roles:
+    - mongodb
+    - mysql
+    - rabbitmq
+    - keystone
+    - glance
+    - cinder
+    - neutron
+    - nova
+    - heat
+    - horizon
+    - ceilometer

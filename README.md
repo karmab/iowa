@@ -1,13 +1,16 @@
+# IOWA repository
+
+[![Build Status](https://travis-ci.org/karmab/iowa.svg?branch=master)](https://travis-ci.org/karmab/iowa)
+
+A set of roles to deploy openstack in a spread per component way
+
+## TODO LIST
+
 - document cinder enabled backends
-
 - add ldap support in keystone? keystone v3 ?
-
 - document how to run the role with a custom variables files ( and with a specific component through tags)
 
-##KEYSTONE
- make sure /var/log/keystone/keystone.log belongs to keystone !!!!!
- seems two db_sync are needed for keystone ????
-
+## SOME TIPS AROUND CONF
 
 ## CINDER
  - volume_driver can be either 
@@ -24,19 +27,21 @@
 
 ## RUN SPECIFIC COMPONENT
 
-##OVERRIDE VARIABLES
+## OVERRIDING VARIABLES
 
-´´´
+```
 ansible-playbook init.yml --extra-vars "@samples/madrid.yaml"
-´´´
+```
 
-´´´
+```
 ansible-playbook init.yml --tags keystone
-´´´
+```
+
 
 # DEPLOYING MULTIPLE NODES WITH ANSIBLE
 
 - make the role visible
+
 ```
 export ANSIBLE_ROLES_PATH=roles
 ```
@@ -55,3 +60,11 @@ ansible-playbook -i ~/klist.py controller.yml --extra-vars @samples/barcelona.ym
 ```
 ansible-playbook -i ~/klist.py compute.yml --extra-vars @samples/barcelona.yml --tags compute
 ```
+
+##Problems?
+
+Send me a mail at [karimboumedhel@gmail.com](mailto:karimboumedhel@gmail.com) !
+
+Mac Fly!!!
+
+karmab
