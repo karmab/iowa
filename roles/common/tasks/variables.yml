@@ -85,8 +85,7 @@
     swift_replicas: "{{ swift.replicas | default('3') }}"
     swift_storage_nodes: "{{ swift.storage_nodes | default(['127.0.0.1']) }}"
 
-- name: Debug Openstack Variables
-  debug:
-   var: hostvars[inventory_hostname]
-  tags:
-   - debug
+#- name: Debug Openstack Variables
+#  debug:
+#   var: hostvars[inventory_hostname]
+#  when: common.debug is True
