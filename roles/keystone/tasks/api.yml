@@ -65,11 +65,6 @@
    state: started
   when: version != 'kilo'
 
-- name: Create Keystone Client File
-  template:
-    src: keystonerc_admin.j2
-    dest: /root/keystonerc_admin
-
 - name: Create Keystone Admin Tenant
   run_once: yes
   keystone_user:

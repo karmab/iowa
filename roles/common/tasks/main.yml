@@ -19,3 +19,23 @@
    - pacemaker
    - rabbitmq
    - swift
+
+- name: Create Common Keystone Client File
+  template:
+    src: keystonerc_admin.j2
+    dest: /root/keystonerc_admin
+  tags:
+   - allinone
+   - api
+   - ceilometer
+   - cinder
+   - common
+   - compute
+   - debug
+   - glance
+   - heat
+   - horizon
+   - keystone
+   - neutron
+   - nova
+   - swift

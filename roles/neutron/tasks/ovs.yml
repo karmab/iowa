@@ -55,7 +55,7 @@
   notify:
     - Restart Neutron Openvswitch
 
-- name: Configure Neutron Ovs Plugin Link
+- name: Configure Neutron Ovs Plugin Link Kilo
   file:
     state: link
     dest: "/etc/neutron/plugin.ini"
@@ -63,14 +63,35 @@
     force: yes
   notify:
     - Restart Neutron Openvswitch
+  when: version == 'kilo'
 
-- name: Configure Neutron Ovs
+- name: Configure Neutron Ovs Plugin Link
+  file:
+    state: link
+    dest: "/etc/neutron/plugin.ini"
+    src: "/etc/neutron/plugins/ml2/openvswitch_agent.ini"
+    force: yes
+  notify:
+    - Restart Neutron Openvswitch
+  when: version != 'kilo'
+
+- name: Configure Neutron Ovs Kilo
   template:
-    src: "openvswitch/ovs_neutron_plugin.ini"
+    src: "openvswitch/plugin.ini"
     dest: "/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini"
     backup: yes
   notify:
     - Restart Neutron Openvswitch
+  when: version == 'kilo'
+
+- name: Configure Neutron Ovs
+  template:
+    src: "openvswitch/plugin.ini"
+    dest: "/etc/neutron/plugins/ml2/openvswitch_agent.ini"
+    backup: yes
+  notify:
+    - Restart Neutron Openvswitch
+  when: version != 'kilo'
 
 - name: Enable Neutron Ovs Services
   service:
