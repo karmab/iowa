@@ -703,7 +703,6 @@ ovs_use_veth = False
 # ===========  end of items for agent management extension =====
 
 [keystone_authtoken]
-auth_uri = http://127.0.0.1:35357/v2.0/
 auth_uri = {{ keystone_internal_url }}
 identity_uri = {{ keystone_identity_uri }}
 admin_tenant_name = {{ common.tenant }}
