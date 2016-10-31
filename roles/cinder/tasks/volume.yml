@@ -26,6 +26,6 @@
 
 - name: Enable Cinder Volume Service
   service:
-    name: "openstack-cinder-volume"
+    name: "{{ cinder_service }}-volume"
     enabled: yes
     state: started

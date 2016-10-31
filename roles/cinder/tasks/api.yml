@@ -14,15 +14,15 @@
   notify:
     - Restart Cinder
 
-- name: Check Cinder Database Version
-  shell: cinder-manage db version
-  register: cinder_db_version
-  changed_when: false
+#- name: Check Cinder Database Version
+#  shell: cinder-manage db version
+#  register: cinder_db_version
+#  changed_when: false
 
 - name: Populate Cinder Database
   run_once: yes
   shell: cinder-manage db sync
-  when: cinder_db_version.stdout == "0"
+#  when: cinder_db_version.stdout == "0"
 
 - name: Create Cinder User
   keystone_user:
@@ -71,7 +71,7 @@
 
 - name: Enable Cinder Service
   service:
-    name: "openstack-cinder-{{ item }}"
+    name: "{{ cinder_service }}-{{ item }}"
     enabled: yes
     state: started
   with_items:

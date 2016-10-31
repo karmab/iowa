@@ -8,11 +8,9 @@
 
 - name: Enable Neutron Ovs Service
   service:
-    name: "openvswitch"
+    name: "{{ openvswitch_service }}"
     enabled: yes
     state: started
-  with_items:
-   - neutron-openvswitch-agent
   notify:
    - Restart Neutron Openvswitch
 
@@ -46,6 +44,7 @@
   template:
     src: "{{ role_path }}/files/ifcfg-br-int"
     dest: /etc/sysconfig/network-scripts/ifcfg-br-int
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Configure Neutron Ovs
   template:
@@ -95,11 +94,9 @@
 
 - name: Enable Neutron Ovs Services
   service:
-    name: "neutron-openvswitch-agent"
+    name: "{{ neutron_ovs_service }}"
     enabled: yes
     state: started
-  with_items:
-   - neutron-openvswitch-agent
 
 - name: Enable Neutron Ovs Cleanup
   service:

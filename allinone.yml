@@ -1,0 +1,21 @@
+---
+- name: Install All
+  hosts: newton
+  remote_user: centos
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+#    - mongodb
+    - mysql
+#    - rabbitmq
+#    - keystone
+#    - glance
+    - cinder
+#    - neutron
+#    - nova
+#    - heat
+#    - horizon
+#    - ceilometer
+#    - swift

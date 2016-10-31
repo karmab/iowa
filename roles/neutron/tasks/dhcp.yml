@@ -16,6 +16,6 @@
 
 - name: Enable Neutron Dhcp Service
   service:
-    name: "neutron-dhcp-agent"
+    name: "{{ neutron_dhcp_service }}"
     enabled: yes
     state: started

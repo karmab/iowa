@@ -59,13 +59,19 @@
 
 - name: Enable Nova Services
   service:
-    name: "openstack-nova-{{ item }}"
+    name: "{{ nova_service }}-{{ item }}"
     enabled: yes
     state: started
   with_items:
    - api
-   - console
    - scheduler
    - conductor
    - novncproxy
    - consoleauth
+
+- name: Enable Nova Console Service
+  service:
+    name: "{{ nova_service }}-console"
+    enabled: yes
+    state: started
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'

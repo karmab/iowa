@@ -41,18 +41,21 @@
     name: net.bridge.bridge-nf-call-arptables
     value: 1
     state: present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Set Nova Sysctl Call Ip6tables
   sysctl:
     name: net.bridge.bridge-nf-call-ip6tables
     value: 1
     state: present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Set Nova Sysctl Call Iptables
   sysctl:
     name: net.bridge.bridge-nf-call-iptables
     value: 1
     state: present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Configure Nova Compute
   template:
@@ -70,11 +73,11 @@
   with_items:
    - messagebus
    - libvirtd
-   - openstack-nova-compute
+   - "{{ nova_compute_service }}"
 
 - name: Enable Nova Compute Ceilometer Services
   service:
-    name: "openstack-ceilometer-compute"
+    name: "{{ ceilometer_service }}-compute"
     enabled: yes
     state: started
   when: nova_ceilometer

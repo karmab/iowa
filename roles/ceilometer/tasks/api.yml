@@ -69,7 +69,7 @@
 
 - name: Enable Ceilometer Services
   service:
-    name: "openstack-ceilometer-{{ item }}"
+    name: "{{ ceilometer_service }}-{{ item }}"
     enabled: yes
     state: started
   with_items:

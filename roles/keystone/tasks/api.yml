@@ -46,21 +46,21 @@
 #
 - name: Enable Keystone Service For Kilo
   service:
-   name: openstack-keystone
+   name: "{{ keystone_service }}"
    enabled: yes
    state: started
   when: version == 'kilo'
 
-- name: Disable Keystone Service
-  service:
-   name: openstack-keystone
-   enabled: no
-   state: stopped
-  when: version != 'kilo'
+#- name: Disable Keystone Service
+#  service:
+#   name: "{{ keystone_service }}"
+#   enabled: no
+#   state: stopped
+#  when: version == 'liberty' or version == 'mitaka'
 
 - name: Enable Keystone Apache Service
   service:
-   name: httpd
+   name: "{{ apache_service }}"
    enabled: yes
    state: started
   when: version != 'kilo'

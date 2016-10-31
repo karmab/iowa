@@ -8,7 +8,7 @@
 
 - name: Enable MariadDB Service
   service:
-   name: mariadb
+   name: "{{ mysql_service }}"
    enabled: yes
    state: started
 

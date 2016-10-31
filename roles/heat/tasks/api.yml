@@ -69,7 +69,7 @@
 
 - name: Enable Heat Services
   service:
-    name: "openstack-heat-{{ item }}"
+    name: "{{ heat_service }}-{{ item }}"
     enabled: yes
     state: started
   with_items:

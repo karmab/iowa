@@ -76,6 +76,6 @@
 
 - name: Enable Neutron Service
   service:
-    name: "neutron-server"
+    name: "{{ neutron_service}}"
     enabled: yes
     state: started

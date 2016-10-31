@@ -27,6 +27,4 @@
     name: "{{ item }}"
     enabled: yes
     state: started
-  with_items:
-    - neutron-l3-agent
-    - neutron-metadata-agent
+  with_items: "{{ neutron_l3_services }}"

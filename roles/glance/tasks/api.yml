@@ -61,7 +61,7 @@
 
 - name: Enable Glance Service
   service:
-    name: "openstack-glance-{{ item }}"
+    name: "{{ glance_service }}-{{ item }}"
     enabled: yes
     state: started
   with_items:

@@ -8,7 +8,7 @@
 
 - name: Configure MongoBD bind_ip
   lineinfile:
-    dest: "/etc/mongod.conf"
+    dest: "{{ mongodb_conf_file }}"
     line: bind_ip = 0.0.0.0
     regexp: ^bind_ip\s*=
   notify:
@@ -16,7 +16,7 @@
 
 - name: Enable MongoDB service
   service:
-   name: mongod
+   name: "{{ mongodb_service }}"
    enabled: yes
    state: started
 

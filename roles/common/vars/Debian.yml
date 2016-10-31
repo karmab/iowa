@@ -1,15 +1,18 @@
 apache_service: apache2
-apache_dir: /etc/apache2/sites-available
-wsgi_file: keystone/wsgi-keystone.conf.debian
-haproxy_packages_
+apache_dir: /etc/apache2/sites-enabled
+wsgi_file: wsgi-keystone.conf.debian
+haproxy_packages:
  - 'haproxy'
 mysql_packages:
  - 'mariadb-server'
  - 'python-mysqldb'
+mysql_service: mysql
 mongodb_packages:
  - 'mongodb-server'
  - 'mongodb-clients'
  - 'python-pymongo'
+mongodb_conf_file: /etc/mongodb.conf
+mongodb_service: mongodb
 rabbitmq_packages:
  - 'rabbitmq-server'
 keystone_packages:
@@ -19,10 +22,12 @@ keystone_packages:
  - 'libapache2-mod-wsgi'
  - 'memcached'
  - 'python-memcache'
+keystone_service: keystone
 glance_packages:
  - 'glance'
  - 'python-glanceclient'
  - 'python-openstackclient'
+glance_service: glance
 cinder_packages:
  - 'cinder-api'
  - 'cinder-scheduler'
@@ -30,6 +35,7 @@ cinder_packages:
  - 'python-openstackclient'
  - 'cinder-volume'
  - 'python-mysqldb'
+cinder_service: cinder
 neutron_packages:
  - 'neutron-server'
  - 'neutron-plugin-ml2'
@@ -39,6 +45,13 @@ neutron_packages:
  - 'neutron-metadata-agent'
  - 'python-neutronclient'
  - 'python-openstackclient'
+neutron_service: neutron-server
+neutron_ovs_service: neutron-openvswitch-agent
+neutron_dhcp_service: neutron-dhcp-agent
+neutron_l3_services:
+ - neutron-l3-agent
+ - neutron-metadata-agent
+openvswitch_service: openvswitch-switch
 nova_packages:
  - 'nova-api'
  - 'nova-cert'
@@ -48,11 +61,13 @@ nova_packages:
  - 'nova-scheduler'
  - 'python-novaclient'
  - 'python-openstackclient'
+nova_service: nova
 nova_compute_packages:
  - 'nova-compute'
  - 'sysfsutils'
  - 'neutron-plugin-ml2'
  - 'neutron-plugin-openvswitch-agent'
+nova_compute_service: nova-compute
 nova_compute_ceilometer_packages:
  - 'ceilometer-agent-compute'
 heat_packages:
@@ -61,6 +76,7 @@ heat_packages:
  - 'heat-engine'
  - 'python-heatclient'
  - 'python-openstackclient'
+heat_service: heat
 ceilometer_packages:
  - 'ceilometer-api'
  - 'ceilometer-collector'
@@ -70,6 +86,7 @@ ceilometer_packages:
  - 'ceilometer-alarm-notifier'
  - 'python-ceilometerclient'
  - 'python-openstackclient'
+ceilometer_service: ceilometer
 swift_packages:
  - 'swift'
  - 'swift-proxy'
@@ -85,6 +102,7 @@ swift_storage_packages:
  - 'swift-account'
  - 'swift-container'
  - 'swift-object'
+swift_service: swift
 horizon_packages:
  - 'apache2'
  - 'libapache2-mod-wsgi'

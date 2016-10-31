@@ -1,15 +1,18 @@
 apache_service: httpd
 apache_dir: /etc/httpd/conf.d
-wsgi_file: keystone/wsgi-keystone.conf.redhat
+wsgi_file: wsgi-keystone.conf.redhat
 haproxy_packages:
  - 'haproxy'
 mysql_packages:
  - 'mariadb-galera-server'
  - 'MySQL-python'
+mysql_service: mariadb
 mongodb_packages:
  - 'mongodb-server'
  - 'python-pymongo'
  - 'mongodb'
+mongodb_conf_file: /etc/mongod.conf
+mongodb_service: mongod
 rabbitmq_packages:
  - 'rabbitmq-server'
 keystone_packages:
@@ -22,11 +25,13 @@ keystone_packages:
  - 'mod_wsgi'
  - 'memcached'
  - 'python-memcached'
+keystone_service: openstack-keystone
 glance_packages:
  - 'openstack-glance'
  - 'openstack-utils'
  - 'openstack-selinux'
  - 'python-openstackclient'
+glance_service: openstack-glance
 cinder_packages:
  - 'openstack-cinder'
  - 'openstack-utils'
@@ -34,6 +39,7 @@ cinder_packages:
  - 'device-mapper-multipath'
  - 'python-openstackclient'
  - 'python-oslo-log'
+cinder_service: openstack-cinder
 neutron_packages:
  - 'openvswitch'
  - 'openstack-neutron'
@@ -42,6 +48,13 @@ neutron_packages:
  - 'openstack-utils'
  - 'openstack-selinux'
  - 'python-openstackclient'
+neutron_service: neutron-server
+neutron_ovs_service: neutron-openvswitch-agent
+neutron_dhcp_service: neutron-dhcp-agent
+neutron_l3_services:
+ - neutron-l3-agent
+ - neutron-metadata-agent
+openvswitch_service: openvswitch
 nova_packages:
  - 'openstack-nova-api'
  - 'openstack-nova-conductor'
@@ -52,12 +65,14 @@ nova_packages:
  - 'python-cinderclient'
  - 'openstack-selinux'
  - 'python-openstackclient'
+nova_service: openstack-nova
 nova_compute_packages:
  - 'libvirt-daemon'
  - 'openstack-nova-compute'
  - 'openstack-utils'
  - 'python-cinderclient'
  - 'openstack-selinux'
+nova_compute_service: openstack-nova-compute
 nova_compute_ceilometer_packages:
  - 'openstack-ceilometer-compute'
  - 'python-ceilometer'
@@ -72,6 +87,7 @@ heat_packages:
  - 'python-heatclient'
  - 'openstack-utils'
  - 'python-openstackclient'
+heat_service: openstack-heat
 ceilometer_packages:
  - 'openstack-ceilometer-api'
  - 'openstack-ceilometer-central'
@@ -85,6 +101,7 @@ ceilometer_packages:
  - 'python-ceilometerclient'
  - 'openstack-selinux'
  - 'python-openstackclient'
+ceilometer_service: openstack-ceilometer
 swift_packages:
  - 'openstack-swift-proxy'
  - 'openstack-swift-plugin-swift3'
@@ -97,6 +114,7 @@ swift_storage_packages:
  - 'openstack-swift-container'
  - 'openstack-swift-account'
  - 'python-swiftclient'
+swift_service: openstack-swift
 horizon_packages:
  - 'httpd'
  - 'mod_wsgi'

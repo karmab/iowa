@@ -3,22 +3,22 @@
   shell: systemctl daemon-reload
 
 - name: Restart Glance
-  service: name=openstack-glance-api state=restarted
+  service: name="{{ glance_service }}-api" state=restarted
 
 - name: Restart Glance Registry
-  service: name=openstack-glance-registry state=restarted
+  service: name="{{ glance_service }}-registry" state=restarted
 
 - name: Restart Cinder
-  service: name=openstack-cinder-api state=restarted
+  service: name="{{ cinder_service }}-api" state=restarted
 
 - name: Restart Cinder Scheduler
-  service: name=openstack-cinder-scheduler state=restarted
+  service: name="{{ cinder_service }}-scheduler" state=restarted
 
 - name: Restart Cinder Volume
-  service: name=openstack-cinder-volume state=restarted
+  service: name="{{ cinder_service }}-volume" state=restarted
 
 - name: Restart Keystone
-  service: name=openstack-keystone state=restarted
+  service: name="{{ keystone_service }}" state=restarted
 
 - name: Restart Neutron
   service: name=neutron-server state=restarted
@@ -36,70 +36,70 @@
   service: name=openvswitch state=restarted
 
 - name: Restart Nova
-  service: name=openstack-nova-api state=restarted
+  service: name="{{ nova_service }}-api" state=restarted
 
 - name: Restart Nova Compute
-  service: name=openstack-nova-compute state=restarted
+  service: name="{{ nova_service }}-compute" state=restarted
 
 - name: Restart Nova Conductor
-  service: name=openstack-nova-conductor state=restarted
+  service: name="{{ nova_service }}-conductor" state=restarted
 
 - name: Restart Nova Scheduler
-  service: name=openstack-nova-scheduler state=restarted
+  service: name="{{ nova_service }}-scheduler" state=restarted
 
 - name: Restart Nova VncProxy
-  service: name=openstack-nova-novncproxy state=restarted
+  service: name="{{ nova_service }}-novncproxy" state=restarted
 
 - name: Restart Heat
-  service: name=openstack-heat-api state=restarted
+  service: name="{{ heat_service }}-api" state=restarted
 
 - name: Restart Heat CloudFormation
-  service: name=openstack-heat-api-cfn state=restarted
+  service: name="{{ heat_service }}-api-cfn" state=restarted
 
 - name: Restart Heat CloudWatch
-  service: name=openstack-heat-api-cloudwatch state=restarted
+  service: name="{{ heat_service }}-api-cloudwatch" state=restarted
 
 - name: Restart Heat Engine
-  service: name=openstack-heat-engine state=restarted
+  service: name="{{ heat_service }}-engine" state=restarted
 
 - name: Restart Apache
   service: name={{ apache_service }} state=restarted
 
 - name: Restart MongoDB
-  service: name=mongod state=restarted
+  service: name={{ mongodb_service }} state=restarted
 
 - name: Restart Ceilometer
-  service: name=openstack-ceilometer-api state=restarted
+  service: name="{{ ceilometer_service }}-api" state=restarted
 
 - name: Restart Ceilometer Central
-  service: name=openstack-ceilometer-central state=restarted
+  service: name="{{ ceilometer_service }}-central" state=restarted
 
 - name: Restart Ceilometer Collector
-  service: name=openstack-ceilometer-collector state=restarted
+  service: name="{{ ceilometer_service }}-collector" state=restarted
  
 - name: Restart Ceilometer Alarm Evaluator
-  service: name=openstack-ceilometer-alarm-evaluator state=restarted
+  service: name="{{ ceilometer_service }}-alarm-evaluator" state=restarted
 
 - name: Restart Ceilometer Alarm Notifier
-  service: name=openstack-ceilometer-alarm-notifier state=restarted
+  service: name="{{ ceilometer_service }}-alarm-notifier" state=restarted
 
 - name: Restart Ceilometer Notification
-  service: name=openstack-ceilometer-notification state=restarted
+  service: name="{{ ceilometer_service }}-notification" state=restarted
 
 - name: Restart Xinetd
   service: name=xinetd state=restarted
 
 - name: Restart Swift Object
-  service: name=openstack-swift-object state=restarted
+  service: name="{{ swift_service }}-object" state=restarted
 
 - name: Restart Swift Account
-  service: name=openstack-swift-account state=restarted
+  service: name="{{ swift_service }}-account" state=restarted
 
 - name: Restart Swift Container
-  service: name=openstack-swift-container state=restarted
+  service: name="{{ swift_service }}-container" state=restarted
 
 - name: Restart Swift Proxy
-  service: name=openstack-swift-proxy state=restarted
+  service: name="{{ swift_service }}-proxy" state=restarted
 
 - name: Restart Haproxy
   service: name=haproxy state=restarted
