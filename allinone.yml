@@ -12,9 +12,9 @@
 #    - rabbitmq
 #    - keystone
 #    - glance
-    - cinder
+#    - cinder
 #    - neutron
-#    - nova
+    - nova
 #    - heat
 #    - horizon
 #    - ceilometer

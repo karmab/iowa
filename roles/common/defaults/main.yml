@@ -79,6 +79,7 @@ nova:
  dbuser: nova
  dbpassword: nova
  dbname: nova
+ api_dbname: nova_api
  username: nova
  password: nova
  metadata_secret: changeme

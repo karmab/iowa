@@ -25,6 +25,11 @@
   run_once: yes
   shell: nova-manage db sync
 #  when: nova_db_version.stdout == "0"
+#
+- name: Populate Nova Api Database
+  run_once: yes
+  shell: nova-manage api_db sync
+  when: version not in ['kilo','liberty']
 
 - name: Create Nova User
   keystone_user:
