@@ -14,8 +14,8 @@
 #    - glance
 #    - cinder
 #    - neutron
-    - nova
-#    - heat
+#    - nova
+    - heat
 #    - horizon
 #    - ceilometer
 #    - swift
