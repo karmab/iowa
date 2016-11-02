@@ -62,7 +62,7 @@
     force: yes
   notify:
     - Restart Neutron Openvswitch
-  when: version == 'kilo'
+  when: version == 'kilo' and plugin_ini is not defined
 
 - name: Configure Neutron Ovs Plugin Link
   file:
@@ -72,7 +72,7 @@
     force: yes
   notify:
     - Restart Neutron Openvswitch
-  when: version != 'kilo'
+  when: version != 'kilo' and plugin_ini is not defined
 
 - name: Configure Neutron Ovs Kilo
   template:

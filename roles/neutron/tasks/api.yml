@@ -21,6 +21,7 @@
     src: "/etc/neutron/plugins/ml2/ml2_conf.ini"
     force: yes
   when: neutron_core_plugin == 'ml2'
+  register: plugin_ini
   notify:
    - Restart Neutron
 

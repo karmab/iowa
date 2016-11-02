@@ -10,6 +10,7 @@
   set_fact:
     keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
     keystone_hosts: "{{ [keystone.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
+    keystone_versions: "{{ keystone.versions | default(['v2.0']) }}"
     glance_host: "{{ [glance.host, common.controller_host] | first_found | default('127.0.0.1') }}"
     glance_hosts: "{{ [glance.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     cinder_host: "{{ [cinder.host, common.controller_host] | first_found | default('127.0.0.1') }}"
