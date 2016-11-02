@@ -1,0 +1,1 @@
+- admin_tenant_name, admin_user and admin_password
