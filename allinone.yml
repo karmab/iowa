@@ -15,7 +15,7 @@
 #    - cinder
 #    - neutron
 #    - nova
-    - heat
-#    - horizon
+#    - heat
+    - horizon
 #    - ceilometer
 #    - swift

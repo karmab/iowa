@@ -30,6 +30,7 @@
     mysql_host: "{{ [mysql.host, common.controller_host] | first_found | default('127.0.0.1') }}"
     mysql_hosts: "{{ [mysql.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     rabbit_hosts: "{{ common.rabbit_hosts | append(':5672') | join(',') }}"
+    redis_host: "{{ [common.redis_host, common.controller_host] | first_found | default('127.0.0.1') }}"
 
 - name: Set Openstack Variables
   set_fact:

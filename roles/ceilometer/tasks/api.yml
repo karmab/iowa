@@ -1,5 +1,15 @@
 ---
 
+- name: Set Ceilometer Handlers
+  set_fact:
+    ceilometer_handlers: ['Restart Ceilometer','Restart Ceilometer Central','Restart Ceilometer Collector','Restart Ceilometer Alarm Evaluator','Restart Ceilometer Alarm Notifier','Restart Ceilometer Notification']
+  when: version in ['kilo', 'liberty']
+
+- name: Set Ceilometer Handlers
+  set_fact:
+    ceilometer_handlers: ['Restart Ceilometer','Restart Ceilometer Central','Restart Ceilometer Collector','Restart Ceilometer Notification']
+  when: version not in ['kilo', 'liberty']
+
 - name: Install Ceilometer Packages
   package: 
     name: '{{ item }}'
@@ -11,13 +21,13 @@
     src: "ceilometer.conf.{{ version }}"
     dest: "/etc/ceilometer/ceilometer.conf"
     backup: yes
-  notify:
-   - Restart Ceilometer
-   - Restart Ceilometer Central
-   - Restart Ceilometer Collector
-   - Restart Ceilometer Alarm Evaluator
-   - Restart Ceilometer Alarm Notifier
-   - Restart Ceilometer Notification
+  notify: "{{ ceilometer_handlers }}"
+#   - Restart Ceilometer
+#   - Restart Ceilometer Central
+#   - Restart Ceilometer Collector
+#   - Restart Ceilometer Alarm Evaluator
+#   - Restart Ceilometer Alarm Notifier
+#   - Restart Ceilometer Notification
 
 - name: Create Ceilometer User
   keystone_user:
@@ -76,6 +86,15 @@
    - api
    - central
    - collector
+   - notification
+
+- name: Enable Ceilometer Alarm Services
+  service:
+    name: "{{ ceilometer_service }}-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
    - alarm-evaluator
    - alarm-notifier
    - notification
+  when: version in ['kilo','liberty']

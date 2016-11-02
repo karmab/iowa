@@ -1,15 +1,130 @@
 [DEFAULT]
 
 #
+# From ceilometer
+#
+
+# To reduce polling agent load, samples are sent to the notification agent in a
+# batch. To gain higher throughput at the cost of load set this to False.
+# (boolean value)
+#batch_polled_samples = true
+
+# To reduce large requests at same time to Nova or other components from
+# different compute agents, shuffle start time of polling task. (integer value)
+#shuffle_time_before_polling_task = 0
+
+# Configuration file for WSGI definition of API. (string value)
+#api_paste_config = api_paste.ini
+
+# Polling namespace(s) to be used while resource polling (list value)
+# Allowed values: compute, central, ipmi
+#polling_namespaces = compute,central
+
+# List of pollsters (or wildcard templates) to be used while polling (list
+# value)
+#pollster_list =
+
+# Exchange name for Nova notifications. (string value)
+#nova_control_exchange = nova
+
+# List of metadata prefixes reserved for metering use. (list value)
+#reserved_metadata_namespace = metering.
+
+# Limit on length of reserved metadata values. (integer value)
+#reserved_metadata_length = 256
+
+# List of metadata keys reserved for metering use. And these keys are
+# additional to the ones included in the namespace. (list value)
+#reserved_metadata_keys =
+
+# Inspector to use for inspecting the hypervisor layer. Known inspectors are
+# libvirt, hyperv, vmware, xenapi and powervm. (string value)
+#hypervisor_inspector = libvirt
+
+# Libvirt domain type. (string value)
+# Allowed values: kvm, lxc, qemu, uml, xen
+#libvirt_type = kvm
+
+# Override the default libvirt URI (which is dependent on libvirt_type).
+# (string value)
+#libvirt_uri =
+
+# Dispatchers to process metering data. (multi valued)
+# Deprecated group/name - [DEFAULT]/dispatcher
+#meter_dispatchers = database
+meter_dispatchers=database
+
+# Dispatchers to process event data. (multi valued)
+# Deprecated group/name - [DEFAULT]/dispatcher
+#event_dispatchers =
+event_dispatchers=database
+
+# Exchange name for Ironic notifications. (string value)
+#ironic_exchange = ironic
+
+# Exchanges name to listen for notifications. (multi valued)
+#http_control_exchanges = nova
+#http_control_exchanges = glance
+#http_control_exchanges = neutron
+#http_control_exchanges = cinder
+
+# Exchange name for Neutron notifications. (string value)
+#neutron_control_exchange = neutron
+
+# DEPRECATED: Allow novaclient's debug log output. (Use default_log_levels
+# instead) (boolean value)
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+#nova_http_log_debug = false
+
+# Swift reseller prefix. Must be on par with reseller_prefix in proxy-
+# server.conf. (string value)
+#reseller_prefix = AUTH_
+
+# Configuration file for pipeline definition. (string value)
+#pipeline_cfg_file = pipeline.yaml
+
+# Configuration file for event pipeline definition. (string value)
+#event_pipeline_cfg_file = event_pipeline.yaml
+
+# Refresh Pipeline configuration on-the-fly. (boolean value)
+#refresh_pipeline_cfg = false
+
+# Refresh Event Pipeline configuration on-the-fly. (boolean value)
+#refresh_event_pipeline_cfg = false
+
+# Polling interval for pipeline file configuration in seconds. (integer value)
+#pipeline_polling_interval = 20
+
+# Source for samples emitted on this instance. (string value)
+#sample_source = openstack
+
+# Name of this node, which must be valid in an AMQP key. Can be an opaque
+# identifier. For ZeroMQ only, must be a valid host name, FQDN, or IP address.
+# (string value)
+#host = <your_hostname>
+
+# Timeout seconds for HTTP requests. Set it to None to disable timeout.
+# (integer value)
+#http_timeout = 600
+http_timeout=600
+
+# Path to the rootwrap configuration file touse for running commands as root
+# (string value)
+#rootwrap_config = /etc/ceilometer/rootwrap.conf
+
+#
 # From oslo.log
 #
 
 # If set to true, the logging level will be set to DEBUG instead of the default
 # INFO level. (boolean value)
-debug = {{ common.debug }}
+# Note: This option can be changed without restarting.
+#debug = false
+debug={{ common.debug }}
 
-# If set to false, the logging level will be set to WARNING instead of the
-# default INFO level. (boolean value)
+# DEPRECATED: If set to false, the logging level will be set to WARNING instead
+# of the default INFO level. (boolean value)
 # This option is deprecated for removal.
 # Its value may be silently ignored in the future.
 #verbose = true
@@ -20,6 +135,7 @@ debug = {{ common.debug }}
 # configuration files are used then all logging configuration is set in the
 # configuration file and other logging configuration options are ignored (for
 # example, logging_context_format_string). (string value)
+# Note: This option can be changed without restarting.
 # Deprecated group/name - [DEFAULT]/log_config
 #log_config_append = <None>
 
@@ -38,6 +154,7 @@ debug = {{ common.debug }}
 # is ignored if log_config_append is set. (string value)
 # Deprecated group/name - [DEFAULT]/logdir
 #log_dir = <None>
+log_dir=/var/log/ceilometer
 
 # Uses logging handler designed to watch file system. When log file is moved or
 # removed this handler will open a new log file with specified path
@@ -103,62 +220,99 @@ debug = {{ common.debug }}
 # Deprecated group/name - [DEFAULT]/rpc_conn_pool_size
 #rpc_conn_pool_size = 30
 
+# The pool size limit for connections expiration policy (integer value)
+#conn_pool_min_size = 2
+
+# The time-to-live in sec of idle connections in the pool (integer value)
+#conn_pool_ttl = 1200
+
 # ZeroMQ bind address. Should be a wildcard (*), an ethernet interface, or IP.
 # The "host" option should point or resolve to this address. (string value)
+# Deprecated group/name - [DEFAULT]/rpc_zmq_bind_address
 #rpc_zmq_bind_address = *
 
 # MatchMaker driver. (string value)
 # Allowed values: redis, dummy
+# Deprecated group/name - [DEFAULT]/rpc_zmq_matchmaker
 #rpc_zmq_matchmaker = redis
 
-# Type of concurrency used. Either "native" or "eventlet" (string value)
-#rpc_zmq_concurrency = eventlet
-
 # Number of ZeroMQ contexts, defaults to 1. (integer value)
+# Deprecated group/name - [DEFAULT]/rpc_zmq_contexts
 #rpc_zmq_contexts = 1
 
 # Maximum number of ingress messages to locally buffer per topic. Default is
 # unlimited. (integer value)
+# Deprecated group/name - [DEFAULT]/rpc_zmq_topic_backlog
 #rpc_zmq_topic_backlog = <None>
 
 # Directory for holding IPC sockets. (string value)
+# Deprecated group/name - [DEFAULT]/rpc_zmq_ipc_dir
 #rpc_zmq_ipc_dir = /var/run/openstack
 
 # Name of this node. Must be a valid hostname, FQDN, or IP address. Must match
 # "host" option, if running Nova. (string value)
+# Deprecated group/name - [DEFAULT]/rpc_zmq_host
 #rpc_zmq_host = localhost
 
 # Seconds to wait before a cast expires (TTL). The default value of -1
 # specifies an infinite linger period. The value of 0 specifies no linger
 # period. Pending messages shall be discarded immediately when the socket is
 # closed. Only supported by impl_zmq. (integer value)
+# Deprecated group/name - [DEFAULT]/rpc_cast_timeout
 #rpc_cast_timeout = -1
 
 # The default number of seconds that poll should wait. Poll raises timeout
 # exception when timeout expired. (integer value)
+# Deprecated group/name - [DEFAULT]/rpc_poll_timeout
 #rpc_poll_timeout = 1
 
 # Expiration timeout in seconds of a name service record about existing target
 # ( < 0 means no timeout). (integer value)
-#zmq_target_expire = 120
+# Deprecated group/name - [DEFAULT]/zmq_target_expire
+#zmq_target_expire = 300
+
+# Update period in seconds of a name service record about existing target.
+# (integer value)
+# Deprecated group/name - [DEFAULT]/zmq_target_update
+#zmq_target_update = 180
 
 # Use PUB/SUB pattern for fanout methods. PUB/SUB always uses proxy. (boolean
 # value)
+# Deprecated group/name - [DEFAULT]/use_pub_sub
 #use_pub_sub = true
+
+# Use ROUTER remote proxy. (boolean value)
+# Deprecated group/name - [DEFAULT]/use_router_proxy
+#use_router_proxy = true
 
 # Minimal port number for random ports range. (port value)
 # Minimum value: 0
 # Maximum value: 65535
-#rpc_zmq_min_port = 49152
+# Deprecated group/name - [DEFAULT]/rpc_zmq_min_port
+#rpc_zmq_min_port = 49153
 
 # Maximal port number for random ports range. (integer value)
 # Minimum value: 1
 # Maximum value: 65536
+# Deprecated group/name - [DEFAULT]/rpc_zmq_max_port
 #rpc_zmq_max_port = 65536
 
 # Number of retries to find free port number before fail with ZMQBindError.
 # (integer value)
+# Deprecated group/name - [DEFAULT]/rpc_zmq_bind_port_retries
 #rpc_zmq_bind_port_retries = 100
+
+# Default serialization mechanism for serializing/deserializing
+# outgoing/incoming messages (string value)
+# Allowed values: json, msgpack
+# Deprecated group/name - [DEFAULT]/rpc_zmq_serialization
+#rpc_zmq_serialization = json
+
+# This option configures round-robin mode in zmq socket. True means not keeping
+# a queue when server side disconnects. False means to keep queue and messages
+# even if server is disconnected, when the server appears we send all
+# accumulated messages to it. (boolean value)
+#zmq_immediate = false
 
 # Size of executor thread pool. (integer value)
 # Deprecated group/name - [DEFAULT]/rpc_thread_pool_size
@@ -167,14 +321,17 @@ debug = {{ common.debug }}
 # Seconds to wait for a response from a call. (integer value)
 #rpc_response_timeout = 60
 
-# A URL representing the messaging driver to use and its full configuration. If
-# not set, we fall back to the rpc_backend option and driver specific
-# configuration. (string value)
+# A URL representing the messaging driver to use and its full configuration.
+# (string value)
 #transport_url = <None>
 
-# The messaging driver to use, defaults to rabbit. Other drivers include amqp
-# and zmq. (string value)
-rpc_backend = {{ ceilometer.rpc_backend }}
+# DEPRECATED: The messaging driver to use, defaults to rabbit. Other drivers
+# include amqp and zmq. (string value)
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: Replaced by [DEFAULT]/transport_url
+#rpc_backend = rabbit
+rpc_backend={{ ceilometer.rpc_backend }}
 
 # The default exchange under which topics are scoped. May be overridden by an
 # exchange name specified in the transport_url option. (string value)
@@ -207,6 +364,104 @@ rpc_backend = {{ ceilometer.rpc_backend }}
 #graceful_shutdown_timeout = 60
 
 
+[api]
+
+#
+# From ceilometer
+#
+
+# Toggle Pecan Debug Middleware. (boolean value)
+#pecan_debug = false
+
+# Default maximum number of items returned by API request. (integer value)
+# Minimum value: 1
+#default_api_return_limit = 100
+
+
+workers=2
+host=0.0.0.0
+port=8777
+[collector]
+
+#
+# From ceilometer
+#
+
+# Address to which the UDP socket is bound. Set to an empty string to disable.
+# (string value)
+#udp_address = 0.0.0.0
+udp_address=0.0.0.0
+
+# Port to which the UDP socket is bound. (port value)
+# Minimum value: 0
+# Maximum value: 65535
+#udp_port = 4952
+udp_port=4952
+
+# Number of notification messages to wait before dispatching them (integer
+# value)
+#batch_size = 1
+
+# Number of seconds to wait before dispatching sampleswhen batch_size is not
+# reached (None means indefinitely) (integer value)
+#batch_timeout = <None>
+
+# Number of workers for collector service. default value is 1. (integer value)
+# Minimum value: 1
+# Deprecated group/name - [DEFAULT]/collector_workers
+#workers = 1
+
+
+[compute]
+
+#
+# From ceilometer
+#
+
+# Enable work-load partitioning, allowing multiple compute agents to be run
+# simultaneously. (boolean value)
+#workload_partitioning = false
+
+# New instances will be discovered periodically based on this option (in
+# seconds). By default, the agent discovers instances according to pipeline
+# polling interval. If option is greater than 0, the instance list to poll will
+# be updated based on this option's interval. Measurements relating to the
+# instances will match intervals defined in pipeline. (integer value)
+# Minimum value: 0
+#resource_update_interval = 0
+
+
+[coordination]
+
+#
+# From ceilometer
+#
+
+# The backend URL to use for distributed coordination. If left empty, per-
+# deployment central agent and per-host compute agent won't do workload
+# partitioning and will only function correctly if a single instance of that
+# service is running. (string value)
+#backend_url = <None>
+{% if ceilometer.redis %}
+backend_url= {{ redis_url }}
+{% endif %}
+# Number of seconds between heartbeats for distributed coordination. (floating
+# point value)
+#heartbeat = 1.0
+
+# Number of seconds between checks to see if group membership has changed
+# (floating point value)
+#check_watchers = 10.0
+
+# Retry backoff factor when retrying to connect withcoordination backend
+# (integer value)
+#retry_backoff = 1
+
+# Maximum number of seconds between retry to join partitioning group (integer
+# value)
+#max_retry_interval = 30
+
+
 [cors]
 
 #
@@ -214,7 +469,8 @@ rpc_backend = {{ ceilometer.rpc_backend }}
 #
 
 # Indicate whether this resource may be shared with the domain received in the
-# requests "origin" header. (list value)
+# requests "origin" header. Format: "<protocol>://<host>[:<port>]", no trailing
+# slash. Example: https://horizon.example.com (list value)
 #allowed_origin = <None>
 
 # Indicate that the actual request can include user credentials (boolean value)
@@ -222,17 +478,17 @@ rpc_backend = {{ ceilometer.rpc_backend }}
 
 # Indicate which headers are safe to expose to the API. Defaults to HTTP Simple
 # Headers. (list value)
-#expose_headers = Content-Type,Cache-Control,Content-Language,Expires,Last-Modified,Pragma
+#expose_headers = X-Auth-Token,X-Subject-Token,X-Service-Token,X-Openstack-Request-Id
 
 # Maximum cache age of CORS preflight requests. (integer value)
 #max_age = 3600
 
 # Indicate which methods can be used during the actual request. (list value)
-#allow_methods = GET,POST,PUT,DELETE,OPTIONS
+#allow_methods = GET,PUT,POST,DELETE,PATCH
 
 # Indicate which header field names may be used during the actual request.
 # (list value)
-#allow_headers = Content-Type,Cache-Control,Content-Language,Expires,Last-Modified,Pragma
+#allow_headers = X-Auth-Token,X-Identity-Status,X-Roles,X-Service-Catalog,X-User-Id,X-Tenant-Id,X-Openstack-Request-Id
 
 
 [cors.subdomain]
@@ -242,7 +498,8 @@ rpc_backend = {{ ceilometer.rpc_backend }}
 #
 
 # Indicate whether this resource may be shared with the domain received in the
-# requests "origin" header. (list value)
+# requests "origin" header. Format: "<protocol>://<host>[:<port>]", no trailing
+# slash. Example: https://horizon.example.com (list value)
 #allowed_origin = <None>
 
 # Indicate that the actual request can include user credentials (boolean value)
@@ -250,27 +507,59 @@ rpc_backend = {{ ceilometer.rpc_backend }}
 
 # Indicate which headers are safe to expose to the API. Defaults to HTTP Simple
 # Headers. (list value)
-#expose_headers = Content-Type,Cache-Control,Content-Language,Expires,Last-Modified,Pragma
+#expose_headers = X-Auth-Token,X-Subject-Token,X-Service-Token,X-Openstack-Request-Id
 
 # Maximum cache age of CORS preflight requests. (integer value)
 #max_age = 3600
 
 # Indicate which methods can be used during the actual request. (list value)
-#allow_methods = GET,POST,PUT,DELETE,OPTIONS
+#allow_methods = GET,PUT,POST,DELETE,PATCH
 
 # Indicate which header field names may be used during the actual request.
 # (list value)
-#allow_headers = Content-Type,Cache-Control,Content-Language,Expires,Last-Modified,Pragma
+#allow_headers = X-Auth-Token,X-Identity-Status,X-Roles,X-Service-Catalog,X-User-Id,X-Tenant-Id,X-Openstack-Request-Id
 
 
 [database]
 
 #
+# From ceilometer
+#
+
+# Number of seconds that samples are kept in the database for (<= 0 means
+# forever). (integer value)
+# Deprecated group/name - [database]/time_to_live
+#metering_time_to_live = -1
+metering_time_to_live=-1
+
+# Number of seconds that events are kept in the database for (<= 0 means
+# forever). (integer value)
+#event_time_to_live = -1
+event_time_to_live=-1
+
+# The connection string used to connect to the metering database. (if unset,
+# connection is used) (string value)
+#metering_connection = <None>
+
+# The connection string used to connect to the event database. (if unset,
+# connection is used) (string value)
+#event_connection = <None>
+
+# Indicates if expirer expires only samples. If set true, expired samples will
+# be deleted, but residual resource and meter definition data will remain.
+# (boolean value)
+#sql_expire_samples_only = false
+
+#
 # From oslo.db
 #
 
-# The file name to use with SQLite. (string value)
+# DEPRECATED: The file name to use with SQLite. (string value)
 # Deprecated group/name - [DEFAULT]/sqlite_db
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: Should use config option connection or slave_connection to connect
+# the database.
 #sqlite_db = oslo.sqlite
 
 # If True, SQLite uses synchronous mode. (boolean value)
@@ -286,7 +575,8 @@ rpc_backend = {{ ceilometer.rpc_backend }}
 # Deprecated group/name - [DEFAULT]/sql_connection
 # Deprecated group/name - [DATABASE]/sql_connection
 # Deprecated group/name - [sql]/connection
-connection = mongodb://{{ mongodb_servers }}/{{ ceilometer_db_name }}
+#connection = <None>
+connection=mongodb://{{ mongodb_servers }}/{{ ceilometer_db_name }}
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)
@@ -309,10 +599,11 @@ connection = mongodb://{{ mongodb_servers }}/{{ ceilometer_db_name }}
 # Deprecated group/name - [DATABASE]/sql_min_pool_size
 #min_pool_size = 1
 
-# Maximum number of SQL connections to keep open in a pool. (integer value)
+# Maximum number of SQL connections to keep open in a pool. Setting a value of
+# 0 indicates no limit. (integer value)
 # Deprecated group/name - [DEFAULT]/sql_max_pool_size
 # Deprecated group/name - [DATABASE]/sql_max_pool_size
-#max_pool_size = <None>
+#max_pool_size = 5
 
 # Maximum number of database connection retries during startup. Set to -1 to
 # specify an infinite retry count. (integer value)
@@ -332,6 +623,8 @@ connection = mongodb://{{ mongodb_servers }}/{{ ceilometer_db_name }}
 
 # Verbosity of SQL debugging information: 0=None, 100=Everything. (integer
 # value)
+# Minimum value: 0
+# Maximum value: 100
 # Deprecated group/name - [DEFAULT]/sql_connection_debug
 #connection_debug = 0
 
@@ -363,14 +656,161 @@ connection = mongodb://{{ mongodb_servers }}/{{ ceilometer_db_name }}
 #db_max_retries = 20
 
 
+[dispatcher_file]
+
+#
+# From ceilometer
+#
+
+# Name and the location of the file to record meters. (string value)
+#file_path = <None>
+
+# The max size of the file. (integer value)
+#max_bytes = 0
+
+# The max number of the files to keep. (integer value)
+#backup_count = 0
+
+
+[dispatcher_gnocchi]
+
+#
+# From ceilometer
+#
+
+# Filter out samples generated by Gnocchi service activity (boolean value)
+#filter_service_activity = true
+
+# Gnocchi project used to filter out samples generated by Gnocchi service
+# activity (string value)
+#filter_project = gnocchi
+
+# The archive policy to use when the dispatcher create a new metric. (string
+# value)
+#archive_policy = <None>
+
+# The Yaml file that defines mapping between samples and gnocchi
+# resources/metrics (string value)
+#resources_definition_file = gnocchi_resources.yaml
+
+
+[event]
+
+#
+# From ceilometer
+#
+
+# Configuration file for event definitions. (string value)
+#definitions_cfg_file = event_definitions.yaml
+
+# Drop notifications if no event definition matches. (Otherwise, we convert
+# them with just the default traits) (boolean value)
+#drop_unmatched_notifications = false
+
+# Store the raw notification for select priority levels (info and/or error). By
+# default, raw details are not captured. (multi valued)
+#store_raw =
+
+
+[exchange_control]
+
+#
+# From ceilometer
+#
+
+# Exchange name for Heat notifications (string value)
+#heat_control_exchange = heat
+
+# Exchange name for Glance notifications. (string value)
+#glance_control_exchange = glance
+
+# Exchange name for Keystone notifications. (string value)
+#keystone_control_exchange = keystone
+
+# Exchange name for Cinder notifications. (string value)
+#cinder_control_exchange = cinder
+
+# Exchange name for Data Processing notifications. (string value)
+#sahara_control_exchange = sahara
+
+# Exchange name for Swift notifications. (string value)
+#swift_control_exchange = swift
+
+# Exchange name for Magnum notifications. (string value)
+#magnum_control_exchange = magnum
+
+# Exchange name for DBaaS notifications. (string value)
+#trove_control_exchange = trove
+
+# Exchange name for Messaging service notifications. (string value)
+#zaqar_control_exchange = zaqar
+
+# Exchange name for DNS service notifications. (string value)
+#dns_control_exchange = central
+
+
+[hardware]
+
+#
+# From ceilometer
+#
+
+# URL scheme to use for hardware nodes. (string value)
+#url_scheme = snmp://
+
+# SNMPd user name of all nodes running in the cloud. (string value)
+#readonly_user_name = ro_snmp_user
+
+# SNMPd v3 authentication password of all the nodes running in the cloud.
+# (string value)
+#readonly_user_password = password
+
+# SNMPd v3 authentication algorithm of all the nodes running in the cloud
+# (string value)
+# Allowed values: md5, sha
+#readonly_user_auth_proto = <None>
+
+# SNMPd v3 encryption algorithm of all the nodes running in the cloud (string
+# value)
+# Allowed values: des, aes128, 3des, aes192, aes256
+#readonly_user_priv_proto = <None>
+
+# SNMPd v3 encryption password of all the nodes running in the cloud. (string
+# value)
+#readonly_user_priv_password = <None>
+
+
+[ipmi]
+
+#
+# From ceilometer
+#
+
+# Number of retries upon Intel Node Manager initialization failure (integer
+# value)
+#node_manager_init_retry = 3
+
+# Tolerance of IPMI/NM polling failures before disable this pollster. Negative
+# indicates retrying forever. (integer value)
+#polling_retry = 3
+
+
 [keystone_authtoken]
 
 #
 # From keystonemiddleware.auth_token
 #
 
-# Complete public Identity API endpoint. (string value)
-auth_uri = {{ keystone_admin_url }}
+# Complete "public" Identity API endpoint. This endpoint should not be an
+# "admin" endpoint, as it should be accessible by all end users.
+# Unauthenticated clients are redirected to this endpoint to authenticate.
+# Although this endpoint should  ideally be unversioned, client support in the
+# wild varies.  If you're using a versioned v2 endpoint here, then this  should
+# *not* be the same endpoint the service user utilizes  for validating tokens,
+# because normal end users may not be  able to reach that endpoint. (string
+# value)
+#auth_uri = <None>
+auth_uri={{ keystone_internal_url }}
 
 # API version of the admin Identity API endpoint. (string value)
 #auth_version = <None>
@@ -387,7 +827,10 @@ auth_uri = {{ keystone_admin_url }}
 # API Server. (integer value)
 #http_request_max_retries = 3
 
-# Env key for the swift cache. (string value)
+# Request environment key where the Swift cache object is stored. When
+# auth_token middleware is deployed with a Swift cache, use this option to have
+# the middleware share a caching backend with swift. Otherwise, use the
+# ``memcached_servers`` option instead. (string value)
 #cache = <None>
 
 # Required if identity server requires client certificate (string value)
@@ -411,7 +854,7 @@ auth_uri = {{ keystone_admin_url }}
 
 # Optionally specify a list of memcached server(s) to use for caching. If left
 # undefined, tokens will instead be cached in-process. (list value)
-# Deprecated group/name - [DEFAULT]/memcache_servers
+# Deprecated group/name - [keystone_authtoken]/memcache_servers
 #memcached_servers = <None>
 
 # In order to prevent excessive effort spent validating tokens, the middleware
@@ -421,8 +864,8 @@ auth_uri = {{ keystone_admin_url }}
 
 # Determines the frequency at which the list of revoked tokens is retrieved
 # from the Identity service (in seconds). A high number of revocation events
-# combined with a low cache duration may significantly reduce performance.
-# (integer value)
+# combined with a low cache duration may significantly reduce performance. Only
+# valid for PKI tokens. (integer value)
 #revocation_cache_time = 10
 
 # (Optional) If defined, indicate whether token data should be authenticated or
@@ -489,85 +932,126 @@ auth_uri = {{ keystone_admin_url }}
 # performance. (list value)
 #hash_algorithms = md5
 
-# Prefix to prepend at the beginning of the path. Deprecated, use identity_uri.
-# (string value)
-#auth_admin_prefix =
-
-# Host providing the admin Identity API endpoint. Deprecated, use identity_uri.
-# (string value)
-#auth_host = 127.0.0.1
-
-# Port of the admin Identity API endpoint. Deprecated, use identity_uri.
-# (integer value)
-#auth_port = 35357
-
-# Protocol of the admin Identity API endpoint. Deprecated, use identity_uri.
-# (string value)
-# Allowed values: http, https
-#auth_protocol = https
-
-# Complete admin Identity API endpoint. This should specify the unversioned
-# root endpoint e.g. https://localhost:35357/ (string value)
-identity_uri = {{ keystone_identity_uri }}
-
-# This option is deprecated and may be removed in a future release. Single
-# shared secret with the Keystone configuration used for bootstrapping a
-# Keystone installation, or otherwise bypassing the normal authentication
-# process. This option should not be used, use `admin_user` and
-# `admin_password` instead. (string value)
-#admin_token = <None>
-
-# Service username. (string value)
-admin_user = {{ ceilometer.username }}
-
-# Service user password. (string value)
-admin_password = {{ ceilometer.password }}
-
-# Service tenant name. (string value)
-admin_tenant_name = {{ common.tenant }}
-
-# Authentication type to load (unknown value)
-# Deprecated group/name - [DEFAULT]/auth_plugin
+# Authentication type to load (string value)
+# Deprecated group/name - [keystone_authtoken]/auth_plugin
 #auth_type = <None>
+auth_type=password
 
-# Config Section from which to load plugin specific options (unknown value)
+# Config Section from which to load plugin specific options (string value)
 #auth_section = <None>
 
 
+project_name={{ common.tenant }}
+username={{ ceilometer.username }}
+password={{ ceilometer.password }}
+auth_url={{ keystone_admin_url }}
 [matchmaker_redis]
 
 #
 # From oslo.messaging
 #
 
-# Host to locate redis. (string value)
+# DEPRECATED: Host to locate redis. (string value)
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: Replaced by [DEFAULT]/transport_url
 #host = 127.0.0.1
 
-# Use this port to connect to redis host. (port value)
+# DEPRECATED: Use this port to connect to redis host. (port value)
 # Minimum value: 0
 # Maximum value: 65535
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: Replaced by [DEFAULT]/transport_url
 #port = 6379
 
-# Password for Redis server (optional). (string value)
+# DEPRECATED: Password for Redis server (optional). (string value)
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: Replaced by [DEFAULT]/transport_url
 #password =
 
-# List of Redis Sentinel hosts (fault tolerance mode) e.g.
+# DEPRECATED: List of Redis Sentinel hosts (fault tolerance mode) e.g.
 # [host:port, host1:port ... ] (list value)
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: Replaced by [DEFAULT]/transport_url
 #sentinel_hosts =
 
 # Redis replica set name. (string value)
 #sentinel_group_name = oslo-messaging-zeromq
 
 # Time in ms to wait between connection attempts. (integer value)
-#wait_timeout = 500
+#wait_timeout = 2000
 
 # Time in ms to wait before the transaction is killed. (integer value)
 #check_timeout = 20000
 
 # Timeout in ms on blocking socket operations (integer value)
-#socket_timeout = 1000
+#socket_timeout = 10000
 
 
+[meter]
+
+#
+# From ceilometer
+#
+
+# Configuration file for defining meter notifications. (string value)
+#meter_definitions_cfg_file = meters.yaml
+
+
+[notification]
+
+#
+# From ceilometer
+#
+
+# Number of queues to parallelize workload across. This value should be larger
+# than the number of active notification agents for optimal results. WARNING:
+# Once set, lowering this value may result in lost data. (integer value)
+# Minimum value: 1
+#pipeline_processing_queues = 10
+
+# Acknowledge message when event persistence fails. (boolean value)
+# Deprecated group/name - [collector]/ack_on_event_error
+#ack_on_event_error = true
+ack_on_event_error=True
+
+# WARNING: Ceilometer historically offered the ability to store events as
+# meters. This usage is NOT advised as it can flood the metering database and
+# cause performance degradation. (boolean value)
+#disable_non_metric_meters = true
+
+# Enable workload partitioning, allowing multiple notification agents to be run
+# simultaneously. (boolean value)
+#workload_partitioning = false
+
+# Messaging URLs to listen for notifications. Example:
+# rabbit://user:pass@host1:port1[,user:pass@hostN:portN]/virtual_host
+# (DEFAULT/transport_url is used if empty). This is useful when you have
+# dedicate messaging nodes for each service, for example, all nova
+# notifications go to rabbit-nova:5672, while all cinder notifications go to
+# rabbit-cinder:5672. (multi valued)
+#messaging_urls =
+
+# Number of notification messages to wait before publishing them. Batching is
+# advised when transformations areapplied in pipeline. (integer value)
+# Minimum value: 1
+#batch_size = 100
+
+# Number of seconds to wait before publishing sampleswhen batch_size is not
+# reached (None means indefinitely) (integer value)
+#batch_timeout = 5
+
+# Number of workers for notification service, default value is 1. (integer
+# value)
+# Minimum value: 1
+# Deprecated group/name - [DEFAULT]/notification_workers
+#workers = 1
+
+
+store_events=False
 [oslo_concurrency]
 
 #
@@ -580,12 +1064,10 @@ admin_tenant_name = {{ common.tenant }}
 
 # Directory to use for lock files.  For security, the specified directory
 # should only be writable by the user running the processes that need locking.
-# Defaults to environment variable OSLO_LOCK_PATH. If OSLO_LOCK_PATH is not set
-# in the environment, use the Python tempfile.gettempdir function to find a
-# suitable location. If external locks are used, a lock path must be set.
-# (string value)
+# Defaults to environment variable OSLO_LOCK_PATH. If external locks are used,
+# a lock path must be set. (string value)
 # Deprecated group/name - [DEFAULT]/lock_path
-#lock_path = /tmp
+#lock_path = <None>
 
 
 [oslo_messaging_amqp]
@@ -594,19 +1076,8 @@ admin_tenant_name = {{ common.tenant }}
 # From oslo.messaging
 #
 
-# address prefix used when sending to a specific server (string value)
-# Deprecated group/name - [amqp1]/server_request_prefix
-#server_request_prefix = exclusive
-
-# address prefix used when broadcasting to all servers (string value)
-# Deprecated group/name - [amqp1]/broadcast_prefix
-#broadcast_prefix = broadcast
-
-# address prefix when sending to any server in group (string value)
-# Deprecated group/name - [amqp1]/group_request_prefix
-#group_request_prefix = unicast
-
-# Name for the AMQP container (string value)
+# Name for the AMQP container. must be globally unique. Defaults to a generated
+# UUID (string value)
 # Deprecated group/name - [amqp1]/container_name
 #container_name = <None>
 
@@ -658,6 +1129,108 @@ admin_tenant_name = {{ common.tenant }}
 # Deprecated group/name - [amqp1]/password
 #password =
 
+# Seconds to pause before attempting to re-connect. (integer value)
+# Minimum value: 1
+#connection_retry_interval = 1
+
+# Increase the connection_retry_interval by this many seconds after each
+# unsuccessful failover attempt. (integer value)
+# Minimum value: 0
+#connection_retry_backoff = 2
+
+# Maximum limit for connection_retry_interval + connection_retry_backoff
+# (integer value)
+# Minimum value: 1
+#connection_retry_interval_max = 30
+
+# Time to pause between re-connecting an AMQP 1.0 link that failed due to a
+# recoverable error. (integer value)
+# Minimum value: 1
+#link_retry_delay = 10
+
+# The deadline for an rpc reply message delivery. Only used when caller does
+# not provide a timeout expiry. (integer value)
+# Minimum value: 5
+#default_reply_timeout = 30
+
+# The deadline for an rpc cast or call message delivery. Only used when caller
+# does not provide a timeout expiry. (integer value)
+# Minimum value: 5
+#default_send_timeout = 30
+
+# The deadline for a sent notification message delivery. Only used when caller
+# does not provide a timeout expiry. (integer value)
+# Minimum value: 5
+#default_notify_timeout = 30
+
+# Indicates the addressing mode used by the driver.
+# Permitted values:
+# 'legacy'   - use legacy non-routable addressing
+# 'routable' - use routable addresses
+# 'dynamic'  - use legacy addresses if the message bus does not support routing
+# otherwise use routable addressing (string value)
+#addressing_mode = dynamic
+
+# address prefix used when sending to a specific server (string value)
+# Deprecated group/name - [amqp1]/server_request_prefix
+#server_request_prefix = exclusive
+
+# address prefix used when broadcasting to all servers (string value)
+# Deprecated group/name - [amqp1]/broadcast_prefix
+#broadcast_prefix = broadcast
+
+# address prefix when sending to any server in group (string value)
+# Deprecated group/name - [amqp1]/group_request_prefix
+#group_request_prefix = unicast
+
+# Address prefix for all generated RPC addresses (string value)
+#rpc_address_prefix = openstack.org/om/rpc
+
+# Address prefix for all generated Notification addresses (string value)
+#notify_address_prefix = openstack.org/om/notify
+
+# Appended to the address prefix when sending a fanout message. Used by the
+# message bus to identify fanout messages. (string value)
+#multicast_address = multicast
+
+# Appended to the address prefix when sending to a particular RPC/Notification
+# server. Used by the message bus to identify messages sent to a single
+# destination. (string value)
+#unicast_address = unicast
+
+# Appended to the address prefix when sending to a group of consumers. Used by
+# the message bus to identify messages that should be delivered in a round-
+# robin fashion across consumers. (string value)
+#anycast_address = anycast
+
+# Exchange name used in notification addresses.
+# Exchange name resolution precedence:
+# Target.exchange if set
+# else default_notification_exchange if set
+# else control_exchange if set
+# else 'notify' (string value)
+#default_notification_exchange = <None>
+
+# Exchange name used in RPC addresses.
+# Exchange name resolution precedence:
+# Target.exchange if set
+# else default_rpc_exchange if set
+# else control_exchange if set
+# else 'rpc' (string value)
+#default_rpc_exchange = <None>
+
+# Window size for incoming RPC Reply messages. (integer value)
+# Minimum value: 1
+#reply_link_credit = 200
+
+# Window size for incoming RPC Request messages (integer value)
+# Minimum value: 1
+#rpc_server_credit = 100
+
+# Window size for incoming Notification messages (integer value)
+# Minimum value: 1
+#notify_server_credit = 100
+
 
 [oslo_messaging_notifications]
 
@@ -679,6 +1252,7 @@ admin_tenant_name = {{ common.tenant }}
 # Deprecated group/name - [rpc_notifier2]/topics
 # Deprecated group/name - [DEFAULT]/notification_topics
 #topics = notifications
+topics=notifications
 
 
 [oslo_messaging_rabbit]
@@ -705,14 +1279,17 @@ admin_tenant_name = {{ common.tenant }}
 # SSL key file (valid only if SSL enabled). (string value)
 # Deprecated group/name - [DEFAULT]/kombu_ssl_keyfile
 #kombu_ssl_keyfile =
+kombu_ssl_keyfile=
 
 # SSL cert file (valid only if SSL enabled). (string value)
 # Deprecated group/name - [DEFAULT]/kombu_ssl_certfile
 #kombu_ssl_certfile =
+kombu_ssl_certfile=
 
 # SSL certification authority file (valid only if SSL enabled). (string value)
 # Deprecated group/name - [DEFAULT]/kombu_ssl_ca_certs
 #kombu_ssl_ca_certs =
+kombu_ssl_ca_certs=
 
 # How long to wait before reconnecting in response to an AMQP consumer cancel
 # notification. (floating point value)
@@ -720,12 +1297,12 @@ admin_tenant_name = {{ common.tenant }}
 #kombu_reconnect_delay = 1.0
 
 # EXPERIMENTAL: Possible values are: gzip, bz2. If not set compression will not
-# be used. This option may notbe available in future versions. (string value)
+# be used. This option may not be available in future versions. (string value)
 #kombu_compression = <None>
 
-# How long to wait a missing client beforce abandoning to send it its replies.
+# How long to wait a missing client before abandoning to send it its replies.
 # This value should not be longer than rpc_response_timeout. (integer value)
-# Deprecated group/name - [DEFAULT]/kombu_reconnect_timeout
+# Deprecated group/name - [oslo_messaging_rabbit]/kombu_reconnect_timeout
 #kombu_missing_consumer_retry_timeout = 60
 
 # Determines how the next RabbitMQ node is chosen in case the one we are
@@ -734,38 +1311,61 @@ admin_tenant_name = {{ common.tenant }}
 # Allowed values: round-robin, shuffle
 #kombu_failover_strategy = round-robin
 
-# The RabbitMQ broker address where a single node is used. (string value)
+# DEPRECATED: The RabbitMQ broker address where a single node is used. (string
+# value)
 # Deprecated group/name - [DEFAULT]/rabbit_host
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: Replaced by [DEFAULT]/transport_url
 #rabbit_host = localhost
 
-# The RabbitMQ broker port where a single node is used. (port value)
+# DEPRECATED: The RabbitMQ broker port where a single node is used. (port
+# value)
 # Minimum value: 0
 # Maximum value: 65535
 # Deprecated group/name - [DEFAULT]/rabbit_port
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: Replaced by [DEFAULT]/transport_url
 #rabbit_port = 5672
 
-# RabbitMQ HA cluster host:port pairs. (list value)
+# DEPRECATED: RabbitMQ HA cluster host:port pairs. (list value)
 # Deprecated group/name - [DEFAULT]/rabbit_hosts
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: Replaced by [DEFAULT]/transport_url
 rabbit_hosts = {{ rabbit_hosts }}
 
 # Connect over SSL for RabbitMQ. (boolean value)
 # Deprecated group/name - [DEFAULT]/rabbit_use_ssl
 #rabbit_use_ssl = false
+rabbit_use_ssl=False
 
-# The RabbitMQ userid. (string value)
+# DEPRECATED: The RabbitMQ userid. (string value)
 # Deprecated group/name - [DEFAULT]/rabbit_userid
-rabbit_userid = {{ common.rabbit_userid }}
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: Replaced by [DEFAULT]/transport_url
+#rabbit_userid = guest
+rabbit_userid={{ common.rabbit_userid }}
 
-# The RabbitMQ password. (string value)
+# DEPRECATED: The RabbitMQ password. (string value)
 # Deprecated group/name - [DEFAULT]/rabbit_password
-rabbit_password = {{ common.rabbit_password }}
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: Replaced by [DEFAULT]/transport_url
+#rabbit_password = guest
+rabbit_password={{ common.rabbit_password }}
 
 # The RabbitMQ login method. (string value)
 # Deprecated group/name - [DEFAULT]/rabbit_login_method
 #rabbit_login_method = AMQPLAIN
 
-# The RabbitMQ virtual host. (string value)
+# DEPRECATED: The RabbitMQ virtual host. (string value)
 # Deprecated group/name - [DEFAULT]/rabbit_virtual_host
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: Replaced by [DEFAULT]/transport_url
 rabbit_virtual_host = {{ common.rabbit_virtual_host }}
 
 # How frequently to retry connecting with RabbitMQ. (integer value)
@@ -780,9 +1380,11 @@ rabbit_virtual_host = {{ common.rabbit_virtual_host }}
 # (integer value)
 #rabbit_interval_max = 30
 
-# Maximum number of RabbitMQ connection retries. Default is 0 (infinite retry
-# count). (integer value)
+# DEPRECATED: Maximum number of RabbitMQ connection retries. Default is 0
+# (infinite retry count). (integer value)
 # Deprecated group/name - [DEFAULT]/rabbit_max_retries
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
 #rabbit_max_retries = 0
 
 # Try to use HA queues in RabbitMQ (x-ha-policy: all). If you change this
@@ -824,7 +1426,7 @@ rabbit_virtual_host = {{ common.rabbit_virtual_host }}
 #frame_max = <None>
 
 # How often to send heartbeats for consumer's connections (integer value)
-#heartbeat_interval = 1
+#heartbeat_interval = 3
 
 # Enable SSL (boolean value)
 #ssl = <None>
@@ -843,8 +1445,12 @@ rabbit_virtual_host = {{ common.rabbit_virtual_host }}
 # point value)
 #host_connection_reconnect_delay = 0.25
 
+# Connection factory implementation (string value)
+# Allowed values: new, single, read_write
+#connection_factory = single
+
 # Maximum number of connections to keep queued. (integer value)
-#pool_max_size = 10
+#pool_max_size = 30
 
 # Maximum number of connections to create above `pool_max_size`. (integer
 # value)
@@ -866,7 +1472,7 @@ rabbit_virtual_host = {{ common.rabbit_virtual_host }}
 # Persist notification messages. (boolean value)
 #notification_persistence = false
 
-# Exchange name for for sending notifications (string value)
+# Exchange name for sending notifications (string value)
 #default_notification_exchange = ${control_exchange}_notification
 
 # Max number of not acknowledged message which RabbitMQ can send to
@@ -916,6 +1522,101 @@ rabbit_virtual_host = {{ common.rabbit_virtual_host }}
 #rpc_retry_delay = 0.25
 
 
+[oslo_messaging_zmq]
+
+#
+# From oslo.messaging
+#
+
+# ZeroMQ bind address. Should be a wildcard (*), an ethernet interface, or IP.
+# The "host" option should point or resolve to this address. (string value)
+# Deprecated group/name - [DEFAULT]/rpc_zmq_bind_address
+#rpc_zmq_bind_address = *
+
+# MatchMaker driver. (string value)
+# Allowed values: redis, dummy
+# Deprecated group/name - [DEFAULT]/rpc_zmq_matchmaker
+#rpc_zmq_matchmaker = redis
+
+# Number of ZeroMQ contexts, defaults to 1. (integer value)
+# Deprecated group/name - [DEFAULT]/rpc_zmq_contexts
+#rpc_zmq_contexts = 1
+
+# Maximum number of ingress messages to locally buffer per topic. Default is
+# unlimited. (integer value)
+# Deprecated group/name - [DEFAULT]/rpc_zmq_topic_backlog
+#rpc_zmq_topic_backlog = <None>
+
+# Directory for holding IPC sockets. (string value)
+# Deprecated group/name - [DEFAULT]/rpc_zmq_ipc_dir
+#rpc_zmq_ipc_dir = /var/run/openstack
+
+# Name of this node. Must be a valid hostname, FQDN, or IP address. Must match
+# "host" option, if running Nova. (string value)
+# Deprecated group/name - [DEFAULT]/rpc_zmq_host
+#rpc_zmq_host = localhost
+
+# Seconds to wait before a cast expires (TTL). The default value of -1
+# specifies an infinite linger period. The value of 0 specifies no linger
+# period. Pending messages shall be discarded immediately when the socket is
+# closed. Only supported by impl_zmq. (integer value)
+# Deprecated group/name - [DEFAULT]/rpc_cast_timeout
+#rpc_cast_timeout = -1
+
+# The default number of seconds that poll should wait. Poll raises timeout
+# exception when timeout expired. (integer value)
+# Deprecated group/name - [DEFAULT]/rpc_poll_timeout
+#rpc_poll_timeout = 1
+
+# Expiration timeout in seconds of a name service record about existing target
+# ( < 0 means no timeout). (integer value)
+# Deprecated group/name - [DEFAULT]/zmq_target_expire
+#zmq_target_expire = 300
+
+# Update period in seconds of a name service record about existing target.
+# (integer value)
+# Deprecated group/name - [DEFAULT]/zmq_target_update
+#zmq_target_update = 180
+
+# Use PUB/SUB pattern for fanout methods. PUB/SUB always uses proxy. (boolean
+# value)
+# Deprecated group/name - [DEFAULT]/use_pub_sub
+#use_pub_sub = true
+
+# Use ROUTER remote proxy. (boolean value)
+# Deprecated group/name - [DEFAULT]/use_router_proxy
+#use_router_proxy = true
+
+# Minimal port number for random ports range. (port value)
+# Minimum value: 0
+# Maximum value: 65535
+# Deprecated group/name - [DEFAULT]/rpc_zmq_min_port
+#rpc_zmq_min_port = 49153
+
+# Maximal port number for random ports range. (integer value)
+# Minimum value: 1
+# Maximum value: 65536
+# Deprecated group/name - [DEFAULT]/rpc_zmq_max_port
+#rpc_zmq_max_port = 65536
+
+# Number of retries to find free port number before fail with ZMQBindError.
+# (integer value)
+# Deprecated group/name - [DEFAULT]/rpc_zmq_bind_port_retries
+#rpc_zmq_bind_port_retries = 100
+
+# Default serialization mechanism for serializing/deserializing
+# outgoing/incoming messages (string value)
+# Allowed values: json, msgpack
+# Deprecated group/name - [DEFAULT]/rpc_zmq_serialization
+#rpc_zmq_serialization = json
+
+# This option configures round-robin mode in zmq socket. True means not keeping
+# a queue when server side disconnects. False means to keep queue and messages
+# even if server is disconnected, when the server appears we send all
+# accumulated messages to it. (boolean value)
+#zmq_immediate = false
+
+
 [oslo_policy]
 
 #
@@ -925,6 +1626,7 @@ rabbit_virtual_host = {{ common.rabbit_virtual_host }}
 # The JSON file that defines policies. (string value)
 # Deprecated group/name - [DEFAULT]/policy_file
 #policy_file = policy.json
+policy_file=/etc/ceilometer/policy.json
 
 # Default rule. Enforced when a requested rule is not found. (string value)
 # Deprecated group/name - [DEFAULT]/policy_default_rule
@@ -937,3 +1639,250 @@ rabbit_virtual_host = {{ common.rabbit_virtual_host }}
 # valued)
 # Deprecated group/name - [DEFAULT]/policy_dirs
 #policy_dirs = policy.d
+
+
+[polling]
+
+#
+# From ceilometer
+#
+
+# Work-load partitioning group prefix. Use only if you want to run multiple
+# polling agents with different config files. For each sub-group of the agent
+# pool with the same partitioning_group_prefix a disjoint subset of pollsters
+# should be loaded. (string value)
+# Deprecated group/name - [central]/partitioning_group_prefix
+#partitioning_group_prefix = <None>
+
+
+[publisher]
+
+#
+# From ceilometer
+#
+
+# Secret value for signing messages. Set value empty if signing is not required
+# to avoid computational overhead. (string value)
+# Deprecated group/name - [DEFAULT]/metering_secret
+# Deprecated group/name - [publisher_rpc]/metering_secret
+# Deprecated group/name - [publisher]/metering_secret
+#telemetry_secret = change this for valid signing
+telemetry_secret={{ ceilometer.secret }}
+
+
+[publisher_notifier]
+
+#
+# From ceilometer
+#
+
+# The topic that ceilometer uses for metering notifications. (string value)
+#metering_topic = metering
+
+# The topic that ceilometer uses for event notifications. (string value)
+#event_topic = event
+
+# The driver that ceilometer uses for metering notifications. (string value)
+# Deprecated group/name - [publisher_notifier]/metering_driver
+#telemetry_driver = messagingv2
+
+
+[rgw_admin_credentials]
+
+#
+# From ceilometer
+#
+
+# Access key for Radosgw Admin. (string value)
+#access_key = <None>
+
+# Secret key for Radosgw Admin. (string value)
+#secret_key = <None>
+
+
+[service_credentials]
+
+#
+# From ceilometer
+#
+
+# Region name to use for OpenStack service endpoints. (string value)
+# Deprecated group/name - [DEFAULT]/os_region_name
+#region_name = <None>
+region_name={{ common.region }}
+
+# Type of endpoint in Identity service catalog to use for communication with
+# OpenStack services. (string value)
+# Allowed values: public, internal, admin, auth, publicURL, internalURL, adminURL
+# Deprecated group/name - [service_credentials]/os_endpoint_type
+#interface = public
+
+# Authentication type to load (string value)
+# Deprecated group/name - [service_credentials]/auth_plugin
+#auth_type = <None>
+auth_type=password
+
+# Config Section from which to load plugin specific options (string value)
+#auth_section = <None>
+
+# Authentication URL (string value)
+#auth_url = <None>
+auth_url={{ keystone_internal_url }}
+
+# Domain ID to scope to (string value)
+#domain_id = <None>
+
+# Domain name to scope to (string value)
+#domain_name = <None>
+
+# Project ID to scope to (string value)
+# Deprecated group/name - [service_credentials]/tenant-id
+#project_id = <None>
+
+# Project name to scope to (string value)
+# Deprecated group/name - [service_credentials]/tenant-name
+#project_name = <None>
+project_name=services
+
+# Domain ID containing project (string value)
+#project_domain_id = <None>
+
+# Domain name containing project (string value)
+#project_domain_name = <None>
+project_domain_name=Default
+
+# Trust ID (string value)
+#trust_id = <None>
+
+# Optional domain ID to use with v3 and v2 parameters. It will be used for both
+# the user and project domain in v3 and ignored in v2 authentication. (string
+# value)
+#default_domain_id = <None>
+
+# Optional domain name to use with v3 API and v2 parameters. It will be used
+# for both the user and project domain in v3 and ignored in v2 authentication.
+# (string value)
+#default_domain_name = <None>
+
+# User id (string value)
+#user_id = <None>
+
+# Username (string value)
+# Deprecated group/name - [service_credentials]/user-name
+#username = <None>
+username= {{ ceilometer.username }}
+
+# User's domain id (string value)
+#user_domain_id = <None>
+
+# User's domain name (string value)
+#user_domain_name = <None>
+{% if 'v3' in keystone_versions %}
+user_domain_name=Default
+{% endif %}
+
+# User's password (string value)
+#password = <None>
+password={{ ceilometer.password }}
+
+
+[service_types]
+
+#
+# From ceilometer
+#
+
+# Kwapi service type. (string value)
+#kwapi = energy
+
+# Glance service type. (string value)
+#glance = image
+
+# Neutron service type. (string value)
+#neutron = network
+
+# Neutron load balancer version. (string value)
+# Allowed values: v1, v2
+#neutron_lbaas_version = v2
+
+# Nova service type. (string value)
+#nova = compute
+
+# Radosgw service type. (string value)
+#radosgw = object-store
+
+# Swift service type. (string value)
+#swift = object-store
+
+
+[storage]
+
+#
+# From ceilometer
+#
+
+# Maximum number of connection retries during startup. Set to -1 to specify an
+# infinite retry count. (integer value)
+# Deprecated group/name - [database]/max_retries
+#max_retries = 10
+
+# Interval (in seconds) between retries of connection. (integer value)
+# Deprecated group/name - [database]/retry_interval
+#retry_interval = 10
+
+
+[vmware]
+
+#
+# From ceilometer
+#
+
+# IP address of the VMware vSphere host. (string value)
+#host_ip =
+
+# Port of the VMware vSphere host. (port value)
+# Minimum value: 0
+# Maximum value: 65535
+#host_port = 443
+
+# Username of VMware vSphere. (string value)
+#host_username =
+
+# Password of VMware vSphere. (string value)
+#host_password =
+
+# CA bundle file to use in verifying the vCenter server certificate. (string
+# value)
+#ca_file = <None>
+
+# If true, the vCenter server certificate is not verified. If false, then the
+# default CA truststore is used for verification. This option is ignored if
+# "ca_file" is set. (boolean value)
+#insecure = false
+
+# Number of times a VMware vSphere API may be retried. (integer value)
+#api_retry_count = 10
+
+# Sleep time in seconds for polling an ongoing async task. (floating point
+# value)
+#task_poll_interval = 0.5
+
+# Optional vim service WSDL location e.g http://<server>/vimService.wsdl.
+# Optional over-ride to default location for bug work-arounds. (string value)
+#wsdl_location = <None>
+
+
+[xenapi]
+
+#
+# From ceilometer
+#
+
+# URL for connection to XenServer/Xen Cloud Platform. (string value)
+#connection_url = <None>
+
+# Username for connection to XenServer/Xen Cloud Platform. (string value)
+#connection_username = root
+
+# Password for connection to XenServer/Xen Cloud Platform. (string value)
+#connection_password = <None>

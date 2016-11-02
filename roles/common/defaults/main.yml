@@ -8,6 +8,7 @@ common:
  controller_hosts:
   - 127.0.0.1
  mysql_host: 127.0.0.1
+ redis_host: 127.0.0.1
  region: RegionOne
  rabbit_userid: guest
  rabbit_password: guest
@@ -115,7 +116,9 @@ ceilometer:
  secret: BIGSECRET
  mongodb_servers:
   - 127.0.0.1
- rpc_backend: ceilometer.openstack.common.rpc.impl_kombu
+# rpc_backend: ceilometer.openstack.common.rpc.impl_kombu
+ rpc_backend: rabbit
+ redis: false
 
 swift:
  username: swift
