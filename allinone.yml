@@ -16,6 +16,6 @@
 #    - neutron
 #    - nova
 #    - heat
-    - horizon
-#    - ceilometer
+#    - horizon
+    - ceilometer
 #    - swift
