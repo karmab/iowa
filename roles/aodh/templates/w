@@ -1,0 +1,440 @@
+Karimb, [03 Nov 2016 13:17]: 
+Cluster Name: tripleo_cluster
+Corosync Nodes:
+ lm2pctrl00 lm2pctrl01 lm2pctrl02
+Pacemaker Nodes:
+ lm2pctrl00 lm2pctrl01 lm2pctrl02
+
+Resources:
+ Resource: ip-10.184.21.6 (class=ocf provider=heartbeat type=IPaddr2)
+  Attributes: ip=10.184.21.6 cidr_netmask=32
+  Operations: start interval=0s timeout=20s (ip-10.184.21.6-start-interval-0s)
+              stop interval=0s timeout=20s (ip-10.184.21.6-stop-interval-0s)
+              monitor interval=10s timeout=20s (ip-10.184.21.6-monitor-interval-10s)
+ Resource: ip-172.16.3.4 (class=ocf provider=heartbeat type=IPaddr2)
+  Attributes: ip=172.16.3.4 cidr_netmask=32
+  Meta Attrs: target-role=Stopped
+  Operations: start interval=0s timeout=20s (ip-172.16.3.4-start-interval-0s)
+              stop interval=0s timeout=20s (ip-172.16.3.4-stop-interval-0s)
+              monitor interval=10s timeout=20s (ip-172.16.3.4-monitor-interval-10s)
+ Clone: haproxy-clone
+  Resource: haproxy (class=systemd type=haproxy)
+   Operations: start interval=0s timeout=200s (haproxy-start-interval-0s)
+               stop interval=0s timeout=200s (haproxy-stop-interval-0s)
+               monitor interval=60s (haproxy-monitor-interval-60s)
+ Resource: ip-10.184.22.5 (class=ocf provider=heartbeat type=IPaddr2)
+  Attributes: ip=10.184.22.5 cidr_netmask=32
+  Operations: start interval=0s timeout=20s (ip-10.184.22.5-start-interval-0s)
+              stop interval=0s timeout=20s (ip-10.184.22.5-stop-interval-0s)
+              monitor interval=10s timeout=20s (ip-10.184.22.5-monitor-interval-10s)
+ Resource: ip-10.184.21.5 (class=ocf provider=heartbeat type=IPaddr2)
+  Attributes: ip=10.184.21.5 cidr_netmask=32
+  Operations: start interval=0s timeout=20s (ip-10.184.21.5-start-interval-0s)
+              stop interval=0s timeout=20s (ip-10.184.21.5-stop-interval-0s)
+              monitor interval=10s timeout=20s (ip-10.184.21.5-monitor-interval-10s)
+ Resource: ip-10.184.20.2 (class=ocf provider=heartbeat type=IPaddr2)
+  Attributes: ip=10.184.20.2 cidr_netmask=32
+  Operations: start interval=0s timeout=20s (ip-10.184.20.2-start-interval-0s)
+              stop interval=0s timeout=20s (ip-10.184.20.2-stop-interval-0s)
+              monitor interval=10s timeout=20s (ip-10.184.20.2-monitor-interval-10s)
+ Master: redis-master
+  Meta Attrs: notify=true ordered=true interleave=true
+  Resource: redis (class=ocf provider=heartbeat type=redis)
+   Attributes: wait_last_known_master=true
+   Operations: start interval=0s timeout=120 (redis-start-interval-0s)
+               stop interval=0s timeout=120 (redis-stop-interval-0s)
+               monitor interval=45 timeout=60 (redis-monitor-interval-45)
+               monitor interval=20 role=Master timeout=60 (redis-monitor-interval-20)
+               monitor interval=60 role=Slave timeout=60 (redis-monitor-interval-60)
+               promote interval=0s timeout=120 (redis-promote-interval-0s)
+               demote interval=0s timeout=120 (redis-demote-interval-0s)
+ Master: galera-master
+  Meta Attrs: master-max=3 ordered=true
+  Resource: galera (class=ocf provider=heartbeat type=galera)
+   Attributes: additional_parameters=--open-files-limit=16384 enable_creation=true wsrep_cluster_address=gcomm://lm2pctrl00,lm2pctrl01,lm2pctrl02
+   Operations: start interval=0s timeout=120 (galera-start-interval-0s)
+               stop interval=0s timeout=120 (galera-stop-interval-0s)
+               monitor interval=20 timeout=30 (galera-monitor-interval-20)
+               monitor interval=10 role=Master timeout=30 (galera-monitor-interval-10)
+               monitor interval=30 role=Slave timeout=30 (galera-monitor-interval-30)
+               demote interval=0s timeout=120 (galera-demote-interval-0s)
+               promote interval=0s timeout=300s on-fail=block (galera-promote-interval-0s)
+ Clone: mongod-clone
+  Resource: mongod (class=systemd type=mongod)
+   Operations: start interval=0s timeout=370s (mongod-start-interval-0s)
+               stop interval=0s timeout=200s (mongod-stop-interval-0s)
+               monitor interval=60s (mongod-monitor-interval-60s)
+ Clone: rabbitmq-clone
+
+Meta Attrs: ordered=true interleave=true
+  Resource: rabbitmq (class=ocf provider=heartbeat type=rabbitmq-cluster)
+   Attributes: set_policy="ha-all ^(?!amq\.).* {"ha-mode":"all"}"
+   Meta Attrs: notify=true
+   Operations: start interval=0s timeout=100 (rabbitmq-start-interval-0s)
+               stop interval=0s timeout=90 (rabbitmq-stop-interval-0s)
+               monitor interval=10 timeout=40 (rabbitmq-monitor-interval-10)
+ Clone: memcached-clone
+  Meta Attrs: interleave=true
+  Resource: memcached (class=systemd type=memcached)
+   Operations: start interval=0s timeout=200s (memcached-start-interval-0s)
+               stop interval=0s timeout=200s (memcached-stop-interval-0s)
+               monitor interval=60s (memcached-monitor-interval-60s)
+ Clone: fs-varlibglanceimages-clone
+  Resource: fs-varlibglanceimages (class=ocf provider=heartbeat type=Filesystem)
+   Attributes: device=10.184.2.1:/OSP_PHYS_GLANCEREPO_01 directory=/var/lib/glance/images fstype=nfs options=rw,sync,context=system_u:object_r:glance_var_lib_t:s0
+   Operations: start interval=0s timeout=60 (fs-varlibglanceimages-start-interval-0s)
+               stop interval=0s timeout=60 (fs-varlibglanceimages-stop-interval-0s)
+               monitor interval=20 timeout=40 (fs-varlibglanceimages-monitor-interval-20)
+ Clone: openstack-nova-scheduler-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-nova-scheduler (class=systemd type=openstack-nova-scheduler)
+   Operations: start interval=0s timeout=200s (openstack-nova-scheduler-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-nova-scheduler-stop-interval-0s)
+               monitor interval=60s (openstack-nova-scheduler-monitor-interval-60s)
+ Clone: neutron-l3-agent-clone
+  Meta Attrs: interleave=true
+  Resource: neutron-l3-agent (class=systemd type=neutron-l3-agent)
+   Operations: start interval=0s timeout=200s (neutron-l3-agent-start-interval-0s)
+               stop interval=0s timeout=200s (neutron-l3-agent-stop-interval-0s)
+               monitor interval=60s (neutron-l3-agent-monitor-interval-60s)
+ Clone: openstack-ceilometer-alarm-notifier-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-ceilometer-alarm-notifier (class=systemd type=openstack-ceilometer-alarm-notifier)
+   Operations: start interval=0s timeout=200s (openstack-ceilometer-alarm-notifier-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-ceilometer-alarm-notifier-stop-interval-0s)
+               monitor interval=60s (openstack-ceilometer-alarm-notifier-monitor-interval-60s)
+ Clone: openstack-heat-engine-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-heat-engine (class=systemd type=openstack-heat-engine)
+   Operations: start interval=0s timeout=200s (openstack-heat-engine-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-heat-engine-stop-interval-0s)
+               monitor interval=60s (openstack-heat-engine-monitor-interval-60s)
+ Clone: openstack-ceilometer-api-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-ceilometer-api (class=systemd type=openstack-ceilometer-api)
+   Operations: start interval=0s timeout=200s (openstack-ceilometer-api-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-ceilometer-api-stop-interval-0s)
+               monitor interval=60s (openstack-ceilometer-api-monitor-interval-60s)
+ Clone: neutron-metadata-agent-clone
+  Meta Attrs: interleave=true
+  Resource: neutron-metadata-agent (class=systemd type=neutron-metadata-agent)
+   Operations: start interval=0s timeout=200s (neutron-metadata-agent-start-interval-0s)
+               stop interval=0s timeout=200s (neutron-metadata-agent-stop-interval-0s)
+               monitor interval=60s (neutron-metadata-agent-monitor-interval-60s)
+ Clone: neutron-ovs-cleanup-clone
+  Meta Attrs: interleave=true
+  Resource: neutron-ovs-cleanup (class=ocf provider=neutron type=OVSCleanup)
+   Operations: start interval=0s timeout=40 (neutron-ovs-cleanup-start-interval-0s)
+               stop interval=0s timeout=300 (neutron-ovs-cleanup-stop-interval-0s)
+
+monitor interval=10 timeout=20 (neutron-ovs-cleanup-monitor-interval-10)
+ Clone: neutron-netns-cleanup-clone
+  Meta Attrs: interleave=true
+  Resource: neutron-netns-cleanup (class=ocf provider=neutron type=NetnsCleanup)
+   Operations: start interval=0s timeout=40 (neutron-netns-cleanup-start-interval-0s)
+               stop interval=0s timeout=300 (neutron-netns-cleanup-stop-interval-0s)
+               monitor interval=10 timeout=20 (neutron-netns-cleanup-monitor-interval-10)
+ Clone: openstack-heat-api-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-heat-api (class=systemd type=openstack-heat-api)
+   Operations: start interval=0s timeout=200s (openstack-heat-api-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-heat-api-stop-interval-0s)
+               monitor interval=60s (openstack-heat-api-monitor-interval-60s)
+ Clone: openstack-cinder-scheduler-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-cinder-scheduler (class=systemd type=openstack-cinder-scheduler)
+   Operations: start interval=0s timeout=200s (openstack-cinder-scheduler-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-cinder-scheduler-stop-interval-0s)
+               monitor interval=60s (openstack-cinder-scheduler-monitor-interval-60s)
+ Clone: openstack-nova-api-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-nova-api (class=systemd type=openstack-nova-api)
+   Operations: start interval=0s timeout=200s (openstack-nova-api-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-nova-api-stop-interval-0s)
+               monitor interval=60s (openstack-nova-api-monitor-interval-60s)
+ Clone: openstack-heat-api-cloudwatch-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-heat-api-cloudwatch (class=systemd type=openstack-heat-api-cloudwatch)
+   Operations: start interval=0s timeout=200s (openstack-heat-api-cloudwatch-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-heat-api-cloudwatch-stop-interval-0s)
+               monitor interval=60s (openstack-heat-api-cloudwatch-monitor-interval-60s)
+ Clone: openstack-ceilometer-collector-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-ceilometer-collector (class=systemd type=openstack-ceilometer-collector)
+   Operations: start interval=0s timeout=200s (openstack-ceilometer-collector-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-ceilometer-collector-stop-interval-0s)
+               monitor interval=60s (openstack-ceilometer-collector-monitor-interval-60s)
+ Clone: openstack-keystone-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-keystone (class=systemd type=openstack-keystone)
+   Operations: start interval=0s timeout=200s (openstack-keystone-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-keystone-stop-interval-0s)
+               monitor interval=60s (openstack-keystone-monitor-interval-60s)
+ Clone: openstack-nova-consoleauth-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-nova-consoleauth (class=systemd type=openstack-nova-consoleauth)
+   Operations: start interval=0s timeout=200s (openstack-nova-consoleauth-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-nova-consoleauth-stop-interval-0s)
+               monitor interval=60s (openstack-nova-consoleauth-monitor-interval-60s)
+ Clone: openstack-glance-registry-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-glance-registry (class=systemd type=openstack-glance-registry)
+   Operations: start interval=0s timeout=200s (openstack-glance-registry-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-glance-registry-stop-interval-0s)
+               monitor interval=60s (openstack-glance-registry-monitor-interval-60s)
+ Clone: openstack-ceilometer-notification-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-ceilometer-notification (class=systemd type=openstack-ceilometer-notification)
+   Operations: start interval=0s timeout=200s (openstack-ceilometer-notification-start-interval-0s)
+
+stop interval=0s timeout=200s (openstack-ceilometer-notification-stop-interval-0s)
+               monitor interval=60s (openstack-ceilometer-notification-monitor-interval-60s)
+ Clone: openstack-cinder-api-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-cinder-api (class=systemd type=openstack-cinder-api)
+   Operations: start interval=0s timeout=200s (openstack-cinder-api-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-cinder-api-stop-interval-0s)
+               monitor interval=60s (openstack-cinder-api-monitor-interval-60s)
+ Clone: neutron-dhcp-agent-clone
+  Meta Attrs: interleave=true
+  Resource: neutron-dhcp-agent (class=systemd type=neutron-dhcp-agent)
+   Operations: start interval=0s timeout=200s (neutron-dhcp-agent-start-interval-0s)
+               stop interval=0s timeout=200s (neutron-dhcp-agent-stop-interval-0s)
+               monitor interval=60s (neutron-dhcp-agent-monitor-interval-60s)
+ Clone: openstack-glance-api-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-glance-api (class=systemd type=openstack-glance-api)
+   Operations: start interval=0s timeout=200s (openstack-glance-api-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-glance-api-stop-interval-0s)
+               monitor interval=60s (openstack-glance-api-monitor-interval-60s)
+ Clone: neutron-openvswitch-agent-clone
+  Meta Attrs: interleave=true
+  Resource: neutron-openvswitch-agent (c...
+
+Karimb, [03 Nov 2016 13:17]: 
+...interval=60s (openstack-heat-api-cloudwatch-monitor-interval-60s)
+ Clone: openstack-ceilometer-collector-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-ceilometer-collector (class=systemd type=openstack-ceilometer-collector)
+   Operations: start interval=0s timeout=200s (openstack-ceilometer-collector-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-ceilometer-collector-stop-interval-0s)
+               monitor interval=60s (openstack-ceilometer-collector-monitor-interval-60s)
+ Clone: openstack-keystone-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-keystone (class=systemd type=openstack-keystone)
+   Operations: start interval=0s timeout=200s (openstack-keystone-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-keystone-stop-interval-0s)
+               monitor interval=60s (openstack-keystone-monitor-interval-60s)
+ Clone: openstack-nova-consoleauth-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-nova-consoleauth (class=systemd type=openstack-nova-consoleauth)
+   Operations: start interval=0s timeout=200s (openstack-nova-consoleauth-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-nova-consoleauth-stop-interval-0s)
+               monitor interval=60s (openstack-nova-consoleauth-monitor-interval-60s)
+ Clone: openstack-glance-registry-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-glance-registry (class=systemd type=openstack-glance-registry)
+   Operations: start interval=0s timeout=200s (openstack-glance-registry-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-glance-registry-stop-interval-0s)
+               monitor interval=60s (openstack-glance-registry-monitor-interval-60s)
+ Clone: openstack-ceilometer-notification-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-ceilometer-notification (class=systemd type=openstack-ceilometer-notification)
+   Operations: start interval=0s timeout=200s (openstack-ceilometer-notification-start-interval-0s)
+
+stop interval=0s timeout=200s (openstack-ceilometer-notification-stop-interval-0s)
+               monitor interval=60s (openstack-ceilometer-notification-monitor-interval-60s)
+ Clone: openstack-cinder-api-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-cinder-api (class=systemd type=openstack-cinder-api)
+   Operations: start interval=0s timeout=200s (openstack-cinder-api-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-cinder-api-stop-interval-0s)
+               monitor interval=60s (openstack-cinder-api-monitor-interval-60s)
+ Clone: neutron-dhcp-agent-clone
+  Meta Attrs: interleave=true
+  Resource: neutron-dhcp-agent (class=systemd type=neutron-dhcp-agent)
+   Operations: start interval=0s timeout=200s (neutron-dhcp-agent-start-interval-0s)
+               stop interval=0s timeout=200s (neutron-dhcp-agent-stop-interval-0s)
+               monitor interval=60s (neutron-dhcp-agent-monitor-interval-60s)
+ Clone: openstack-glance-api-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-glance-api (class=systemd type=openstack-glance-api)
+   Operations: start interval=0s timeout=200s (openstack-glance-api-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-glance-api-stop-interval-0s)
+               monitor interval=60s (openstack-glance-api-monitor-interval-60s)
+ Clone: neutron-openvswitch-agent-clone
+  Meta Attrs: interleave=true
+  Resource: neutron-openvswitch-agent (class=systemd type=neutron-openvswitch-agent)
+   Operations: start interval=0s timeout=200s (neutron-openvswitch-agent-start-interval-0s)
+               stop interval=0s timeout=200s (neutron-openvswitch-agent-stop-interval-0s)
+               monitor interval=60s (neutron-openvswitch-agent-monitor-interval-60s)
+ Clone: openstack-nova-novncproxy-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-nova-novncproxy (class=systemd type=openstack-nova-novncproxy)
+   Operations: start interval=0s timeout=200s (openstack-nova-novncproxy-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-nova-novncproxy-stop-interval-0s)
+               monitor interval=60s (openstack-nova-novncproxy-monitor-interval-60s)
+ Clone: delay-clone
+  Meta Attrs: interleave=true
+  Resource: delay (class=ocf provider=heartbeat type=Delay)
+   Attributes: startdelay=10
+   Operations: start interval=0s timeout=30 (delay-start-interval-0s)
+               stop interval=0s timeout=30 (delay-stop-interval-0s)
+               monitor interval=10 timeout=30 (delay-monitor-interval-10)
+ Clone: neutron-server-clone
+  Meta Attrs: interleave=true
+  Resource: neutron-server (class=systemd type=neutron-server)
+   Operations: start interval=0s timeout=200s (neutron-server-start-interval-0s)
+               stop interval=0s timeout=200s (neutron-server-stop-interval-0s)
+               monitor interval=60s (neutron-server-monitor-interval-60s)
+ Clone: httpd-clone
+  Meta Attrs: interleave=true
+  Resource: httpd (class=systemd type=httpd)
+   Operations: start interval=0s timeout=200s (httpd-start-interval-0s)
+               stop interval=0s timeout=200s (httpd-stop-interval-0s)
+               monitor interval=60s (httpd-monitor-interval-60s)
+ Clone: openstack-ceilometer-central-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-ceilometer-central (class=systemd type=openstack-ceilometer-central)
+   Operations: start interval=0s timeout=200s (openstack-ceilometer-central-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-ceilometer-central-stop-interval-0s)
+               monitor interval=60s (openstack-ceilometer-central-monitor-interval-60s)
+ Clone: openstack-ceilometer-alarm-evaluator-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-ceilometer-alarm-evaluator (class=systemd type=openstack-ceilometer-alarm-evaluator)
+   Operations: start interval=0s timeout=200s (openstack-ceilometer-alarm-evaluator-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-ceilometer-alarm-evaluator-stop-interval-0s)
+
+monitor interval=60s (openstack-ceilometer-alarm-evaluator-monitor-interval-60s)
+ Clone: openstack-heat-api-cfn-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-heat-api-cfn (class=systemd type=openstack-heat-api-cfn)
+   Operations: start interval=0s timeout=200s (openstack-heat-api-cfn-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-heat-api-cfn-stop-interval-0s)
+               monitor interval=60s (openstack-heat-api-cfn-monitor-interval-60s)
+ Resource: openstack-cinder-volume (class=systemd type=openstack-cinder-volume)
+  Operations: start interval=0s timeout=200s (openstack-cinder-volume-start-interval-0s)
+              stop interval=0s timeout=200s (openstack-cinder-volume-stop-interval-0s)
+              monitor interval=60s (openstack-cinder-volume-monitor-interval-60s)
+ Clone: openstack-nova-conductor-clone
+  Meta Attrs: interleave=true
+  Resource: openstack-nova-conductor (class=systemd type=openstack-nova-conductor)
+   Operations: start interval=0s timeout=200s (openstack-nova-conductor-start-interval-0s)
+               stop interval=0s timeout=200s (openstack-nova-conductor-stop-interval-0s)
+               monitor interval=60s (openstack-nova-conductor-monitor-interval-60s)
+ Resource: ip-10.184.2.9 (class=ocf provider=heartbeat type=IPaddr2)
+  Attributes: ip=10.184.2.9 cidr_netmask=32
+  Operations: start interval=0s timeout=20s (ip-10.184.2.9-start-interval-0s)
+              stop interval=0s timeout=20s (ip-10.184.2.9-stop-interval-0s)
+              monitor interval=10s timeout=20s (ip-10.184.2.9-monitor-interval-10s)
+
+Stonith Devices:
+ Resource: ipmilan-controller01 (class=stonith type=fence_ipmilan)
+  Attributes: pcmk_host_list=lm2pctrl00 ipaddr=10.50.226.50 login=root passwd=Huawei12#$ lanplus=1 cipher=1
+  Operations: monitor interval=60s (ipmilan-controller01-monitor-interval-60s)
+ Resource: ipmilan-controller02 (class=stonith type=fence_ipmilan)
+  Attributes: pcmk_host_list=lm2pctrl01 ipaddr=10.50.226.49 login=root passwd=Huawei12#$ lanplus=1 cipher=1
+  Operations: monitor interval=60s (ipmilan-controller02-monitor-interval-60s)
+ Resource: ipmilan-controller03 (class=stonith type=fence_ipmilan)
+  Attributes: pcmk_host_list=lm2pctrl02 ipaddr=10.50.226.51 login=root passwd=Huawei12#$ lanplus=1 cipher=1
+  Operations: monitor interval=60s (ipmilan-controller03-monitor-interval-60s)
+Fencing Levels:
+
+Location Constraints:
+  Resource: ipmilan-controller01
+    Disabled on: lm2pctrl00 (score:-INFINITY) (id:location-ipmilan-controller01-lm2pctrl00--INFINITY)
+  Resource: ipmilan-controller02
+    Disabled on: lm2pctrl01 (score:-INFINITY) (id:location-ipmilan-controller02-lm2pctrl01--INFINITY)
+  Resource: ipmilan-controller03
+    Disabled on: lm2pctrl02 (score:-INFINITY) (id:location-ipmilan-controller03-lm2pctrl02--INFINITY)
+Ordering Constraints:
+  start ip-10.184.21.5 then start haproxy-clone (kind:Optional) (id:order-ip-10.184.21.5-haproxy-clone-Optional)
+  start ip-10.184.20.2 then start haproxy-clone (kind:Optional) (id:order-ip-10.184.20.2-haproxy-clone-Optional)
+  start ip-172.16.3.4 then start haproxy-clone (kind:Optional) (id:order-ip-172.16.3.4-haproxy-clone-Optional)
+  start ip-10.184.22.5 then start haproxy-clone (kind:Optional) (id:order-ip-10.184.22.5-haproxy-clone-Optional)
+  start ip-10.184.21.6 then start haproxy-clone (kind:Optional) (id:order-ip-10.184.21.6-haproxy-clone-Optional)
+  start memcached-clone then start openstack-keystone-clone (kind:Mandatory) (id:order-memcached-clone-openstack-keystone-clone-mandatory)
+  start mongod-clone then start openstack-ceilometer-central-clone (kind:Mandatory) (id:order-mongod-clone-openstack-ceilometer-central-clone-mandatory)
+  start openstack-glance-registry-clone then start openstack-glance-api-clone (kind:Mandatory) (id:order-openstack-glance-registry-clone-openstack-glance-api-clone-mandatory)
+  start rabbitmq-clone then start openstack-keystone-clone (kind:Mandatory) (id:order-rabbitmq-clone-openstack-keystone-clone-mandatory)
+
+start openstack-heat-api-clone then start openstack-heat-api-cfn-clone (kind:Mandatory) (id:order-openstack-heat-api-clone-openstack-heat-api-cfn-clone-mandatory)
+  start delay-clone then start openstack-ceilometer-alarm-evaluator-clone (kind:Mandatory) (id:order-delay-clone-openstack-ceilometer-alarm-evaluator-clone-mandatory)
+  start openstack-keystone-clone then start openstack-ceilometer-central-clone (kind:Mandatory) (id:order-openstack-keystone-clone-openstack-ceilometer-central-clone-mandatory)
+  start openstack-keystone-clone then start openstack-glance-registry-clone (kind:Mandatory) (id:order-openstack-keystone-clone-openstack-glance-registry-clone-mandatory)
+  start openstack-keystone-clone then start openstack-cinder-api-clone (kind:Mandatory) (id:order-openstack-keystone-clone-openstack-cinder-api-clone-mandatory)
+  start openstack-cinder-scheduler-clone then start openstack-cinder-volume (kind:Mandatory) (id:order-openstack-cinder-scheduler-clone-openstack-cinder-volume-mandatory)
+  promote redis-master then start openstack-ceilometer-central-clone (kind:Mandatory) (Options: require-all=false) (id:order-redis-master-openstack-ceilometer-central-clone-mandatory)
+  start openstack-nova-scheduler-clone then start openstack-nova-conductor-clone (kind:Mandatory) (id:order-openstack-nova-scheduler-clone-openstack-nova-conductor-clone-mandatory)
+  start openstack-nova-consoleauth-clone then start openstack-nova-novncproxy-clone (kind:Mandatory) (id:order-openstack-nova-consoleauth-clone-openstack-nova-novncproxy-clone-mandatory)
+  start neutron-l3-agent-clone then start neutron-metadata-agent-clone (kind:Mandatory) (id:order-neutron-l3-agent-clone-neutron-metadata-agent-clone-mandatory)
+  start openstack-nova-novncproxy-clone then start openstack-nova-api-clone (kind:Mandatory) (id:order-openstack-nova-novncproxy-clone-openstack-nova-api-clone-mandatory)
+  start openstack-heat-api-cloudwatch-clone then start openstack-heat-engine-clone (kind:Mandatory) (id:order-openstack-heat-api-cloudwatch-clone-openstack-heat-engine-clone-mandatory)
+  start openstack-ceilometer-notification-clone then start openstack-heat-api-clone (kind:Mandatory) (id:order-openstack-ceilometer-notification-clone-openstack-heat-api-clone-mandatory)
+  start openstack-keystone-clone then start neutron-server-clone (kind:Mandatory) (id:order-openstack-keystone-clone-neutron-server-clone-mandatory)
+  start neutron-dhcp-agent-clone then start neutron-l3-agent-clone (kind:Mandatory) (id:order-neutron-dhcp-agent-clone-neutron-l3-agent-clone-mandatory)
+  start neutron-server-clone then start neutron-openvswitch-agent-clone (kind:Mandatory) (id:order-neutron-server-clone-neutron-openvswitch-agent-clone-mandatory)
+  start openstack-ceilometer-alarm-notifier-clone then start openstack-ceilometer-notification-clone (kind:Mandatory) (id:order-openstack-ceilometer-alarm-notifier-clone-openstack-ceilometer-notification-clone-mandatory)
+  start openstack-keystone-clone then start openstack-nova-consoleauth-clone (kind:Mandatory) (id:order-openstack-keystone-clone-openstack-nova-consoleauth-clone-mandatory)
+  start openstack-nova-api-clone then start openstack-nova-scheduler-clone (kind:Mandatory) (id:order-openstack-nova-api-clone-openstack-nova-scheduler-clone-mandatory)
+  start openstack-heat-api-cfn-clone then start openstack-heat-api-cloudwatch-clone (kind:Mandatory) (id:order-openstack-heat-api-cfn-clone-openstack-heat-api-cloudwatch-clone-mandatory)
+  start neutron-openvswitch-agent-clone then start neutron-dhcp-agent-clone (kind:Mandatory) (id:order-neutron-openvswitch-agent-clone-neutron-dhcp-agent-clone-mandatory)
+  start openstack-ceilometer-api-clone then start delay-clone (kind:Mandatory) (id:order-openstack-ceilometer-api-clone-delay-clone-mandatory)
+  promote galera-master then start openstack-keystone-clone (kind:Mandatory) (id:order-galera-master-openstack-keystone-clone-mandatory)
+
+start openstack-cinder-api-clone then start openstack-cinder-scheduler-clone (kind:Mandatory) (id:order-openstack-cinder-api-clone-openstack-cinder-scheduler-clone-mandatory)
+  start neutron-netns-cleanup-clone then start neutron-openvswitch-agent-clone (kind:Mandatory) (id:order-neutron-netns-cleanup-clone-neutron-openvswitch-agent-clone-mandatory)
+  start openstack-ceilometer-central-clone then start openstack-ceilometer-collector-clone (kind:Mandatory) (id:order-openstack-ceilometer-central-clone-openstack-ceilometer-collector-clone-mandatory)
+  start haproxy-clone then start openstack-keystone-clone (kind:Mandatory) (id:order-haproxy-clone-openstack-keystone-clone-mandatory)
+  start neutron-ovs-cleanup-clone then start neutron-netns-cleanup-clone (kind:Mandatory) (id:order-neutron-ovs-cleanup-clone-neutron-netns-cleanup-clone-mandatory)
+  start openstack-ceilometer-collector-clone then start openstack-ceilometer-api-clone (kind:Mandatory) (id:order-openstack-ceilometer-collector-clone-openstack-ceilometer-api-clone-mandatory)
+  start openstack-keystone-clone then start openstack-heat-api-clone (kind:Mandatory) (id:order-openstack-keystone-clone-openstack-heat-api-clone-mandatory)
+  start openstack-ceilometer-alarm-evaluator-clone then start openstack-ceilometer-alarm-notifier-clone (kind:Mandatory) (id:order-openstack-ceilometer-alarm-evaluator-clone-openstack-ceilometer-alarm-notifier-clone-mandatory)
+  start ip-10.184.2.9 then start haproxy-clone (kind:Optional) (id:order-ip-10.184.2.9-haproxy-clone-Optional)
+Colocation Constraints:
+  ip-172.16.3.4 with haproxy-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-ip-172.16.3.4-haproxy-clone-INFINITY)
+  ip-10.184.21.5 with haproxy-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-ip-10.184.21.5-haproxy-clone-INFINITY)
+  ip-10.184.20.2 with haproxy-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-ip-10.184.20.2-haproxy-clone-INFINITY)
+  ip-10.184.22.5 with haproxy-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-ip-10.184.22.5-haproxy-clone-INFINITY)
+  ip-10.184.21.6 with haproxy-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-ip-10.184.21.6-haproxy-clone-INFINITY)
+  openstack-glance-api-clone with openstack-glance-registry-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-glance-api-clone-openstack-glance-registry-clone-INFINITY)
+  openstack-cinder-volume with openstack-cinder-scheduler-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-cinder-volume-openstack-cinder-scheduler-clone-INFINITY)
+  neutron-dhcp-agent-clone with neutron-openvswitch-agent-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-neutron-dhcp-agent-clone-neutron-openvswitch-agent-clone-INFINITY)
+  openstack-nova-scheduler-clone with openstack-nova-api-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-nova-scheduler-clone-openstack-nova-api-clone-INFINITY)
+  neutron-l3-agent-clone with neutron-dhcp-agent-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-neutron-l3-agent-clone-neutron-dhcp-agent-clone-INFINITY)
+  openstack-ceilometer-notification-clone with openstack-ceilometer-alarm-notifier-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-ceilometer-notification-clone-openstack-ceilometer-alarm-notifier-clone-INFINITY)
+  neutron-openvswitch-agent-clone with neutron-netns-cleanup-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-neutron-openvswitch-agent-clone-neutron-netns-cleanup-clone-INFINITY)
+  neutron-netns-cleanup-clone with neutron-ovs-cleanup-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-neutron-netns-cleanup-clone-neutron-ovs-cleanup-clone-INFINITY)
+
+openstack-heat-api-cloudwatch-clone with openstack-heat-api-cfn-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-heat-api-cloudwatch-clone-openstack-heat-api-cfn-clone-INFINITY)
+  delay-clone with openstack-ceilometer-api-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-delay-clone-openstack-ceilometer-api-clone-INFINITY)
+  openstack-heat-engine-clone with openstack-heat-api-cloudwatch-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-heat-engine-clone-openstack-heat-api-cloudwatch-clone-INFINITY)
+  openstack-ceilometer-alarm-notifier-clone with openstack-ceilometer-alarm-evaluator-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-ceilometer-alarm-notifier-clone-openstack-ceilometer-alarm-evaluator-clone-INFINITY)
+  openstack-nova-api-clone with openstack-nova-novncproxy-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-nova-api-clone-openstack-nova-novncproxy-clone-INFINITY)
+  openstack-heat-api-cfn-clone with openstack-heat-api-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-heat-api-cfn-clone-openstack-heat-api-clone-INFINITY)
+  openstack-cinder-scheduler-clone with openstack-cinder-api-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-cinder-scheduler-clone-openstack-cinder-api-clone-INFINITY)
+  openstack-nova-conductor-clone with openstack-nova-scheduler-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-nova-conductor-clone-openstack-nova-scheduler-clone-INFINITY)
+  openstack-ceilometer-alarm-evaluator-clone with delay-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-ceilometer-alarm-evaluator-clone-delay-clone-INFINITY)
+  neutron-metadata-agent-clone with neutron-l3-agent-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-neutron-metadata-agent-clone-neutron-l3-agent-clone-INFINITY)
+  openstack-nova-novncproxy-clone with openstack-nova-consoleauth-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-nova-novncproxy-clone-openstack-nova-consoleauth-clone-INFINITY)
+  openstack-ceilometer-api-clone with openstack-ceilometer-collector-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-openstack-ceilometer-api-clone-openstack-ceilometer-collector-clone-INFINITY)
+  ip-10.184.2.9 with haproxy-clone (score:INFINITY) (rsc-role:Started) (with-rsc-role:Master) (id:colocation-ip-10.184.2.9-haproxy-clone-INFINITY)
+
+Resources Defaults:
+ resource-stickiness: INFINITY
+Operations Defaults:
+ No defaults set
+
+Cluster Properties:
+ cluster-infrastructure: corosync
+ cluster-name: tripleo_cluster
+ dc-version: 1.1.13-10.el7_2.2-44eb2dd
+ have-watchdog: false
+ last-lrm-refresh: 1473073119
+ maintenance-mode: false
+ redis_REPL_INFO: lm2pctrl02
+ stonith-enabled: true
+Node Attributes:
+ lm2pctrl00: rmq-node-attr-last-known-rabbitmq=rabbit@lm2pctrl00
+ lm2pctrl01: rmq-node-attr-last-known-rabbitmq=rabbit@lm2pctrl01
+ lm2pctrl02: rmq-node-attr-last-known-rabbitmq=rabbit@lm2pctrl02

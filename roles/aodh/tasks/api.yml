@@ -1,0 +1,64 @@
+---
+
+- name: Install Aodh Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ aodh_packages }}"
+
+- name: Configure Aodh
+  template:
+    src: "aodh.conf.{{ version }}"
+    dest: "/etc/aodh/aodh.conf"
+    backup: yes
+  notify: 
+   - Restart Aodh
+   - Restart Aodh Evaluator
+   - Restart Aodh Notifier
+   - Restart Aodh Listener
+
+- name: Populate Aodh Database
+  run_once: yes
+  shell: aodh-dbsync
+
+- name: Create Aodh User
+  keystone_user:
+    state: present
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    user: aodh
+    tenant: services
+    password: "{{ aodh.password }}"
+
+- name: Grant Aodh Admin Role
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    user: aodh
+    role: admin
+
+- name: Create Aodh Service And Endpoint
+  keystone_service: 
+    name: aodh
+    type: alarming
+    description: "Aodh Alarming Service"
+    publicurl: "{{ aodh_public_url }}"
+    internalurl: "{{ aodh_internal_url }}"
+    adminurl: "{{ aodh_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
+- name: Enable Aodh Services
+  service:
+    name: "{{ aodh_service }}-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+   - api
+   - evaluator
+   - notifier
+   - listener
