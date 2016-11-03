@@ -84,7 +84,7 @@
   service: name="{{ ceilometer_service }}-alarm-notifier" state=restarted
 
 - name: Restart Ceilometer Notification
-  service: name="{{ ceilometer_service }}-notification" state=restarted
+  service: name="{{ ceilometer_notification_service }}" state=restarted
 
 - name: Restart Xinetd
   service: name=xinetd state=restarted

@@ -7,16 +7,16 @@
   become_user: root
   become_method: sudo
   roles:
-    - mongodb
-    - mysql
-    - rabbitmq
-    - keystone
-    - glance
-    - cinder
-    - neutron
-    - nova
-    - heat
-    - horizon
-    - aodh
+#    - mongodb
+#    - mysql
+#    - rabbitmq
+#    - keystone
+#    - glance
+#    - cinder
+#    - neutron
+#    - nova
+#    - heat
+#    - horizon
+#    - aodh
     - ceilometer
 #    - swift

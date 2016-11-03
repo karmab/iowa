@@ -87,6 +87,7 @@ ceilometer_packages:
  - 'python-openstackclient'
 ceilometer_service: ceilometer
 ceilometer_compute_service: ceilometer-agent-compute
+ceilometer_notification_service: ceilometer-agent-notification
 swift_packages:
  - 'swift'
  - 'swift-proxy'

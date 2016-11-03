@@ -1749,7 +1749,9 @@ project_name=services
 
 # Domain name containing project (string value)
 #project_domain_name = <None>
+{% if 'v3' in keystone_versions %}
 project_domain_name=Default
+{% endif %}
 
 # Trust ID (string value)
 #trust_id = <None>

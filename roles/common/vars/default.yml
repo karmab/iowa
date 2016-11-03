@@ -103,6 +103,7 @@ ceilometer_packages:
  - 'python-openstackclient'
 ceilometer_service: openstack-ceilometer
 ceilometer_compute_service: openstack-ceilometer-compute
+ceilometer_notification_service: openstack-ceilometer-notification
 swift_packages:
  - 'openstack-swift-proxy'
  - 'openstack-swift-plugin-swift3'
