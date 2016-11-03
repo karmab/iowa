@@ -71,13 +71,19 @@
     enabled: yes
     state: started
   with_items:
-   - messagebus
    - libvirtd
    - "{{ nova_compute_service }}"
 
-- name: Enable Nova Compute Ceilometer Services
+- name: Enable Nova Compute Messagebus
   service:
-    name: "{{ ceilometer_service }}-compute"
+    name: "messagebus"
+    enabled: yes
+    state: started
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Enable Nova Compute Ceilometer Service
+  service:
+    name: "{{ ceilometer_compute_service }}"
     enabled: yes
     state: started
   when: nova_ceilometer

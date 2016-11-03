@@ -16,6 +16,6 @@
 
 - name: Enable Apache Service
   service:
-   name: httpd
+   name: "{{ apache_service }}"
    enabled: yes
    state: started

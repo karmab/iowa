@@ -22,12 +22,6 @@
     dest: "/etc/ceilometer/ceilometer.conf"
     backup: yes
   notify: "{{ ceilometer_handlers }}"
-#   - Restart Ceilometer
-#   - Restart Ceilometer Central
-#   - Restart Ceilometer Collector
-#   - Restart Ceilometer Alarm Evaluator
-#   - Restart Ceilometer Alarm Notifier
-#   - Restart Ceilometer Notification
 
 - name: Create Ceilometer User
   keystone_user:
@@ -84,9 +78,23 @@
     state: started
   with_items:
    - api
-   - central
    - collector
+   - central
    - notification
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Enable Ceilometer Services
+  service:
+    name: "{{ ceilometer_service }}-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+   - api
+   - collector
+   - agent-central
+   - agent-notification
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
 
 - name: Enable Ceilometer Alarm Services
   service:
@@ -97,4 +105,15 @@
    - alarm-evaluator
    - alarm-notifier
    - notification
-  when: version in ['kilo','liberty']
+  when: version in ['kilo','liberty'] and ( ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' )
+
+- name: Enable Ceilometer Alarm Services
+  service:
+    name: "{{ ceilometer_service }}-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+   - alarm-evaluator
+   - alarm-notifier
+   - agent-notification
+  when: version in ['kilo','liberty'] and ( ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' )

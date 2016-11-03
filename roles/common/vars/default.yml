@@ -102,6 +102,7 @@ ceilometer_packages:
  - 'openstack-selinux'
  - 'python-openstackclient'
 ceilometer_service: openstack-ceilometer
+ceilometer_compute_service: openstack-ceilometer-compute
 swift_packages:
  - 'openstack-swift-proxy'
  - 'openstack-swift-plugin-swift3'
@@ -121,3 +122,12 @@ horizon_packages:
  - 'mod_ssl'
  - 'memcached'
  - 'openstack-dashboard'
+aodh_packages:
+ - 'openstack-aodh-api'
+ - 'openstack-aodh-evaluator'
+ - 'openstack-aodh-notifier'
+ - 'openstack-aodh-listener'
+ - 'openstack-aodh-expirer'
+ - 'python-aodhclient'
+ - 'python-openstackclient'
+aodh_service: openstack-aodh

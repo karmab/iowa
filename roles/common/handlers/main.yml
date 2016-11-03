@@ -103,3 +103,15 @@
 
 - name: Restart Haproxy
   service: name=haproxy state=restarted
+
+- name: Restart Aodh
+  service: name="{{ aodh_service }}-api" state=restarted
+
+- name: Restart Aodh Evaluator
+  service: name="{{ aodh_service }}-evaluator" state=restarted
+
+- name: Restart Aodh Notifier
+  service: name="{{ aodh_service }}-notifier" state=restarted
+
+- name: Restart Aodh Listener
+  service: name="{{ aodh_service }}-listener" state=restarted

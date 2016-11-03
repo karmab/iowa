@@ -15,6 +15,7 @@ common:
  rabbit_hosts:
   - 127.0.0.1
  auth_strategy: keystone
+ redis_host: 127.0.0.1
 
 mysql:
  databases:
@@ -24,6 +25,7 @@ mysql:
   - nova
   - neutron
   - heat
+  - aodh
 
 keystone:
  dbuser: keystone
@@ -32,6 +34,8 @@ keystone:
  admin_token: XXXXXX
  admin_password: unix1234
  public_url: http://127.0.0.1:5000/v2.0
+ versions:
+  - v2.0
 
 glance:
  dbuser: glance
@@ -78,6 +82,7 @@ neutron:
 nova:
  dbuser: nova
  dbpassword: nova
+ api_dbname: nova_api
  dbname: nova
  username: nova
  password: nova
@@ -112,7 +117,8 @@ ceilometer:
  secret: BIGSECRET
  mongodb_servers:
   - 127.0.0.1
- rpc_backend: ceilometer.openstack.common.rpc.impl_kombu
+ rpc_backend: rabbit
+ redis: false
 
 swift:
  username: swift
@@ -125,3 +131,11 @@ swift:
 
 horizon:
  ssl: false
+
+aodh:
+ dbuser: aodh
+ dbpassword: aodh
+ dbname: aodh
+ username: aodh
+ password: aodh
+ rpc_backend: rabbit

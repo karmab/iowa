@@ -25,6 +25,7 @@ mysql:
   - nova
   - neutron
   - heat
+  - aodh
 
 keystone:
  dbuser: keystone
@@ -96,7 +97,6 @@ nova:
  firewall_driver: nova.virt.firewall.NoopFirewallDriver
  vncserver_listen: 0.0.0.0
 
-
 heat:
  dbuser: heat
  dbpassword: heat
@@ -105,7 +105,6 @@ heat:
  password: heat
  rpc_backend: rabbit
  heat_stack_user_role: heat_stack_user
-
 
 ceilometer:
  dbuser: ceilometer
@@ -131,3 +130,11 @@ swift:
 
 horizon:
  ssl: false
+
+aodh:
+ dbuser: aodh
+ dbpassword: aodh
+ dbname: aodh
+ username: aodh
+ password: aodh
+ rpc_backend: rabbit

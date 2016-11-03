@@ -31,6 +31,7 @@
     mysql_hosts: "{{ [mysql.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     rabbit_hosts: "{{ common.rabbit_hosts | append(':5672') | join(',') }}"
     redis_host: "{{ [common.redis_host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    aodh_host: "{{ [common.aodh_host, common.controller_host] | first_found | default('127.0.0.1') }}"
 
 - name: Set Openstack Variables
   set_fact:
@@ -86,8 +87,12 @@
     swift_partition: "{{ swift.partition | default('16') }}"
     swift_replicas: "{{ swift.replicas | default('3') }}"
     swift_storage_nodes: "{{ swift.storage_nodes | default(['127.0.0.1']) }}"
+    aodh_public_url: "{{ aodh.public_url | default('http://' ~ aodh_host ~ ':8042') }}"
+    aodh_internal_url: "{{ aodh.internal_url | default('http://' ~ aodh_host ~ ':8042') }}"
+    aodh_admin_url: "{{ aodh.admin_url | default('http://' ~ aodh_host ~ ':8042') }}"
 
 #- name: Debug Openstack Variables
 #  debug:
 #   var: hostvars[inventory_hostname]
+#   var: nova
 #  when: common.debug is True

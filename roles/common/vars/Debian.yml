@@ -73,6 +73,7 @@ nova_compute_ceilometer_packages:
 heat_packages:
  - 'heat-api'
  - 'heat-api-cfn'
+ - 'heat-api-cloudwatch'
  - 'heat-engine'
  - 'python-heatclient'
  - 'python-openstackclient'
@@ -82,11 +83,10 @@ ceilometer_packages:
  - 'ceilometer-collector'
  - 'ceilometer-agent-central'
  - 'ceilometer-agent-notification'
- - 'ceilometer-alarm-evaluator'
- - 'ceilometer-alarm-notifier'
  - 'python-ceilometerclient'
  - 'python-openstackclient'
 ceilometer_service: ceilometer
+ceilometer_compute_service: ceilometer-agent-compute
 swift_packages:
  - 'swift'
  - 'swift-proxy'
@@ -109,3 +109,12 @@ horizon_packages:
  - 'memcached'
  - 'python-memcache'
  - 'openstack-dashboard'
+aodh_packages:
+ - 'aodh-api'
+ - 'aodh-evaluator'
+ - 'aodh-notifier'
+ - 'aodh-listener'
+ - 'aodh-expirer'
+ - 'python-aodhclient'
+ - 'python-openstackclient'
+aodh_service: aodh
