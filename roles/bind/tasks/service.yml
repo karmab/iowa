@@ -9,6 +9,13 @@
 - name: Create Bind Rndc Key
   shell: rndc-confgen -a creates=/etc/rndc.key
 
+- name: Set Permission to Bind Rndc Key
+  file:
+   path: /etc/rndc.key
+   owner: named
+   group: named
+   mode: 0600
+  
 - name: Register Bind Rndc Key
   shell: cat /etc/rndc.key
   register: rndc_key
