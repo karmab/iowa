@@ -18,6 +18,7 @@ defaults
   timeout  server 1m
   timeout  check 10s
 
+{% if horizon_hosts is defined %}
 listen horizon
   bind *:80
   balance  source
@@ -27,7 +28,9 @@ listen horizon
   {% for host in horizon_hosts %}
   server {{ host }} {{ host}}:80 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if horizon_hosts is defined %}
 listen horizon_ssl
   bind *:443
   balance  source
@@ -37,7 +40,9 @@ listen horizon_ssl
   {% for host in horizon_hosts %}
   server {{ host }} {{ host}}:443 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if msyql_hosts is defined %}
 listen mysql
   bind *:3306
   balance  source
@@ -45,7 +50,9 @@ listen mysql
   {% for host in mysql_hosts %}
   server {{ host }} {{ host }}:3306 check port 9200 inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if redis_hosts is defined %}
 listen redis
   bind *:6379
   balance  source
@@ -55,7 +62,9 @@ listen redis
   {% for host in redis_hosts %}
   server {{ host }} {{ host }}:6379 check port 9200 inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if glance_hosts is defined %}
 listen glance_api
   bind *:9292
   balance  source
@@ -65,7 +74,9 @@ listen glance_api
   {% for host in glance_hosts %}
   server {{ host }} {{ host }}:9292 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if glance_hosts is defined %}
 listen glance_registry
   bind *:9191
   balance  source
@@ -74,7 +85,9 @@ listen glance_registry
   {% for host in glance_hosts %}
   server {{ host }} {{ host }}:9191 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if keystone_hosts is defined %}
 listen keystone_admin
   bind *:35357
   balance  source
@@ -84,7 +97,9 @@ listen keystone_admin
   {% for host in keystone_hosts %}
   server {{ host }} {{ host }}:35357 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if keystone_hosts is defined %}
 listen keystone_public_internal
   bind *:5000
   balance  source
@@ -94,7 +109,9 @@ listen keystone_public_internal
   {% for host in keystone_hosts %}
   server {{ host }} {{ host }}:5000 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if nova_hosts is defined %}
 listen nova_ec2_api
   bind *:8773
   balance  source
@@ -103,7 +120,9 @@ listen nova_ec2_api
   {% for host in nova_hosts %}
   server {{ host }} {{ host }}:8773 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if nova_hosts is defined %}
 listen nova_compute_api
   bind *:8774
   balance  source
@@ -113,7 +132,9 @@ listen nova_compute_api
   {% for host in nova_hosts %}
   server {{ host }} {{ host }}:8774 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if nova_hosts is defined %}
 listen nova_metadata_api
   bind *:8775
   balance  source
@@ -122,7 +143,9 @@ listen nova_metadata_api
   {% for host in nova_hosts %}
   server {{ host }} {{ host }}:8775 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if cinder_hosts is defined %}
 listen cinder_api
   bind *:8776
   balance  source
@@ -132,7 +155,9 @@ listen cinder_api
   {% for host in cinder_hosts %}
   server {{ host }} {{ host }}:8776 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if ceilometer_hosts is defined %}
 listen ceilometer_api
   bind *:8777
   balance  source
@@ -141,7 +166,9 @@ listen ceilometer_api
   {% for host in ceilometer_hosts %}
   server {{ host }} {{ host }}:8777 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if nova_hosts is defined %}
 listen nova_vncproxy
   bind *:6080
   balance  source
@@ -150,7 +177,9 @@ listen nova_vncproxy
   {% for host in nova_hosts %}
   server {{ host }} {{ host }}:6080 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if neutron_hosts is defined %}
 listen neutron_api
   bind *:9696
   balance  source
@@ -160,7 +189,9 @@ listen neutron_api
   {% for host in neutron_hosts %}
   server {{ host }} {{ host }}:9696 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if swift_hosts is defined %}
 listen swift_proxy
   bind *:8080
   balance  source
@@ -169,7 +200,9 @@ listen swift_proxy
   {% for host in swift_hosts %}
   server {{ host }} {{ host }}:8080 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
 
+{% if heat_hosts is defined %}
 listen heat
   bind *:8004
   balance  source
@@ -178,3 +211,4 @@ listen heat
   {% for host in heat_hosts %}
   server {{ host }} {{ host }}:8004 check inter 2000 rise 2 fall 5
   {% endfor %}
+{% endif %}
