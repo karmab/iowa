@@ -8,9 +8,9 @@
   become_method: sudo
   roles:
 #    - mongodb
-#    - mysql
+    - mysql
 #    - rabbitmq
-    - redis
+#    - redis
 #    - keystone
 #    - glance
 #    - cinder
@@ -21,3 +21,5 @@
 #    - aodh
 #    - ceilometer
 #    - swift
+    - bind
+    - designate

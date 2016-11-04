@@ -738,7 +738,7 @@ root_helper=sudo neutron-rootwrap /etc/neutron/rootwrap.conf
 # Deprecated group/name - [DATABASE]/sql_connection
 # Deprecated group/name - [sql]/connection
 #connection = <None>
-connection=mysql://{{ neutron.dbuser}}:{{neutron.dbpassword}}@{{ common.mysql_host}}/{{ neutron.dbname }}
+connection=mysql://{{ neutron.dbuser }}:{{ neutron.dbpassword }}@{{ common.mysql_host }}/{{ neutron.dbname }}
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)
@@ -1337,6 +1337,7 @@ lock_path=$state_path/lock
 # Deprecated group/name - [rpc_notifier2]/topics
 # Deprecated group/name - [DEFAULT]/notification_topics
 #topics = notifications
+topics = notifications, notification_designate
 
 
 [oslo_messaging_rabbit]

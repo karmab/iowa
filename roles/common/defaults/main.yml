@@ -23,9 +23,12 @@ mysql:
   - cinder
   - glance
   - nova
+  - nova_api
   - neutron
   - heat
   - aodh
+  - designate
+  - designate_pool_manager
 
 keystone:
  dbuser: keystone
@@ -97,6 +100,11 @@ nova:
  firewall_driver: nova.virt.firewall.NoopFirewallDriver
  vncserver_listen: 0.0.0.0
 
+nova_api:
+ dbuser: nova
+ dbpassword: nova
+ dbname: nova_api
+
 heat:
  dbuser: heat
  dbpassword: heat
@@ -141,3 +149,26 @@ aodh:
 
 redis:
  x: false
+
+designate:
+ dbuser: designate
+ dbpassword: designate
+ dbname: designate
+ username: designate
+ password: designate
+ pool_dbname: designate_pool_manager
+ notification_driver:
+  - nova.openstack.common.notifier.rpc_notifier
+  - messaging
+ notification_topics: notifications_designate
+ pool_id: 794ccc2c-d751-44fe-b57f-8894c9f5c842
+ target_id: 54547AD9-993D-4886-A676-9104D3136083
+ nameserver_id: CD196519-D6DD-460D-BEA7-4C93167939E6
+ target_type: bind9
+ bind_host: 127.0.0.1
+
+designate_pool_manager:
+ dbuser: designate
+ dbpassword: designate
+ dbname: designate_pool_manager
+

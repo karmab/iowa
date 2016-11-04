@@ -135,3 +135,19 @@ aodh_service: openstack-aodh
 redis_packages:
  - 'redis'
 redis_service: redis
+designate_packages:
+ - 'openstack-designate-api'
+ - 'openstack-designate-central'
+ - 'openstack-designate-sink'
+ - 'openstack-designate-pool-manager'
+ - 'openstack-designate-mdns'
+ - 'openstack-designate-common'
+ - 'python-designate'
+ - 'python-designateclient'
+ - 'openstack-designate-agent'
+ - 'python-openstackclient'
+designate_service: designate
+bind_packages:
+ - 'bind'
+ - 'bind-utils'
+bind_service: named

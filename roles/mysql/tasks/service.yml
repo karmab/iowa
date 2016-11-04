@@ -23,29 +23,36 @@
   mysql_user:
    name: "{{ vars[item[0]]['dbuser'] }}"
    password: "{{ vars[item[0]]['dbpassword'] }}"
-   priv: "*.*:ALL,GRANT"
+#   priv: "*.*:ALL,GRANT"
+   priv: "{{ item[0] }}.*:ALL,GRANT"
+   append_privs: yes
    state: "present"
    host: "{{ item[1] }}"
   with_nested:
    - "{{ mysql.databases}}"
    - ['localhost', '%' ]
 
-- name: Create Nova Api Db 
-  mysql_db:
-   name: "{{ nova.api_dbname }}" 
-   state: "present"
-   encoding: utf8
-  when: version not in ['kilo','liberty']
+#- name: Create Nova Api Db 
+#  mysql_db:
+#   name: "{{ nova.api_dbname }}" 
+#   state: "present"
+#   encoding: utf8
+#  when: version not in ['kilo','liberty']
+#
+#- name: Create User for Nova Api Db
+#  mysql_user:
+#   name: "{{ nova.dbuser }}"
+#   password: "{{ nova.dbpassword }}"
+#   priv: "*.*:ALL,GRANT"
+#   state: "present"
+#   host: "{{ item }}"
+#  with_items:
+#   - 'localhost'
+#   - '%'
+#  when: version not in ['kilo','liberty']
 
-- name: Create User for Nova Api Db
-  mysql_user:
-   name: "{{ nova.dbuser }}"
-   password: "{{ nova.dbpassword }}"
-   priv: "*.*:ALL,GRANT"
-   state: "present"
-   host: "{{ item }}"
-  with_items:
-   - 'localhost'
-   - '%'
-  when: version not in ['kilo','liberty']
-
+#- name: Create Designate Pool Manager Db 
+#  mysql_db:
+#   name: "{{ designate.pool_dbname }}" 
+#   state: "present"
+#   encoding: utf8

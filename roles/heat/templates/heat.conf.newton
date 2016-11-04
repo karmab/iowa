@@ -1090,7 +1090,7 @@ auth_uri = {{ keystone_admin_url }}
 # Deprecated group/name - [DATABASE]/sql_connection
 # Deprecated group/name - [sql]/connection
 #connection = <None>
-connection = mysql://{{ heat.dbuser}}:{{heat.dbpassword}}@{{ common.mysql_host}}/{{ heat.dbname }}
+connection = mysql://{{ heat.dbuser }}:{{ heat.dbpassword }}@{{ common.mysql_host }}/{{ heat.dbname }}
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)

@@ -424,7 +424,7 @@ rpc_backend = {{ aodh.rpc_backend }}
 # Deprecated group/name - [DEFAULT]/sql_connection
 # Deprecated group/name - [DATABASE]/sql_connection
 # Deprecated group/name - [sql]/connection
-connection = mysql://{{ aodh.dbuser}}:{{aodh.dbpassword}}@{{ common.mysql_host}}/{{ aodh.dbname }}
+connection = mysql://{{ aodh.dbuser }}:{{ aodh.dbpassword }}@{{ common.mysql_host }}/{{ aodh.dbname }}
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)
@@ -1007,7 +1007,7 @@ auth_uri = {{ keystone_identity_uri }}
 # This option is deprecated for removal.
 # Its value may be silently ignored in the future.
 # Reason: Replaced by [DEFAULT]/transport_url
-rabbit_hosts = { rabbit_hosts }}
+rabbit_hosts = {{ rabbit_hosts }}
 
 # Connect over SSL for RabbitMQ. (boolean value)
 # Deprecated group/name - [DEFAULT]/rabbit_use_ssl

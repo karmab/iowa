@@ -1,0 +1,38 @@
+---
+
+- name: Install Bind Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ bind_packages }}"
+
+- name: Create Rndc Bind Key
+  shell: rndc-confgen -a creates=/etc/rndc.key
+
+- name: Register Rndc Bind Key
+  shell: grep secret /etc/rndc.key  | awk -F' ' '{print $2}'
+  register: rndc_key
+
+- name: Enable Bind to listen on all interfaces
+  lineinfile:
+   dest: /etc/named.conf
+   regexp: 'listen-on port 53'
+   line: '        listen-on port 53 { 0.0.0.0; };'
+
+#- name: Enable Bind Rndc Key
+#  lineinfile:
+#   dest: /etc/named.conf
+#   insertbefore: 'options {'
+#   line: "include \"/etc/rndc.key\";\ncontrols { \n  inet 127.0.0.1 allow { localhost; } keys { \"rndc-key\"; }; \n};"
+#
+#- name: Enable Bind Options
+#  lineinfile:
+#   dest: /etc/named.conf
+#   insertafter: 'options {'
+#   line: "        allow-new-zones yes; \n       allow-query { any; }; \n        recursion no;'"
+
+- name: Enable Bind Service
+  service:
+   name: "{{ bind_service }}"
+   enabled: yes
+   state: started

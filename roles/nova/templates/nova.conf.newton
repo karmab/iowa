@@ -3713,7 +3713,7 @@ volume_api_class=nova.volume.cinder.API
 # value)
 #connection=mysql://nova:nova@localhost/nova
 {% if version not in  ['kilo','liberty'] %}
-connection=mysql://{{ nova.dbuser}}:{{nova.dbpassword}}@{{ common.mysql_host}}/{{ nova.dbname }}_api
+connection = mysql://{{ nova.dbuser }}:{{nova.dbpassword }}@{{ common.mysql_host }}/{{ nova.dbname }}_api
 {% endif %}
 # If True, SQLite uses synchronous mode. (boolean value)
 #sqlite_synchronous=true
@@ -4733,7 +4733,7 @@ workers=2
 # Deprecated group;name - [DATABASE]/sql_connection
 # Deprecated group;name - [sql]/connection
 #connection=<None>
-connection=mysql://{{ nova.dbuser}}:{{nova.dbpassword}}@{{ common.mysql_host}}/{{ nova.dbname }}
+connection = mysql://{{ nova.dbuser }}:{{ nova.dbpassword }}@{{ common.mysql_host }}/{{ nova.dbname }}
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)
@@ -4869,7 +4869,7 @@ connection=mysql://{{ nova.dbuser}}:{{nova.dbpassword}}@{{ common.mysql_host}}/{
 # "scheme://hostname:port[/path]" (i.e. "http://10.0.1.0:9292" or
 # "https://my.glance.server/image") (list value)
 #api_servers=<None>
-api_servers={{ glance_api_servers | prepend('http') | append(':9292') | join(',') }}
+api_servers={{ glance_api_servers | prepend('http:') | append(':9292') | join(',') }}
 
 # Allow to perform insecure SSL (https) requests to glance (boolean value)
 #api_insecure=false
@@ -6977,7 +6977,8 @@ driver = ceilometer.compute.nova_notifier
 # AMQP topic used for OpenStack notifications. (list value)
 # Deprecated group;name - [rpc_notifier2]/topics
 # Deprecated group;name - DEFAULT;notification_topics
-#topics=notifications
+#topics= notifications
+topics = notifications, notifications_designate
 
 
 [oslo_messaging_rabbit]

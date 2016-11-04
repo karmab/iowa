@@ -9,6 +9,8 @@ A set of roles to deploy openstack in a spread per component way
 - document cinder enabled backends
 - add ldap support in keystone? keystone v3 ?
 - document how to run the role with a custom variables files ( and with a specific component through tags)
+- document that when creating a db, the corresponding hash with its associated dbuser, dbpassword and dbname is needed for mysql role to work correctly
+- check if notifications_designate as topic is really needed or defaulting to notifications is enough
 
 ## SOME TIPS AROUND CONF
 

@@ -167,7 +167,7 @@ debug = {{ common.debug }}
 # Deprecated group/name - [DEFAULT]/sql_connection
 # Deprecated group/name - [DATABASE]/sql_connection
 # Deprecated group/name - [sql]/connection
-connection = mysql://{{ glance.dbuser}}:{{glance.dbpassword}}@{{ common.mysql_host}}/{{ glance.dbname }}
+connection = mysql://{{ glance.dbuser }}:{{ glance.dbpassword }}@{{ common.mysql_host }}/{{ glance.dbname }}
 
 # The SQL mode to be used for MySQL sessions. This option,
 # including the default, overrides any server-set SQL mode. To

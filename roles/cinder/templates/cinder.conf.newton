@@ -3409,7 +3409,7 @@ glance_host={{ glance_host }}
 # Deprecated group/name - [DATABASE]/sql_connection
 # Deprecated group/name - [sql]/connection
 #connection = <None>
-connection = mysql://{{ cinder.dbuser}}:{{cinder.dbpassword}}@{{ common.mysql_host}}/{{ cinder.dbname }}
+connection = mysql://{{ cinder.dbuser }}:{{ cinder.dbpassword }}@{{ common.mysql_host }}/{{ cinder.dbname }}
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)

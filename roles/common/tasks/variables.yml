@@ -33,6 +33,7 @@
     aodh_host: "{{ [common.aodh_host, common.controller_host] | first_found | default('127.0.0.1') }}"
     redis_host: "{{ [common.redis_host, common.controller_host] | first_found | default('127.0.0.1') }}"
     redis_hosts: "{{ [redis.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
+    designate_host: "{{ [common.designate_host, common.controller_host] | first_found | default('127.0.0.1') }}"
 
 - name: Set Openstack Variables
   set_fact:
@@ -91,6 +92,9 @@
     aodh_public_url: "{{ aodh.public_url | default('http://' ~ aodh_host ~ ':8042') }}"
     aodh_internal_url: "{{ aodh.internal_url | default('http://' ~ aodh_host ~ ':8042') }}"
     aodh_admin_url: "{{ aodh.admin_url | default('http://' ~ aodh_host ~ ':8042') }}"
+    designate_public_url: "{{ designate.public_url | default('http://' ~ designate_host ~ ':9001') }}"
+    designate_internal_url: "{{ designate.internal_url | default('http://' ~ designate_host ~ ':9001') }}"
+    designate_admin_url: "{{ designate.admin_url | default('http://' ~ designate_host ~ ':9001') }}"
 
 #- name: Debug Openstack Variables
 #  debug:

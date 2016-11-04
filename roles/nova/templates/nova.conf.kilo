@@ -2214,7 +2214,7 @@ vncserver_proxyclient_address = {{ nova_vnc_ip }}
 # Deprecated group;name - DEFAULT;sql_connection
 # Deprecated group;name - [DATABASE]/sql_connection
 # Deprecated group;name - [sql]/connection
-connection = mysql://{{ nova.dbuser}}:{{nova.dbpassword}}@{{ common.mysql_host}}/{{ nova.dbname }}
+connection = mysql://{{ nova.dbuser }}:{{ nova.dbpassword }}@{{ common.mysql_host }}/{{ nova.dbname }}
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)

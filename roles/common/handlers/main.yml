@@ -115,3 +115,15 @@
 
 - name: Restart Aodh Listener
   service: name="{{ aodh_service }}-listener" state=restarted
+
+- name: Restart Designate
+  service: name="{{ designate_service }}-api" state=restarted
+
+- name: Restart Designate Central
+  service: name="{{ designate_service }}-central" state=restarted
+
+- name: Restart Designate Mdns
+  service: name="{{ designate_service }}-mdns" state=restarted
+
+- name: Restart Designate Pool Manager
+  service: name="{{ designate_service }}-pool-manager" state=restarted

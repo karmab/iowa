@@ -2364,7 +2364,7 @@ debug = {{ common.debug }}
 #use_tpool=false
 
 
-connection = mysql://{{ cinder.dbuser}}:{{cinder.dbpassword}}@{{ common.mysql_host}}/{{ cinder.dbname }}
+connection = mysql://{{ cinder.dbuser }}:{{ cinder.dbpassword }}@{{ common.mysql_host }}/{{ cinder.dbname }}
 [fc-zone-manager]
 
 #

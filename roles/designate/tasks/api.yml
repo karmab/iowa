@@ -1,0 +1,68 @@
+---
+
+- name: Install Designate Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ designate_packages }}"
+
+- name: Configure Designate
+  template:
+    src: "designate.conf.{{ version }}"
+    dest: "/etc/designate/designate.conf"
+    backup: yes
+  notify: 
+   - Restart Designate
+   - Restart Designate Central
+   - Restart Designate Mdns
+   - Restart Designate Pool Manager
+
+- name: Populate Designate Database
+  run_once: yes
+  shell: designate-manage database sync
+
+- name: Populate Designate Pool Manager Database
+  run_once: yes
+  shell: designate-manage pool-manager-cache sync
+
+- name: Create Designate User
+  keystone_user:
+    state: present
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    user: designate
+    tenant: services
+    password: "{{ designate.password }}"
+
+- name: Grant Designate Admin Role
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    user: designate
+    role: admin
+
+- name: Create Designate Service And Endpoint
+  keystone_service: 
+    name: designate
+    type: dns
+    description: "Designate DNS Service"
+    publicurl: "{{ designate_public_url }}"
+    internalurl: "{{ designate_internal_url }}"
+    adminurl: "{{ designate_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
+- name: Enable Designate Services
+  service:
+    name: "{{ designate_service }}-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+   - api
+   - central
+   - mdns
+   - pool-manager

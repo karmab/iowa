@@ -1755,7 +1755,7 @@ rpc_backend = rabbit
 # Deprecated group/name - [DATABASE]/sql_connection
 # Deprecated group/name - [sql]/connection
 #connection = <None>
-connection = mysql://{{ glance.dbuser}}:{{glance.dbpassword}}@{{ common.mysql_host}}/{{ glance.dbname }}
+connection = mysql://{{ glance.dbuser }}:{{ glance.dbpassword }}@{{ common.mysql_host }}/{{ glance.dbname }}
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)
