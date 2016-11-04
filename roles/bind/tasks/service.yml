@@ -6,30 +6,41 @@
     state: latest
   with_items: "{{ bind_packages }}"
 
-- name: Create Rndc Bind Key
+- name: Create Bind Rndc Key
   shell: rndc-confgen -a creates=/etc/rndc.key
 
-- name: Register Rndc Bind Key
+- name: Register Bind Rndc Key
   shell: grep secret /etc/rndc.key  | awk -F' ' '{print $2}'
   register: rndc_key
+
+- name: Include Bind Rndc Key File
+  lineinfile:
+   state: present
+   dest: /etc/named.conf
+   line: 'include "/etc/rndc.key";'
 
 - name: Enable Bind to listen on all interfaces
   lineinfile:
    dest: /etc/named.conf
-   regexp: 'listen-on port 53'
-   line: '        listen-on port 53 { 0.0.0.0; };'
+   regexp: "listen-on port 53"
+   line: "        listen-on port 53 { any; };"
 
-#- name: Enable Bind Rndc Key
-#  lineinfile:
-#   dest: /etc/named.conf
-#   insertbefore: 'options {'
-#   line: "include \"/etc/rndc.key\";\ncontrols { \n  inet 127.0.0.1 allow { localhost; } keys { \"rndc-key\"; }; \n};"
-#
-#- name: Enable Bind Options
-#  lineinfile:
-#   dest: /etc/named.conf
-#   insertafter: 'options {'
-#   line: "        allow-new-zones yes; \n       allow-query { any; }; \n        recursion no;'"
+- name: Enable Bind Recusion
+  lineinfile:
+   dest: /etc/named.conf
+   regexp: "allow-query"
+   line: "        allow-query { any; };\n        allow-new-zones yes;"
+
+- name: Include Bind Controls File
+  lineinfile:
+   state: present
+   dest: /etc/named.conf
+   line: 'include "/etc/named.conf.controls";'
+
+- name: Create Bind Controls File
+  copy:
+   src: "{{ role_path }}/files/named.conf.controls"
+   dest: /etc/named.conf.controls
 
 - name: Enable Bind Service
   service:
