@@ -1,0 +1,13 @@
+---
+
+- name: Install Redis Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ redis_packages }}"
+
+- name: Enable Redis Service
+  service:
+   name: "{{ redis_service }}"
+   enabled: yes
+   state: started

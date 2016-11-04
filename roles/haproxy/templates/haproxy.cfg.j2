@@ -46,6 +46,16 @@ listen mysql
   server {{ host }} {{ host }}:3306 check port 9200 inter 2000 rise 2 fall 5
   {% endfor %}
 
+listen redis
+  bind *:6379
+  balance  source
+  option  tcpka
+  option  httpchk
+  option  tcplog
+  {% for host in redis_hosts %}
+  server {{ host }} {{ host }}:6379 check port 9200 inter 2000 rise 2 fall 5
+  {% endfor %}
+
 listen glance_api
   bind *:9292
   balance  source

@@ -119,3 +119,6 @@ aodh_packages:
  - 'python-aodhclient'
  - 'python-openstackclient'
 aodh_service: aodh
+redis_packages:
+ - 'redis-server'
+redis_service: redis-server

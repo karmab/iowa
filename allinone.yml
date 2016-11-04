@@ -1,7 +1,7 @@
 ---
 - name: Install All
-  hosts: openbuntu
-  remote_user: ubuntu
+  hosts: newton
+  remote_user: centos
   gather_facts: true
   become: yes
   become_user: root
@@ -10,6 +10,7 @@
 #    - mongodb
 #    - mysql
 #    - rabbitmq
+    - redis
 #    - keystone
 #    - glance
 #    - cinder
@@ -18,5 +19,5 @@
 #    - heat
 #    - horizon
 #    - aodh
-    - ceilometer
+#    - ceilometer
 #    - swift

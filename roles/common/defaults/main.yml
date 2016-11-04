@@ -138,3 +138,6 @@ aodh:
  username: aodh
  password: aodh
  rpc_backend: rabbit
+
+redis:
+ x: false

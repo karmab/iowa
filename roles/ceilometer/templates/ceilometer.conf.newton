@@ -443,7 +443,7 @@ udp_port=4952
 # service is running. (string value)
 #backend_url = <None>
 {% if ceilometer.redis %}
-backend_url= {{ redis_url }}
+backend_url= redis://{{ redis_host }}:6379
 {% endif %}
 # Number of seconds between heartbeats for distributed coordination. (floating
 # point value)
