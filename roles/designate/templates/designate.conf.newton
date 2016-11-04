@@ -593,4 +593,4 @@ port = 53
 [pool_target:{{ designate.target_id }}]
 masters = {{ designate.bind_host}}:5354
 type = bind9
-options = port: 53, host: {{ designate.bind_host }}
+options = rndc_port: 953, rndc_host: {{ designate.bind_host }}, rndc_config_file: /etc/rndc.conf, rndc_key_file: /etc/rndc.key

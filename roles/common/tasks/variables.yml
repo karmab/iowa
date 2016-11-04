@@ -34,6 +34,7 @@
     redis_host: "{{ [common.redis_host, common.controller_host] | first_found | default('127.0.0.1') }}"
     redis_hosts: "{{ [redis.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     designate_host: "{{ [common.designate_host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    bind_host: "{{ [designate.bind_host, common.bind_host, common.controller_host] | first_found | default('127.0.0.1') }}"
 
 - name: Set Openstack Variables
   set_fact:

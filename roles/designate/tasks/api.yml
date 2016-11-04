@@ -1,5 +1,17 @@
 ---
 
+- name: Create Rndc Key File
+  copy:
+   content: "{{ rndc_key.stdout }}"
+   dest: /etc/rndc.key 
+  when: rndc_key is defined
+
+- name: Create Rndc Conf File
+  template:
+   src: "{{ role_path }}/templates/rndc.conf"
+   dest: /etc/rndc.conf
+  when: rndc_key is defined and mysql_host is defined
+
 - name: Install Designate Packages
   package: 
     name: '{{ item }}'

@@ -10,8 +10,13 @@
   shell: rndc-confgen -a creates=/etc/rndc.key
 
 - name: Register Bind Rndc Key
-  shell: grep secret /etc/rndc.key  | awk -F' ' '{print $2}'
+  shell: cat /etc/rndc.key
   register: rndc_key
+
+- name: Create Bind Rndc Conf File
+  template:
+   src: "{{ role_path }}/templates/rndc.conf"
+   dest: /etc/rndc.conf
 
 - name: Include Bind Rndc Key File
   lineinfile:
