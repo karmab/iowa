@@ -25,30 +25,6 @@
    src: "{{ role_path }}/templates/rndc.conf"
    dest: /etc/rndc.conf
 
-#- name: Include Bind Rndc Key File
-#  lineinfile:
-#   state: present
-#   dest: /etc/named.conf
-#   line: 'include "/etc/rndc.key";'
-#
-#- name: Enable Bind to listen on all interfaces
-#  lineinfile:
-#   dest: /etc/named.conf
-#   regexp: "listen-on port 53"
-#   line: "        listen-on port 53 { any; };"
-#
-#- name: Enable Bind Recusion
-#  lineinfile:
-#   dest: /etc/named.conf
-#   regexp: "allow-query"
-#   line: "        allow-query { any; };\n        allow-new-zones yes;"
-#
-#- name: Include Bind Controls File
-#  lineinfile:
-#   state: present
-#   dest: /etc/named.conf
-#   line: 'include "/etc/named.conf.controls";'
-
 - name: Configure Bind
   copy:
    src: "{{ role_path }}/files/named.conf"
