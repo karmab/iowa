@@ -124,6 +124,10 @@ redis_packages:
 redis_service: redis-server
 designate_packages:
  - 'designate'
+ - 'designate-central'
+ - 'designate-sink'
+ - 'designate-pool-manager'
+ - 'designate-mdns'
  - 'python-openstackclient'
 designate_service: designate
 bind_packages:
