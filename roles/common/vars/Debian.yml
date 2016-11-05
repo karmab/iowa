@@ -128,5 +128,5 @@ designate_packages:
 designate_service: designate
 bind_packages:
  - 'bind9'
- - 'bind9-utils'
+ - 'bind9utils'
 bind_service: bind9
