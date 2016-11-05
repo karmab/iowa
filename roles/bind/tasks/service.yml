@@ -29,6 +29,7 @@
   copy:
    src: "{{ role_path }}/files/named.conf"
    dest: /etc/named.conf
+   backup:yes
 
 - name: Enable Bind Service
   service:
