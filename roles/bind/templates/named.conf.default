@@ -1,5 +1,5 @@
 
-include "/etc/rndc.key";
+include "{{ bind_conf_dir}}/rndc.key";
 
 options {
     listen-on port 53 { any; };
@@ -40,5 +40,5 @@ zone "." IN {
     file "named.ca";
 };
 
-include "/etc/named.rfc1912.zones";
-include "/etc/named.root.key";
+include "{{ bind_conf_dir }}/named.rfc1912.zones";
+include "{{ bind_conf_dir }}/named.root.key";

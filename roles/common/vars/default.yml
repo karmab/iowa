@@ -151,3 +151,6 @@ bind_packages:
  - 'bind'
  - 'bind-utils'
 bind_service: named
+bind_conf_dir: /etc
+bind_user: named
+bind_group: named

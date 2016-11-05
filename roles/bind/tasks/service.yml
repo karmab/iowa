@@ -7,17 +7,17 @@
   with_items: "{{ bind_packages }}"
 
 - name: Create Bind Rndc Key
-  shell: rndc-confgen -a creates=/etc/rndc.key
+  shell: rndc-confgen -a creates={{ bind_conf_dir }}/rndc.key
 
 - name: Set Permission to Bind Rndc Key
   file:
-   path: /etc/rndc.key
-   owner: named
-   group: named
+   path: "{{ bind_conf_dir }}/rndc.key"
+   owner: "{{ bind_user }}"
+   group: "{{ bind_group }}"
    mode: 0600
   
 - name: Register Bind Rndc Key
-  shell: cat /etc/rndc.key
+  shell: cat {{ bind_conf_dir }}/rndc.key
   register: rndc_key
 
 - name: Create Bind Rndc Conf File
@@ -26,10 +26,14 @@
    dest: /etc/rndc.conf
 
 - name: Configure Bind
-  copy:
-   src: "{{ role_path }}/files/named.conf"
-   dest: /etc/named.conf
-   backup:yes
+  template:
+#   src: "{{ role_path }}/templates/named.conf.{{ item }}"
+   src: "{{ item }}"
+   dest: "{{ bind_conf_dir }}/named.conf"
+   backup: yes
+  with_first_found:
+   - '{{ role_path }}/templates/named.conf.{{ ansible_os_family }}.yml'
+   - '{{ role_path }}/templates/named.conf.default'
 
 - name: Enable Bind Service
   service:
