@@ -26,6 +26,8 @@ mysql:
   - neutron
   - heat
   - aodh
+  - designate
+  - designate_pool_manager
 
 keystone:
  dbuser: keystone
