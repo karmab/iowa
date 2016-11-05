@@ -27,13 +27,14 @@
 
 - name: Configure Bind
   template:
-#   src: "{{ role_path }}/templates/named.conf.{{ item }}"
    src: "{{ item }}"
    dest: "{{ bind_conf_dir }}/named.conf"
    backup: yes
   with_first_found:
-   - '{{ role_path }}/templates/named.conf.{{ ansible_os_family }}.yml'
+   - '{{ role_path }}/templates/named.conf.{{ ansible_os_family }}'
    - '{{ role_path }}/templates/named.conf.default'
+  notify:
+   - Restart Bind
 
 - name: Enable Bind Service
   service:

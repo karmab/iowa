@@ -127,3 +127,6 @@
 
 - name: Restart Designate Pool Manager
   service: name="{{ designate_service }}-pool-manager" state=restarted
+
+- name: Restart Bind
+  service: name="{{ bind_service }}" state=restarted

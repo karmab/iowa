@@ -4,7 +4,6 @@ options {
     listen-on-v6 port 53 { ::1; };
     allow-new-zones yes;
     allow-query { any; };
-    allow-new-zones yes;
     recursion no;
 };
 
