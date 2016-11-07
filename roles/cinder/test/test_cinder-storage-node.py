@@ -6,7 +6,7 @@ import pytest
     ("openstack-selinux"),
     ("openstack-utils")
 ])
-def test_packages(Package, name, version):
+def test_packages(Package, name):
     assert Package(name).is_installed
 
 @pytest.mark.parametrize("process,enabled", [

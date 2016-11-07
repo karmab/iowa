@@ -1,12 +1,12 @@
 import pytest
 
-@pytest.mark.parametrize("name,version", [
+@pytest.mark.parametrize("name", [
     ("ceph"),
     ("ceph-common"),
     ("ceph-osd"),
     ("ceph-mon"),
 ])
-def test_packages(Package, name, version):
+def test_packages(Package, name):
     assert Package(name).is_installed
 
 @pytest.mark.parametrize("name,port", [
