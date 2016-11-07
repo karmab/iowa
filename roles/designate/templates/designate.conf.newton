@@ -160,7 +160,7 @@ enabled_extensions_v2 = quota, reports
 # Keystone Middleware
 #-----------------------
 [keystone_authtoken]
-auth_uri = {{ keystone.internal_url }}
+auth_uri = {{ keystone_internal_url }}
 identity_uri = {{ keystone_identity_uri }}
 #auth_host = {{ keystone_host }}
 auth_port = 35357

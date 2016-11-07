@@ -128,7 +128,7 @@ enabled_extensions_v2 = quotas, reports
 [keystone_authtoken]
 ##auth_uri = http://192.168.5.151:5000/v2.0
 ##identity_uri = http://192.168.5.151:35357/
-auth_uri = {{ keystone.internal_url }}
+auth_uri = {{ keystone_internal_url }}
 identity_uri = {{ keystone_identity_uri }}
 admin_tenant_name = {{ common.tenant }}
 admin_user = {{ designate.username }}

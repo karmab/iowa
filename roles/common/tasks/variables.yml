@@ -98,8 +98,8 @@
     designate_internal_url: "{{ designate.internal_url | default('http://' ~ designate_host ~ ':9001') }}"
     designate_admin_url: "{{ designate.admin_url | default('http://' ~ designate_host ~ ':9001') }}"
 
-#- name: Debug Openstack Variables
-#  debug:
-#   var: hostvars[inventory_hostname]
+- name: Debug Openstack Variables
+  debug:
+   var: hostvars[inventory_hostname]
 #   var: nova
 #  when: common.debug is True
