@@ -1,2 +1,10 @@
+# Python
 *pyc
 *retry
+
+# VEnv
+.virtualenv
+
+# testinfra
+.cache
+__pycache__
