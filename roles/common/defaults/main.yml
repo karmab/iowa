@@ -167,6 +167,12 @@ designate:
  target_type: bind9
  bind_host: 127.0.0.1
 
+infoblox:
+ host : 10.39.11.123
+ version: v1.4.1
+ username: admin
+ password: infoblox
+
 designate_pool_manager:
  dbuser: designate
  dbpassword: designate

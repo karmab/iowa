@@ -592,8 +592,22 @@ targets = {{ designate.target_id }}
 host = {{ designate.bind_host }}
 port = 53
 #
-
+{% if designate.target_type == 'bind9' %}
 [pool_target:{{ designate.target_id }}]
 type = bind9
 options = rndc_port: 953, rndc_host: {{ designate.bind_host }}, rndc_config_file: /etc/rndc.conf, rndc_key_file: /etc/rndc.key
 masters = {{ designate.bind_host}}:5354
+{% endif %}
+
+{% if designate.target_type == 'infoblox' %}
+[pool_target:{{ designate.target_id }}]
+infoblox_wapi = https://{{ infoblox.host }}/wapi/{{ infoblox.version }}/
+infoblox_username = {{ infoblox.username }}
+infoblox_password = {{ infoblox.password }}
+infoblox_sslverify = False
+##multi_tenant = True
+###infoblox_http_pool_connections =100
+###infoblox_http_pool_maxsize = 100
+###dns_view = default
+###net_view = default
+{% endif %}
