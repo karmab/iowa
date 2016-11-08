@@ -7,19 +7,19 @@
   become_user: root
   become_method: sudo
   roles:
-    - mongodb
-    - mysql
-    - rabbitmq
-    - redis
-    - keystone
-    - glance
-    - cinder
-    - neutron
-    - nova
-    - heat
-    - horizon
+#    - mongodb
+#    - mysql
+#    - rabbitmq
+#    - redis
+#    - keystone
+#    - glance
+#    - cinder
+#    - neutron
+#    - nova
+#    - heat
+#    - horizon
 #    - aodh
-    - ceilometer
+#    - ceilometer
 #    - swift
     - bind
-    - designate
+#    - designate
