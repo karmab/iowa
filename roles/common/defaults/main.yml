@@ -123,8 +123,6 @@ ceilometer:
  secret: BIGSECRET
  mongodb_servers:
   - 127.0.0.1
-# rpc_backend: ceilometer.openstack.common.rpc.impl_kombu
- rpc_backend: rabbit
  redis: false
 
 swift:

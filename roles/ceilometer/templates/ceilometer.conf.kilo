@@ -177,7 +177,11 @@
 
 # The messaging driver to use, defaults to rabbit. Other
 # drivers include qpid and zmq. (string value)
-rpc_backend = {{ ceilometer.rpc_backend }}
+{% if  version == 'kilo' %}
+rpc_backend = ceilometer.openstack.common.rpc.impl_kombu
+{% else %}
+rpc_backend = rabbit
+{% endif %}
 
 # The default exchange under which topics are scoped. May be
 # overridden by an exchange name specified in the

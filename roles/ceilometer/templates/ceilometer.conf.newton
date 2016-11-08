@@ -331,7 +331,11 @@ log_dir=/var/log/ceilometer
 # Its value may be silently ignored in the future.
 # Reason: Replaced by [DEFAULT]/transport_url
 #rpc_backend = rabbit
-rpc_backend={{ ceilometer.rpc_backend }}
+{% if  version == 'kilo' %}
+rpc_backend = ceilometer.openstack.common.rpc.impl_kombu
+{% else %}
+rpc_backend = rabbit
+{% endif %}
 
 # The default exchange under which topics are scoped. May be overridden by an
 # exchange name specified in the transport_url option. (string value)
