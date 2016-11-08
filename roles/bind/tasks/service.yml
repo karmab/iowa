@@ -36,6 +36,21 @@
   notify:
    - Restart Bind
 
+- name: Configure Bind Selinux
+  seboolean:
+   name: named_write_master_zones
+   state: yes
+   persistent: yes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Set Bind Directories Owner
+  file:
+   path: "/var/named"
+   owner: "{{ bind_user }}"
+   group: "{{ bind_group }}"
+   mode: 770
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
 - name: Enable Bind Service
   service:
    name: "{{ bind_service }}"

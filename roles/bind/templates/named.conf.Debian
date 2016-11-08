@@ -8,7 +8,7 @@ options {
 };
 
 controls {
-        inet 127.0.0.1 allow { any; } keys { "rndc-key"; };
+        inet * allow { any; } keys { "rndc-key"; };
 };
 
 include "{{ bind_conf_dir}}/rndc.key";

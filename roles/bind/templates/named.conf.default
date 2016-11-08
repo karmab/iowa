@@ -6,7 +6,6 @@ options {
     listen-on-v6 port 53 { ::1; };
     allow-new-zones yes;
     allow-query { any; };
-    allow-new-zones yes;
     directory   "/var/named";
     dump-file   "/var/named/data/cache_dump.db";
     statistics-file "/var/named/data/named_stats.txt";
@@ -25,7 +24,7 @@ options {
 };
 
 controls {
-        inet 127.0.0.1 allow { any; } keys { "rndc-key"; };
+        inet * allow { any; } keys { "rndc-key"; };
 };
 
 logging {
