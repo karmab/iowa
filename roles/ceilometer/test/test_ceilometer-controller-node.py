@@ -9,6 +9,7 @@ import pytest
     ("openstack-ceilometer-notification"),
     ("openstack-utils"),
     ("openstack-selinux"),
+    ("ntpd"),
 ])
 def test_packages(Package, name, version):
     assert Package(name).is_installed

@@ -23,6 +23,8 @@ def test_services(Service, process, enabled):
 @pytest.mark.parametrize("service,conf_file", [
     ("cinder", "cinder.conf"),
     ("cinder", "api-paste.ini"),
+    ("cinder", "rootwrap.conf"),
+    ("cinder", "policy.json"),
 ])
 def test_main_services_files(File, service, conf_file):
     _file = File("/etc/" + service + "/" + conf_file)
