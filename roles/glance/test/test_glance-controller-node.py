@@ -1,18 +1,24 @@
 import pytest
 
 @pytest.mark.parametrize("name", [
-    ("openstack-cinder"),
-    ("python-cinderclient"),
     ("openstack-selinux"),
-    ("openstack-utils")
+    ("openstack-utils"),
+    ("python-glance-store"),
+    ("python-glanceclient"),
+    ("openstack-glance"),
+    ("python-glance"),
 ])
 def test_packages(Package, name):
     assert Package(name).is_installed
 
+def test_listening_interfaces(Socket):
+    socket = Socket("tcp://0.0.0.0:9292")
+    assert socket.is_listening
+
 @pytest.mark.parametrize("process,enabled", [
     ("ntpd", True),
-    ("openstack-cinder-volume", True),
-    ("openstack-cinder-backup", True),
+    ("openstack-glance-api", True),
+    ("openstack-glance-registry", True),
 ])
 def test_services(Service, process, enabled):
     service = Service(process)
@@ -21,10 +27,12 @@ def test_services(Service, process, enabled):
         assert service.is_enabled
 
 @pytest.mark.parametrize("service,conf_file", [
-    ("cinder", "cinder.conf"),
-    ("cinder", "api-paste.ini"),
-    ("cinder", "rootwrap.conf"),
-    ("cinder", "policy.json"),
+    ("glance", "glance-api.conf"),
+    ("glance", "glance-cache.conf"),
+    ("glance", "glance-registry.conf"),
+    ("glance", "glance-scrubber.conf"),
+    ("glance", "schema-image.json"),
+    ("glance", "policy.json"),
 ])
 def test_main_services_files(File, service, conf_file):
     _file = File("/etc/" + service + "/" + conf_file)

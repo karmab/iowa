@@ -9,6 +9,7 @@ import pytest
     ("openstack-utils"),
     ("openstack-selinux"),
     ("openstack-utils"),
+    ("ntpd"),
 ])
 def test_packages(Package, name):
     assert Package(name).is_installed
