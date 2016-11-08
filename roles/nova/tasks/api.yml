@@ -79,4 +79,4 @@
     name: "{{ nova_service }}-console"
     enabled: yes
     state: started
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+  when: ansible_os_family == 'RedHat'

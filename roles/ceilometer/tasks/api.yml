@@ -81,7 +81,7 @@
    - collector
    - central
    - notification
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+  when: ansible_os_family == 'RedHat'
 
 - name: Enable Ceilometer Services
   service:
@@ -105,7 +105,7 @@
    - alarm-evaluator
    - alarm-notifier
    - notification
-  when: version in ['kilo','liberty'] and ( ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat')
+  when: version in ['kilo','liberty'] and ansible_os_family == 'RedHat'
 
 - name: Enable Ceilometer Alarm Services
   service:

@@ -44,7 +44,7 @@
   template:
     src: "{{ role_path }}/files/ifcfg-br-int"
     dest: /etc/sysconfig/network-scripts/ifcfg-br-int
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+  when: ansible_os_family == 'RedHat'
 
 - name: Configure Neutron Ovs
   template:
