@@ -41,7 +41,7 @@
    name: named_write_master_zones
    state: yes
    persistent: yes
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
 - name: Set Bind Directories Owner
   file:
@@ -50,7 +50,7 @@
    owner: "root"
    group: "{{ bind_group }}"
    mode: 0770
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
 - name: Enable Bind Service
   service:
