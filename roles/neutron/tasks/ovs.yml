@@ -81,7 +81,7 @@
     backup: yes
   notify:
     - Restart Neutron Openvswitch
-  when: version == 'kilo' and plugin_ini is not defined
+  when: version == 'kilo'
 
 - name: Configure Neutron Ovs
   template:
@@ -90,7 +90,7 @@
     backup: yes
   notify:
     - Restart Neutron Openvswitch
-  when: version != 'kilo' and plugin_ini is not defined
+  when: version != 'kilo'
 
 - name: Enable Neutron Ovs Services
   service:

@@ -8,7 +8,8 @@
 
 - name: Configure Horizon
   template:
-    src: "local_settings.{{ version }}"
+#    src: "local_settings.{{ version }}"
+    src: "local_settings"
     dest: "/etc/openstack-dashboard/local_settings"
     backup: yes
   notify:
