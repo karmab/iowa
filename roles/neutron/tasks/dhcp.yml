@@ -14,6 +14,16 @@
   notify:
    - Restart Neutron Dhcp
 
+- name: Configure Neutron Dhcp DnsMasq MTU
+  copy:
+    src: "dnsmasq-neutron.conf"
+    dest: "/etc/neutron/dnsmasq-neutron.conf"
+    owner: root
+    group: neutron
+    mode: 0640
+  notify:
+   - Restart Neutron Dhcp
+
 - name: Enable Neutron Dhcp Service
   service:
     name: "{{ neutron_dhcp_service }}"

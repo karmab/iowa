@@ -73,7 +73,7 @@ interface_driver = {{ neutron.interface_driver }}
 # dhcp_domain = openstacklocal
 
 # Override the default dnsmasq settings with this file
-# dnsmasq_config_file =
+dnsmasq_config_file = /etc/neutron/dnsmasq-neutron.conf
 
 # Comma-separated list of DNS servers which will be used by dnsmasq
 # as forwarders.
