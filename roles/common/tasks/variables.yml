@@ -98,6 +98,17 @@
     designate_internal_url: "{{ designate.internal_url | default('http://' ~ designate_host ~ ':9001') }}"
     designate_admin_url: "{{ designate.admin_url | default('http://' ~ designate_host ~ ':9001') }}"
 
+- name: Set Mysql Prefix for Kilo
+  set_fact:
+    mysql_prefix: "mysql"
+  when: version == 'kilo'
+
+- name: Set Mysql Prefix
+  set_fact:
+    mysql_prefix: "mysql+pymysql"
+    mysql_prefix: "mysql+pymysql"
+  when: version != 'kilo'
+
 #- name: Debug Openstack Variables
 #  debug:
 #   var: hostvars[inventory_hostname]

@@ -214,7 +214,7 @@ pool_id = {{ designate.pool_id }}
 # SQLAlchemy Storage
 #-----------------------
 [storage:sqlalchemy]
-connection = mysql://{{ designate.dbuser }}:{{ designate.dbpassword }}@{{ common.mysql_host }}/{{ designate.dbname }}
+connection = {{ mysql_prefix }}://{{ designate.dbuser }}:{{ designate.dbpassword }}@{{ common.mysql_host }}/{{ designate.dbname }}
 max_retries = -1
 # Database connection string - to configure options for a given implementation
 # like sqlalchemy or other see below
@@ -262,7 +262,7 @@ format = %(octet0)s-%(octet1)s-%(octet2)s-%(octet3)s.%(domain)s
 # SQLAlchemy Pool Manager Cache
 #-----------------------
 [pool_manager_cache:sqlalchemy]
-connection = mysql://{{ designate_pool_manager.dbuser }}:{{ designate_pool_manager.dbpassword }}@{{ common.mysql_host }}/{{ designate_pool_manager.dbname }}
+connection = {{ mysql_prefix }}://{{ designate_pool_manager.dbuser }}:{{ designate_pool_manager.dbpassword }}@{{ common.mysql_host }}/{{ designate_pool_manager.dbname }}
 max_retries = -1
 #connection = sqlite:///$state_path/designate_pool_manager.sqlite
 #connection_debug = 100

@@ -416,7 +416,7 @@ debug = {{ common.debug }}
 # Deprecated group/name - [DEFAULT]/sql_connection
 # Deprecated group/name - [DATABASE]/sql_connection
 # Deprecated group/name - [sql]/connection
-connection = mysql://{{ keystone.dbuser }}:{{ keystone.dbpassword }}@{{ common.mysql_host }}/{{ keystone.dbname }}
+connection = {{ mysql_prefix }}://{{ keystone.dbuser }}:{{ keystone.dbpassword }}@{{ common.mysql_host }}/{{ keystone.dbname }}
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)

@@ -3713,7 +3713,7 @@ volume_api_class=nova.volume.cinder.API
 # value)
 #connection=mysql://nova:nova@localhost/nova
 {% if version not in  ['kilo','liberty'] %}
-connection = mysql://{{ nova.dbuser }}:{{nova.dbpassword }}@{{ common.mysql_host }}/{{ nova.dbname }}_api
+connection = {{ mysql_prefix }}://{{ nova.dbuser }}:{{nova.dbpassword }}@{{ common.mysql_host }}/{{ nova.dbname }}_api
 {% endif %}
 # If True, SQLite uses synchronous mode. (boolean value)
 #sqlite_synchronous=true
@@ -4733,7 +4733,7 @@ workers=2
 # Deprecated group;name - [DATABASE]/sql_connection
 # Deprecated group;name - [sql]/connection
 #connection=<None>
-connection = mysql://{{ nova.dbuser }}:{{ nova.dbpassword }}@{{ common.mysql_host }}/{{ nova.dbname }}
+connection = {{ mysql_prefix }}://{{ nova.dbuser }}:{{ nova.dbpassword }}@{{ common.mysql_host }}/{{ nova.dbname }}
 
 # The SQLAlchemy connection string to use to connect to the slave database.
 # (string value)
