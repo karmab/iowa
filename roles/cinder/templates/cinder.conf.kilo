@@ -2442,7 +2442,8 @@ connection = {{ mysql_prefix }}://{{ cinder.dbuser }}:{{ cinder.dbpassword }}@{{
 #
 
 # Complete public Identity API endpoint. (string value)
-#auth_uri = <None>
+auth_uri =  http://{{ keystone_host }}:5000
+
 
 # API version of the admin Identity API endpoint. (string value)
 #auth_version = <None>
