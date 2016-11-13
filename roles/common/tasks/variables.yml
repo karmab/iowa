@@ -106,11 +106,10 @@
 - name: Set Mysql Prefix
   set_fact:
     mysql_prefix: "mysql+pymysql"
-    mysql_prefix: "mysql+pymysql"
   when: version != 'kilo'
 
 #- name: Debug Openstack Variables
 #  debug:
 #   var: hostvars[inventory_hostname]
-#   var: nova
+#   var: keystone_internal_url
 #  when: common.debug is True
