@@ -15,6 +15,13 @@
   notify:
     - Restart Apache
 
+- name: Configure Horizon Selinux
+  seboolean:
+   name: httpd_can_network_connect
+   state: yes
+   persistent: yes
+  when: ansible_os_family == 'RedHat'
+
 - name: Enable Apache Service
   service:
    name: "{{ apache_service }}"
