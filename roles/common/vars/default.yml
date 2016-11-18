@@ -154,3 +154,9 @@ bind_service: named
 bind_conf_dir: /etc
 bind_user: named
 bind_group: named
+magnum_packages:
+ - 'openstack-magnum-api'
+ - 'openstack-magnum-conductor'
+ - 'python2-magnumclient.noarch'
+ - 'python-openstackclient'
+magnum_service: openstack-magnum

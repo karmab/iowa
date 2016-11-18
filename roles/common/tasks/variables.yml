@@ -36,6 +36,8 @@
     designate_host: "{{ [common.designate_host, common.controller_host] | first_found | default('127.0.0.1') }}"
     designate_hosts: "{{ [common.designate_hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     bind_host: "{{ [designate.bind_host, common.bind_host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    magnum_host: "{{ [common.magnum_host, common.controller_host] | first_found | default('127.0.0.1') }}"
+    magnum_hosts: "{{ [common.magnum_hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
 
 - name: Set Openstack Variables
   set_fact:
@@ -97,6 +99,9 @@
     designate_public_url: "{{ designate.public_url | default('http://' ~ designate_host ~ ':9001') }}"
     designate_internal_url: "{{ designate.internal_url | default('http://' ~ designate_host ~ ':9001') }}"
     designate_admin_url: "{{ designate.admin_url | default('http://' ~ designate_host ~ ':9001') }}"
+    magnum_public_url: "{{ magnum.public_url | default('http://' ~ magnum_host ~ ':9511/v1') }}"
+    magnum_internal_url: "{{ magnum.internal_url | default('http://' ~ magnum_host ~ ':9511/v1') }}"
+    magnum_admin_url: "{{ magnum.admin_url | default('http://' ~ magnum_host ~ ':9511/v1') }}"
 
 - name: Set Mysql Prefix for Kilo
   set_fact:

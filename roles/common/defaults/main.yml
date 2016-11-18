@@ -29,6 +29,7 @@ mysql:
   - aodh
   - designate
   - designate_pool_manager
+  - magnum
 
 keystone:
  dbuser: keystone
@@ -175,3 +176,10 @@ designate_pool_manager:
  dbpassword: designate
  dbname: designate_pool_manager
 
+magnum:
+ dbuser: magnum
+ dbpassword: magnum
+ dbname: magnum
+ username: magnum
+ password: magnum
+ cert_manager_type: local

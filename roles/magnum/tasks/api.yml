@@ -1,0 +1,60 @@
+---
+
+- name: Install Magnum Packages
+  package: 
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ magnum_packages }}"
+
+- name: Configure Magnum
+  template:
+    src: "magnum.conf.{{ version }}"
+    dest: "/etc/magnum/magnum.conf"
+    backup: yes
+  notify: 
+   - Restart Magnum
+   - Restart Magnum Conductor
+
+- name: Populate Magnum Database
+  run_once: yes
+  shell: magnum-db-manage upgrade
+
+- name: Create Magnum User
+  keystone_user:
+    state: present
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    user: magnum
+    tenant: services
+    password: "{{ magnum.password }}"
+
+- name: Grant Magnum Admin Role
+  keystone_user:
+    endpoint: "{{ keystone_admin_url }}"
+    token: "{{ keystone.admin_token }}"
+    tenant: services
+    user: magnum
+    role: admin
+
+- name: Create Magnum Service And Endpoint
+  keystone_service: 
+    name: magnum
+    type: container-infra
+    description: "Magnum Container Service"
+    publicurl: "{{ magnum_public_url }}"
+    internalurl: "{{ magnum_internal_url }}"
+    adminurl: "{{ magnum_admin_url }}"
+    endpoint: "{{ keystone_internal_url }}"
+    login_user: admin
+    login_password: "{{ keystone.admin_password }}"
+    tenant_name: admin
+    region: "{{ common.region }}"
+
+- name: Enable Magnum Services
+  service:
+    name: "{{ magnum_service }}-{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+   - api
+   - conductor

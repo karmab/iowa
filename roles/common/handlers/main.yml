@@ -130,3 +130,9 @@
 
 - name: Restart Bind
   service: name="{{ bind_service }}" state=restarted
+
+- name: Restart Magnum
+  service: name="{{ magnum_service }}" state=restarted
+
+- name: Restart Magnum Conductor
+  service: name="{{ magnum_service }}-conductor" state=restarted

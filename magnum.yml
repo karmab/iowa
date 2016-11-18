@@ -1,0 +1,11 @@
+---
+- name: Install Magnum
+  hosts: newton
+  remote_user: centos
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - mysql
+    - magnum
