@@ -2609,7 +2609,7 @@ nova_catalog_admin_info = compute:nova:adminURL
 #hitachi_auth_password = HBSD-CHAP-password
 
 # Driver to use for volume creation (string value)
-#volume_driver = {{ cinder.volume_driver }}
+volume_driver = {{ cinder.volume_driver }}
 
 # Timeout for creating the volume to migrate to when performing volume
 # migration (seconds) (integer value)
@@ -4429,7 +4429,7 @@ policy_file = /etc/cinder/policy.json
 [lvm]
 #iscsi_helper=lioadm
 #iscsi_ip_address=192.168.5.140
-#volume_driver = {{ cinder.volume_driver }}
+volume_driver = {{ cinder.volume_driver }}
 #volume_backend_name=lvm
 #volumes_dir=/var/lib/cinder/volumes
 {% if cinder.volume_driver == 'cinder.volume.drivers.lvm.LVMISCSIDriver' %}
