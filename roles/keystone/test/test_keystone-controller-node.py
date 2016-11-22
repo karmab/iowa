@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.mark.parametrize("name", [
     ("openstack-selinux"),
     ("openstack-utils"),
@@ -13,18 +14,19 @@ import pytest
 def test_packages(Package, name):
     assert Package(name).is_installed
 
+
 @pytest.mark.parametrize("name,port", [
-    ("keystone_user","5000"),
-    ("keystone_admin","35357"),
-    ("httpd","80"),
-    ("httpd-ssl","443"),
+    ("keystone_user", "5000"),
+    ("keystone_admin", "35357"),
+    ("httpd", "80"),
+    ("httpd-ssl", "443"),
 ])
 def test_listening_interfaces(Socket, name, port):
     socket = Socket("tcp://0.0.0.0:" + port)
     assert socket.is_listening
 
+
 @pytest.mark.parametrize("process,enabled", [
-    ("ntpd", True),
     ("httpd", True),
 ])
 def test_services(Service, process, enabled):
@@ -32,6 +34,7 @@ def test_services(Service, process, enabled):
     assert service.is_running
     if enabled:
         assert service.is_enabled
+
 
 @pytest.mark.parametrize("service,conf_file", [
     ("keystone", "keystone.conf"),
