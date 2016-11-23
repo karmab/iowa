@@ -1,12 +1,12 @@
 import pytest
 
-component = 'glance'
-ports = ['9292']
-configuration_files = ['glance-api.conf', 'glance-registry.conf']
-debian_packages = ['glance', 'python-openstackclient', 'python-glanceclient']
-rhel_packages = ['openstack-glance', 'openstack-utils', 'openstack-selinux', 'python-openstackclient']
-debian_services = ['glance-api', 'glance-registry']
-rhel_services = ['openstack-glance-api', 'openstack-glance-registry']
+component = 'swift'
+ports = ['8080']
+configuration_files = ['proxy-server.conf', 'object.builder', 'container.builder', 'account.builder']
+debian_packages = ['swift', 'swift-proxy', 'python-swiftclient', 'python-keystoneclient', 'python-keystonemiddleware', 'memcached', 'python-openstackclient']
+rhel_packages = ['openstack-swift-proxy', 'openstack-swift-plugin-swift3', 'memcached', 'python-swiftclient']
+debian_services = ['swift-proxy']
+rhel_services = ['openstack-swift-proxy', 'memcached']
 configuration_files = ["/etc/%s/%s" % (component, configuration_file) for configuration_file in configuration_files]
 
 

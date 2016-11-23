@@ -1,12 +1,12 @@
 import pytest
 
-component = 'glance'
-ports = ['9292']
-configuration_files = ['glance-api.conf', 'glance-registry.conf']
-debian_packages = ['glance', 'python-openstackclient', 'python-glanceclient']
-rhel_packages = ['openstack-glance', 'openstack-utils', 'openstack-selinux', 'python-openstackclient']
-debian_services = ['glance-api', 'glance-registry']
-rhel_services = ['openstack-glance-api', 'openstack-glance-registry']
+component = 'heat'
+ports = ['8004', '8000']
+configuration_files = ['heat.conf']
+debian_packages = ['heat-api', 'heat-api-cfn', 'heat-api-cloudwatch', 'heat-engine', 'python-heatclient', 'python-openstackclient']
+rhel_packages = ['openstack-heat-api', 'openstack-heat-api-cfn', 'openstack-heat-common', 'openstack-heat-engine', 'openstack-heat-api-cloudwatch', 'heat-cfntools', 'python-heatclient', 'openstack-utils', 'python-openstackclient']
+debian_services = ['heat-api', 'heat-api-cfn', 'heat-api-cloudwatch', 'heat-engine']
+rhel_services = ['openstack-heat-api', 'openstack-heat-api-cfn', 'openstack-heat-api-cloudwatch', 'openstack-heat-engine']
 configuration_files = ["/etc/%s/%s" % (component, configuration_file) for configuration_file in configuration_files]
 
 

@@ -1,12 +1,12 @@
 import pytest
 
-component = 'glance'
-ports = ['9292']
-configuration_files = ['glance-api.conf', 'glance-registry.conf']
-debian_packages = ['glance', 'python-openstackclient', 'python-glanceclient']
-rhel_packages = ['openstack-glance', 'openstack-utils', 'openstack-selinux', 'python-openstackclient']
-debian_services = ['glance-api', 'glance-registry']
-rhel_services = ['openstack-glance-api', 'openstack-glance-registry']
+component = 'nova'
+ports = ['8774']
+configuration_files = ['nova.conf']
+debian_packages = ['nova-api', 'nova-cert', 'nova-conductor', 'nova-consoleauth', 'nova-novncproxy', 'nova-scheduler', 'python-novaclient', 'python-openstackclient']
+rhel_packages = ['openstack-nova-api', 'openstack-nova-conductor', 'openstack-nova-scheduler', 'openstack-nova-novncproxy', 'openstack-nova-console', 'openstack-utils', 'python-cinderclient', 'openstack-selinux', 'python-openstackclient']
+debian_services = ['nova-api', 'nova-scheduler', 'nova-conductor', 'nova-novncproxy', 'nova-consoleauth']
+rhel_services = ['openstack-nova-api', 'openstack-nova-scheduler', 'openstack-nova-conductor', 'openstack-nova-novncproxy', 'openstack-nova-consoleauth', 'openstack-nova-console']
 configuration_files = ["/etc/%s/%s" % (component, configuration_file) for configuration_file in configuration_files]
 
 

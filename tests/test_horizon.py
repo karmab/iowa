@@ -1,12 +1,12 @@
 import pytest
 
-component = 'glance'
-ports = ['9292']
-configuration_files = ['glance-api.conf', 'glance-registry.conf']
-debian_packages = ['glance', 'python-openstackclient', 'python-glanceclient']
-rhel_packages = ['openstack-glance', 'openstack-utils', 'openstack-selinux', 'python-openstackclient']
-debian_services = ['glance-api', 'glance-registry']
-rhel_services = ['openstack-glance-api', 'openstack-glance-registry']
+component = 'openstack-dashboard'
+ports = []
+configuration_files = ['local_settings']
+debian_packages = ['apache2', 'libapache2-mod-wsgi', 'memcached', 'python-memcache', 'openstack-dashboard']
+rhel_packages = ['httpd', 'mod_wsgi', 'mod_ssl', 'memcached', 'openstack-dashboard']
+debian_services = ['apache2']
+rhel_services = ['httpd']
 configuration_files = ["/etc/%s/%s" % (component, configuration_file) for configuration_file in configuration_files]
 
 

@@ -63,6 +63,13 @@ ansible-playbook -i ~/klist.py controller.yml --extra-vars @samples/barcelona.ym
 ansible-playbook -i ~/klist.py compute.yml --extra-vars @samples/barcelona.yml --tags compute
 ```
 
+##RUNNING TESTS
+
+```
+testinfra --connection=ansible --ansible-inventory ~/klist.py --sudo --hosts=heat tests/test_heat.py  -v
+```
+
+
 ##Problems?
 
 Send me a mail at [karimboumedhel@gmail.com](mailto:karimboumedhel@gmail.com) !

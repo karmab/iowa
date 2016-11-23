@@ -1,12 +1,12 @@
 import pytest
 
-component = 'glance'
-ports = ['9292']
-configuration_files = ['glance-api.conf', 'glance-registry.conf']
-debian_packages = ['glance', 'python-openstackclient', 'python-glanceclient']
-rhel_packages = ['openstack-glance', 'openstack-utils', 'openstack-selinux', 'python-openstackclient']
-debian_services = ['glance-api', 'glance-registry']
-rhel_services = ['openstack-glance-api', 'openstack-glance-registry']
+component = 'designate'
+ports = ['9001']
+configuration_files = ['designate.conf']
+debian_packages = ['designate', 'designate-central', 'designate-sink', 'designate-pool-manager', 'designate-mdns', 'python-openstackclient']
+rhel_packages = ['openstack-designate-api', 'openstack-designate-central', 'openstack-designate-sink', 'openstack-designate-pool-manager', 'openstack-designate-mdns', 'openstack-designate-common', 'python-designate', 'python-designateclient', 'openstack-designate-agent', 'python-openstackclient']
+debian_services = ['designate-api', 'designate-central', 'designate-mdsn', 'designate-pool-manager']
+rhel_services = ['openstack-designate-api', 'openstack-designate-central', 'openstack-designate-mdsn', 'openstack-designate-pool-manager']
 configuration_files = ["/etc/%s/%s" % (component, configuration_file) for configuration_file in configuration_files]
 
 

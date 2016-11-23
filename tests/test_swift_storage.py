@@ -1,12 +1,12 @@
 import pytest
 
-component = 'glance'
-ports = ['9292']
-configuration_files = ['glance-api.conf', 'glance-registry.conf']
-debian_packages = ['glance', 'python-openstackclient', 'python-glanceclient']
-rhel_packages = ['openstack-glance', 'openstack-utils', 'openstack-selinux', 'python-openstackclient']
-debian_services = ['glance-api', 'glance-registry']
-rhel_services = ['openstack-glance-api', 'openstack-glance-registry']
+component = 'swift'
+ports = ['6200', '6201', '6202']
+configuration_files = ['swift.conf', 'proxy-server.conf', 'object.builder', 'container.builder', 'account.builder']
+debian_packages = ['rsync', 'xinetd', 'swift', 'swift-account', 'swift-container', 'swift-object']
+rhel_packages = ['rsync', 'xinetd', 'openstack-swift-object', 'openstack-swift-container', 'openstack-swift-account', 'python-swiftclient']
+debian_services = ['swift-object', 'swift-container', 'swift-account', 'xinetd']
+rhel_services = ['openstack-swift-object', 'openstack-swift-container', 'openstack-swift-account', 'xinetd']
 configuration_files = ["/etc/%s/%s" % (component, configuration_file) for configuration_file in configuration_files]
 
 
