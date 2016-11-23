@@ -26,7 +26,15 @@ def Variables(SystemInfo):
         elif args == 'ports':
                 return ports
         elif args == 'conf':
-                return ["/etc/%s/%s" % (component, configuration_file) for configuration_file in configuration_files]
+                conf = []
+                for configuration_file in configuration_files:
+                    if configuration_file.startswith('/etc'):
+                        conf.append(configuration_file)
+                    elif '/' in configuration_file:
+                        conf.append('/etc/%s' % configuration_file)
+                    else:
+                        conf.append("/etc/%s/%s" % (component, configuration_file))
+                return conf
     return f
 
 
