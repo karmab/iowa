@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    host: "{{ neutron_host }}"
     ports: 
      - 9696
     packages: "{{ neutron_packages }}"

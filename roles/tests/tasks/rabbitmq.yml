@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    host: "{{ rabbitmq_host }}"
     ports: 
      - 25672
     packages: "{{ rabbitmq_packages }}"

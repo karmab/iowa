@@ -2,14 +2,13 @@
 
 - name: Set Test Variables
   set_fact:
+    host: "{{ glance_host }}"
     ports: 
      - 9292
     packages: "{{ glance_packages }}"
-    services:
-     - 'openstack-glance-api'
-     - 'openstack-glance-registry'
+    services: "{{ glance_services }}"
     configuration_files:
      - '/etc/glance/glance-api.conf'
-     - '/etc/glance/glance-registryconf'
+     - '/etc/glance/glance-registry.conf'
 
 - include: common.yml

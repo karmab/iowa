@@ -27,7 +27,9 @@ glance_packages:
  - 'glance'
  - 'python-glanceclient'
  - 'python-openstackclient'
-glance_service: glance
+glance_services:
+ - 'glance-api'
+ - 'glance-registry'
 cinder_packages:
  - 'cinder-api'
  - 'cinder-scheduler'

@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    host: "{{ ceilometer_host }}"
     ports: 
      - 8777
     packages: "{{ ceilometer_packages }}"

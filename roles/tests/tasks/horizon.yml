@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    host: "{{ horizon_host }}"
     ports: 
      - 80
     packages: "{{ horizon_packages }}"

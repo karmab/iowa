@@ -31,7 +31,9 @@ glance_packages:
  - 'openstack-utils'
  - 'openstack-selinux'
  - 'python-openstackclient'
-glance_service: openstack-glance
+glance_services:
+ - 'openstack-glance-api'
+ - 'openstack-glance-registry'
 cinder_packages:
  - 'openstack-cinder'
  - 'openstack-utils'

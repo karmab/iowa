@@ -1,7 +1,7 @@
 ---
 
 - name: Test Ports
-  wait_for: host={{ keystone_host }} port={{ item }} timeout=10
+  wait_for: host={{ host }} port={{ item }} timeout=10
   ignore_errors: yes
   with_items: "{{ ports }}"
   when: ports is defined

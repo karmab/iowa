@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    host: "{{ nova_host }}"
     ports: 
      - 8774
     packages: "{{ nova_packages }}"

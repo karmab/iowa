@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    host: "{{ swift_host }}"
     ports: 
      - 8080
     packages: "{{ swift_packages }}"

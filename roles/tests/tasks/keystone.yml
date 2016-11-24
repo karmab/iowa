@@ -13,6 +13,7 @@
 
 - name: Set Test Variables
   set_fact:
+    host: "{{ keystone_host }}"
     ports: 
      - 5000
      - 35357

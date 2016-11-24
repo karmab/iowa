@@ -3,10 +3,8 @@
   shell: systemctl daemon-reload
 
 - name: Restart Glance
-  service: name="{{ glance_service }}-api" state=restarted
-
-- name: Restart Glance Registry
-  service: name="{{ glance_service }}-registry" state=restarted
+  service: name="{{ item }}" state=restarted
+  with_items: "{{ glance_services }}"
 
 - name: Restart Cinder
   service: name="{{ cinder_service }}-api" state=restarted

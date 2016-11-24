@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    host: "{{ designate_host }}"
     ports: 
      - 9001
     packages: "{{ designate_packages }}"

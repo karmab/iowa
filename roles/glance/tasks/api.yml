@@ -16,7 +16,6 @@
     - 'registry'
   notify:
     - Restart Glance
-    - Restart Glance Registry
 
 #- name: Check Glance Database Version
 #  shell: su - glance -s /bin/bash -c 'glance-manage db_version'
@@ -61,9 +60,7 @@
 
 - name: Enable Glance Service
   service:
-    name: "{{ glance_service }}-{{ item }}"
+    name: "{{ item }}"
     enabled: yes
     state: started
-  with_items:
-    - 'api'
-    - 'registry'
+  with_items: "{{ glance_services }}"
