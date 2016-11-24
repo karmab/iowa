@@ -1,0 +1,13 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 6379
+    packages: "{{ redis_packages }}"
+    services:
+     - 'redis'
+    configuration_files:
+     - '/etc/redis.conf'
+
+- include: common.yml

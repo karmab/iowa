@@ -1,0 +1,14 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 8776
+    packages: "{{ cinder_packages }}"
+    services:
+     - 'openstack-cinder-api'
+     - 'openstack-cinder-scheduler'
+    configuration_files:
+     - '/etc/cinder/cinder.conf'
+
+- include: common.yml

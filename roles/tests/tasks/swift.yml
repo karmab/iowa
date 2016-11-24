@@ -1,0 +1,17 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 8080
+    packages: "{{ swift_packages }}"
+    services:
+     - 'openstack-swift-proxy'
+     - 'memcached'
+    configuration_files:
+     - '/etc/swift/proxy-server.conf'
+     - '/etc/swift/object.builder'
+     - '/etc/swift/container.builder'
+     - '/etc/swift/account.builder'
+
+- include: common.yml

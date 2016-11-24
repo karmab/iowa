@@ -1,0 +1,13 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 80
+    packages: "{{ horizon_packages }}"
+    services:
+     - 'httpd'
+    configuration_files:
+     - '/etc/openstack-dashboard/local_settings'
+
+- include: common.yml

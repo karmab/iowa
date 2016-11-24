@@ -41,6 +41,7 @@ def Variables(SystemInfo):
 def test_packages(Package, Variables):
     packages = Variables('packages')
     for package in packages:
+        print package
         assert Package(package).is_installed
 
 
@@ -53,6 +54,7 @@ def test_services(Service, Variables):
 def test_ports(Socket, Variables):
     for port in Variables('ports'):
         socket = Socket("tcp://0.0.0.0:%s" % port)
+        print port
         assert socket.is_listening
 
 

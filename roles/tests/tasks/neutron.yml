@@ -1,0 +1,19 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 9696
+    packages: "{{ neutron_packages }}"
+    services:
+     - 'neutron-server'
+     - 'neutron-openvswitch-agent'
+     - 'neutron-dhcp-agent'
+     - 'neutron-l3-agent'
+     - 'neutron-metadata-agent'
+     - 'openvswitch'
+    configuration_files:
+     - '/etc/neutron/neutron.conf'
+     - '/etc/neutron/plugin.ini'
+
+- include: common.yml

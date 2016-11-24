@@ -1,0 +1,21 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 6200
+     - 6201
+     - 6202
+    packages: "{{ swift_storage_packages }}"
+    services:
+     - 'openstack-swift-object'
+     - 'openstack-swift-container'
+     - 'openstack-swift-account'
+     - 'xinetd'
+    configuration_files:
+     - '/etc/swift/swift.conf'
+     - '/etc/swift/object.builder'
+     - '/etc/swift/container.builder'
+     - '/etc/swift/account.builder'
+
+- include: common.yml

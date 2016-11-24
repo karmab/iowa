@@ -1,0 +1,11 @@
+---
+- name: Test 
+  hosts:
+   - glance
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - tests

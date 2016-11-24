@@ -1,0 +1,25 @@
+---
+
+- name: Set Keystone Service
+  set_fact: 
+    service: "{{ keystone_service }}"
+  when: version == 'kilo'
+
+- name: Set Keystone Service
+  set_fact: 
+    service: "{{ apache_service }}"
+  when: version != 'kilo'
+
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 5000
+     - 35357
+    packages: "{{ keystone_packages }}"
+    services:
+     - "{{ service }}"
+    configuration_files:
+     - '/etc/keystone/keystone.conf'
+
+- include: common.yml

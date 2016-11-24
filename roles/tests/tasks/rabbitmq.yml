@@ -1,0 +1,13 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 25672
+    packages: "{{ rabbitmq_packages }}"
+    services:
+     - 'rabbitmq-server'
+    configuration_files:
+     - '/etc/rabbitmq/rabbitmq.config'
+
+- include: common.yml

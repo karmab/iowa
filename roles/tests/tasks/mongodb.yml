@@ -1,0 +1,13 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 27017
+    packages: "{{ mongodb_packages }}"
+    services:
+     - 'mongod'
+    configuration_files:
+     - '/etc/mongod.conf'
+
+- include: common.yml

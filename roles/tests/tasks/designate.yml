@@ -1,0 +1,16 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 9001
+    packages: "{{ designate_packages }}"
+    services:
+     - 'openstack-designate-api'
+     - 'openstack-designate-central'
+     - 'openstack-designate-mdsn'
+     - 'openstack-designate-pool-manager'
+    configuration_files:
+     - '/etc/designate/designate.conf'
+
+- include: common.yml

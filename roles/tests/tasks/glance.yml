@@ -1,0 +1,15 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 9292
+    packages: "{{ glance_packages }}"
+    services:
+     - 'openstack-glance-api'
+     - 'openstack-glance-registry'
+    configuration_files:
+     - '/etc/glance/glance-api.conf'
+     - '/etc/glance/glance-registryconf'
+
+- include: common.yml

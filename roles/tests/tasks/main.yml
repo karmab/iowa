@@ -1,0 +1,51 @@
+- include: mysql.yml
+  tags:
+   - mysql
+- include: rabbitmq.yml
+  tags:
+   - rabbitmq
+- include: mongodb.yml
+  tags:
+   - mongodb
+- include: redis.yml
+  tags:
+   - redis
+- include: keystone.yml
+  tags:
+   - keystone
+- include: glance.yml
+  tags:
+   - glance
+- include: cinder.yml
+  tags:
+   - cinder
+- include: cinder_volume.yml
+  tags:
+   - cinder_volume
+- include: neutron.yml
+  tags:
+   - neutron
+- include: nova.yml
+  tags:
+   - nova
+- include: nova_compute.yml
+  tags:
+   - nova_compute
+- include: heat.yml
+  tags:
+   - heat
+- include: ceilometer.yml
+  tags:
+   - ceilometer
+- include: horizon.yml
+  tags:
+   - horizon
+- include: swift.yml
+  tags:
+   - swift
+- include: swift_storage.yml
+  tags:
+   - swift_storage
+- include: designate.yml
+  tags:
+   - designate

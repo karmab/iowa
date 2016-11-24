@@ -1,0 +1,17 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 8000
+     - 8004
+    packages: "{{ heat_packages }}"
+    services:
+     - 'openstack-heat-api'
+     - 'openstack-heat-api-cfn'
+     - 'openstack-heat-api-cloudwatch'
+     - 'openstack-heat-engine'
+    configuration_files:
+     - '/etc/heat/heat.conf'
+
+- include: common.yml

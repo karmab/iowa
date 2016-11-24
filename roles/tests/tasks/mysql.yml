@@ -1,0 +1,13 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    ports: 
+     - 3306
+    packages: "{{ mysql_packages }}"
+    services:
+     - 'mariadb'
+    configuration_files:
+     - '/etc/my.cnf'
+
+- include: common.yml

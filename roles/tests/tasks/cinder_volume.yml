@@ -1,0 +1,11 @@
+---
+
+- name: Set Test Variables
+  set_fact:
+    packages: "{{ cinder_packages }}"
+    services:
+     - 'openstack-cinder-volume'
+    configuration_files:
+     - '/etc/cinder/cinder.conf'
+
+- include: common.yml

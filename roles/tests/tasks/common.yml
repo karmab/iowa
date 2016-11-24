@@ -1,0 +1,33 @@
+---
+
+- name: Test Ports
+  wait_for: host={{ keystone_host }} port={{ item }} timeout=10
+  ignore_errors: yes
+  with_items: "{{ ports }}"
+  when: ports is defined
+
+- name: Test Packages
+  shell: yum list installed | grep {{ item }}
+  ignore_errors: yes
+  with_items: "{{ packages }}"
+  when: packages is defined
+
+- name: Gather Configuration Files
+  stat: path={{ item }}
+  register: configuration_files_checked
+  ignore_errors: yes
+  with_items: "{{ configuration_files }}"
+  when: configuration_files is defined
+
+- name: Test Configuration Files
+  fail:
+    msg: |
+      Configuration file {{ item.item }} missing
+  when: configuration_files_checked is defined and not item.stat.exists
+  with_items: "{{ configuration_files_checked.results }}"
+
+- name: Test Services
+  shell: systemctl status {{ item }}
+  ignore_errors: yes
+  with_items: "{{ services }}"
+  when: services is defined
