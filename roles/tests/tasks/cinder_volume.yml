@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    group: cinder
     packages: "{{ cinder_packages }}"
     services:
      - 'openstack-cinder-volume'

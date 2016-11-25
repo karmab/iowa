@@ -1,12 +1,12 @@
 ---
 
-- name: Test Ports
+- name: Test Ports Are Listening
   wait_for: host={{ host }} port={{ item }} timeout=10
   ignore_errors: yes
   with_items: "{{ ports }}"
   when: ports is defined
 
-- name: Test Packages
+- name: Test Packages Are Installed
   shell: yum list installed | grep {{ item }}
   ignore_errors: yes
   with_items: "{{ packages }}"
@@ -19,15 +19,35 @@
   with_items: "{{ configuration_files }}"
   when: configuration_files is defined
 
-- name: Test Configuration Files
+- name: Test Configuration Files Exist
   fail:
     msg: |
       Configuration file {{ item.item }} missing
   when: configuration_files_checked is defined and not item.stat.exists
   with_items: "{{ configuration_files_checked.results }}"
 
-- name: Test Services
+- name: Test Configuration Files Have Correct Group Owner
+  fail:
+    msg: |
+      Configuration file {{ item.item }} has wrong user {{ item.stat.gr_name }}
+  when: configuration_files_checked is defined and group is defined and item.stat.gr_name != group
+  with_items: "{{ configuration_files_checked.results }}"
+
+- name: Test Configuration Files Are Readable
+  fail:
+    msg: |
+      Configuration file {{ item.item }} cant be read by {{ group }}
+  when: configuration_files_checked is defined and group is defined and not item.stat.rgrp
+  with_items: "{{ configuration_files_checked.results }}"
+
+- name: Test Services Are Up
   shell: systemctl status {{ item }}
+  ignore_errors: yes
+  with_items: "{{ services }}"
+  when: services is defined
+
+- name: Test Services Are Enbled
+  shell: systemctl is-enabled {{ item }}
   ignore_errors: yes
   with_items: "{{ services }}"
   when: services is defined

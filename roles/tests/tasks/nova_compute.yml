@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    group: nova
     packages: "{{ nova_compute_packages }}"
     services:
      - 'openstack-nova-compute'

@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    group: nova
     host: "{{ nova_host }}"
     ports: 
      - 8774

@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    group: neutron
     host: "{{ neutron_host }}"
     ports: 
      - 9696

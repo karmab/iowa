@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    group: cinder
     host: "{{ cinder_host }}"
     ports: 
      - 8776

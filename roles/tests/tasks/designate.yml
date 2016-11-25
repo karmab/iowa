@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    group: designate
     host: "{{ designate_host }}"
     ports: 
      - 9001

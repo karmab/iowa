@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    group: glance
     host: "{{ glance_host }}"
     ports: 
      - 9292

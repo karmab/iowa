@@ -2,6 +2,7 @@
 
 - name: Set Test Variables
   set_fact:
+    group: heat
     host: "{{ heat_host }}"
     ports: 
      - 8000
