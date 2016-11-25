@@ -46,7 +46,7 @@
   with_items: "{{ services }}"
   when: services is defined
 
-- name: Test Services Are Enbled
+- name: Test Services Are Enabled
   shell: systemctl is-enabled {{ item }}
   ignore_errors: yes
   with_items: "{{ services }}"
