@@ -13,9 +13,6 @@
     backup: yes
   notify: 
    - Restart Aodh
-   - Restart Aodh Evaluator
-   - Restart Aodh Notifier
-   - Restart Aodh Listener
 
 - name: Populate Aodh Database
   run_once: yes
@@ -54,11 +51,7 @@
 
 - name: Enable Aodh Services
   service:
-    name: "{{ aodh_service }}-{{ item }}"
+    name: "{{item }}"
     enabled: yes
     state: started
-  with_items:
-   - api
-   - evaluator
-   - notifier
-   - listener
+  with_items: "{{ aodh_services }}"

@@ -4,8 +4,8 @@
   set_fact:
     group: cinder
     packages: "{{ cinder_packages }}"
-    services:
-     - 'openstack-cinder-volume'
+    services: 
+     - "{{ cinder_volume_service }}"
     configuration_files:
      - '/etc/cinder/cinder.conf'
 

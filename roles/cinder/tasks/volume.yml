@@ -26,6 +26,6 @@
 
 - name: Enable Cinder Volume Service
   service:
-    name: "{{ cinder_service }}-volume"
+    name: "{{ cinder_volume_service }}"
     enabled: yes
     state: started

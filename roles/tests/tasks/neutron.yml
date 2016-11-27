@@ -7,8 +7,8 @@
     ports: 
      - 9696
     packages: "{{ neutron_packages }}"
-    services:
-     - 'neutron-server'
+    services: 
+     - "{{ neutron_service }}"
      - 'neutron-openvswitch-agent'
      - 'neutron-dhcp-agent'
      - 'neutron-l3-agent'

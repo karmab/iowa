@@ -7,7 +7,7 @@
      - 6379
     packages: "{{ redis_packages }}"
     services:
-     - 'redis'
+     - "{{ redis_service }}"
     configuration_files:
      - '/etc/redis.conf'
 

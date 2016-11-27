@@ -7,11 +7,7 @@
     ports: 
      - 9001
     packages: "{{ designate_packages }}"
-    services:
-     - 'openstack-designate-api'
-     - 'openstack-designate-central'
-     - 'openstack-designate-mdsn'
-     - 'openstack-designate-pool-manager'
+    services: "{{ designate_services }}"
     configuration_files:
      - '/etc/designate/designate.conf'
 

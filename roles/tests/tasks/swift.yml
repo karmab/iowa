@@ -7,9 +7,7 @@
     ports: 
      - 8080
     packages: "{{ swift_packages }}"
-    services:
-     - 'openstack-swift-proxy'
-     - 'memcached'
+    services: "{{ swift_services}}"
     configuration_files:
      - '/etc/swift/proxy-server.conf'
      - '/etc/swift/object.builder'

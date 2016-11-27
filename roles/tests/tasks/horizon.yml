@@ -7,8 +7,7 @@
     ports: 
      - 80
     packages: "{{ horizon_packages }}"
-    services:
-     - 'httpd'
+    services: "{{ apache_service }}"
     configuration_files:
      - '/etc/openstack-dashboard/local_settings'
 

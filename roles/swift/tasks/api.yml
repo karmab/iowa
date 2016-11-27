@@ -20,7 +20,7 @@
     dest: "/etc/swift/proxy-server.conf"
     backup: yes
   notify:
-   - Restart Swift Proxy
+   - Restart Swift
 
 - name: Create Swift Ring Objects
   shell: "swift-ring-builder /etc/swift/{{ item }}.builder create {{ swift_partition }} {{ swift_replicas }} 1"
@@ -84,6 +84,4 @@
    name: "{{ item }}"
    enabled: yes
    state: started
-  with_items:
-    - 'memcached'
-    - 'openstack-swift-proxy'
+  with_items: "{{ swift_services }}"

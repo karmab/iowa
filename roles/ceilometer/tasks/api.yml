@@ -2,12 +2,12 @@
 
 - name: Set Ceilometer Handlers
   set_fact:
-    ceilometer_handlers: ['Restart Ceilometer','Restart Ceilometer Central','Restart Ceilometer Collector','Restart Ceilometer Alarm Evaluator','Restart Ceilometer Alarm Notifier','Restart Ceilometer Notification']
+    ceilometer_handlers: ['Restart Ceilometer','Restart Ceilometer Alarm']
   when: version in ['kilo', 'liberty']
 
 - name: Set Ceilometer Handlers
   set_fact:
-    ceilometer_handlers: ['Restart Ceilometer','Restart Ceilometer Central','Restart Ceilometer Collector','Restart Ceilometer Notification']
+    ceilometer_handlers: ['Restart Ceilometer']
   when: version not in ['kilo', 'liberty']
 
 - name: Install Ceilometer Packages
@@ -73,47 +73,15 @@
 
 - name: Enable Ceilometer Services
   service:
-    name: "{{ ceilometer_service }}-{{ item }}"
+    name: "{{ item }}"
     enabled: yes
     state: started
-  with_items:
-   - api
-   - collector
-   - central
-   - notification
-  when: ansible_os_family == 'RedHat'
-
-- name: Enable Ceilometer Services
-  service:
-    name: "{{ ceilometer_service }}-{{ item }}"
-    enabled: yes
-    state: started
-  with_items:
-   - api
-   - collector
-   - agent-central
-   - agent-notification
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
+  with_items: "{{ ceilometer_services }}"
 
 - name: Enable Ceilometer Alarm Services
   service:
-    name: "{{ ceilometer_service }}-{{ item }}"
+    name: "{{ item }}"
     enabled: yes
     state: started
-  with_items:
-   - alarm-evaluator
-   - alarm-notifier
-   - notification
-  when: version in ['kilo','liberty'] and ansible_os_family == 'RedHat'
-
-- name: Enable Ceilometer Alarm Services
-  service:
-    name: "{{ ceilometer_service }}-{{ item }}"
-    enabled: yes
-    state: started
-  with_items:
-   - alarm-evaluator
-   - alarm-notifier
-   - agent-notification
-  when: version in ['kilo','liberty'] and ( ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' )
+  with_items: "{{ ceilometer_alarm_services }}"
+  when: version in ['kilo','liberty']

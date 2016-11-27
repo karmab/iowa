@@ -7,7 +7,7 @@
      - 27017
     packages: "{{ mongodb_packages }}"
     services:
-     - 'mongod'
+     - '{{ mongodb_service }}'
     configuration_files:
      - '/etc/mongod.conf'
 

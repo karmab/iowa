@@ -71,9 +71,7 @@
 
 - name: Enable Cinder Service
   service:
-    name: "{{ cinder_service }}-{{ item }}"
+    name: "{{ item }}"
     enabled: yes
     state: started
-  with_items:
-   - api
-   - scheduler
+  with_items: {{ cinder_services }}

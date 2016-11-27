@@ -7,7 +7,7 @@
      - 3306
     packages: "{{ mysql_packages }}"
     services:
-     - 'mariadb'
+     - "{{ mysql_service }}"
     configuration_files:
      - '/etc/my.cnf'
 

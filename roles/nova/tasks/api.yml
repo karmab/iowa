@@ -13,8 +13,6 @@
     backup: yes
   notify:
    - Restart Nova
-   - Restart Nova Conductor
-   - Restart Nova Scheduler
 
 #- name: Check Nova Database Version
 #  shell: nova-manage db version
@@ -64,19 +62,7 @@
 
 - name: Enable Nova Services
   service:
-    name: "{{ nova_service }}-{{ item }}"
+    name: "{{ item }}"
     enabled: yes
     state: started
-  with_items:
-   - api
-   - scheduler
-   - conductor
-   - novncproxy
-   - consoleauth
-
-- name: Enable Nova Console Service
-  service:
-    name: "{{ nova_service }}-console"
-    enabled: yes
-    state: started
-  when: ansible_os_family == 'RedHat'
+  with_items: "{{ nova_services }}"

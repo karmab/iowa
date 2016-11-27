@@ -8,6 +8,6 @@
 
 - name: Enable Rabbitmq service
   service:
-   name: rabbitmq-server
+   name: "{{ rabbitmq_service }}"
    enabled: yes
    state: started

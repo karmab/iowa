@@ -13,7 +13,6 @@
     backup: yes
   notify: 
    - Restart Magnum
-   - Restart Magnum Conductor
 
 - name: Populate Magnum Database
   run_once: yes
@@ -52,9 +51,7 @@
 
 - name: Enable Magnum Services
   service:
-    name: "{{ magnum_service }}-{{ item }}"
+    name: "{{ item }}"
     enabled: yes
     state: started
-  with_items:
-   - api
-   - conductor
+  with_items: "{{ magnum_services }}"

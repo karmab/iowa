@@ -40,7 +40,7 @@
     src: rsyncd.conf
     dest: /etc/rsyncd.conf
   notify:
-   - Restart Xinetd
+   - Restart Swift Storage
 
 - name: Configure Swift Storage Object
   ini_file:
@@ -49,7 +49,7 @@
     option: bind_ip
     value: 0.0.0.0
   notify:
-   - Restart Swift Object
+   - Restart Swift Storage
 
 - name: Configure Swift Storage Container
   ini_file:
@@ -58,7 +58,7 @@
     option: bind_ip
     value: 0.0.0.0
   notify:
-   - Restart Swift Container
+   - Restart Swift Storage
 
 - name: Configure Swift Storage Account
   ini_file:
@@ -67,7 +67,7 @@
     option: bind_ip
     value: 0.0.0.0
   notify:
-   - Restart Swift Account
+   - Restart Swift Storage
 
 - name: Configure Swift
   template:
@@ -75,9 +75,7 @@
     dest: "/etc/swift/swift.conf"
     backup: yes
   notify:
-   - Restart Swift Object
-   - Restart Swift Account
-   - Restart Swift Container
+   - Restart Swift Storage
 
 - name: Create Swift Storage Ring Objects
   shell: "swift-ring-builder /etc/swift/{{ item }}.builder create {{ swift_partition }} {{ swift_replicas }} 1"
@@ -110,8 +108,4 @@
    name: "{{ item }}"
    enabled: yes
    state: started
-  with_items:
-   - 'xinetd'
-   - 'openstack-swift-object'
-   - 'openstack-swift-container'
-   - 'openstack-swift-account'
+  with_items: "{{ swift_storage_services }}"

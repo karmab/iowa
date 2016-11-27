@@ -7,7 +7,7 @@
      - 25672
     packages: "{{ rabbitmq_packages }}"
     services:
-     - 'rabbitmq-server'
+     - '{{ rabbitmq_service }}'
     configuration_files:
      - '/etc/rabbitmq/rabbitmq.config'
 

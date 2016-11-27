@@ -7,13 +7,7 @@
     ports: 
      - 8774
     packages: "{{ nova_packages }}"
-    services:
-     - 'openstack-nova-api'
-     - 'openstack-nova-scheduler'
-     - 'openstack-nova-conductor'
-     - 'openstack-nova-novncproxy'
-     - 'openstack-nova-consoleauth'
-     - 'openstack-nova-console'
+    services: "{{ nova_services }}"
     configuration_files:
      - '/etc/nova/nova.conf'
 

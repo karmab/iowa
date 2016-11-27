@@ -25,9 +25,6 @@
     backup: yes
   notify: 
    - Restart Designate
-   - Restart Designate Central
-   - Restart Designate Mdns
-   - Restart Designate Pool Manager
 
 - name: Populate Designate Database
   run_once: yes
@@ -70,11 +67,7 @@
 
 - name: Enable Designate Services
   service:
-    name: "{{ designate_service }}-{{ item }}"
+    name: "{{ item }}"
     enabled: yes
     state: started
-  with_items:
-   - api
-   - central
-   - mdns
-   - pool-manager
+  with_items: "{{ designate_services }}"

@@ -15,6 +15,7 @@ mongodb_conf_file: /etc/mongodb.conf
 mongodb_service: mongodb
 rabbitmq_packages:
  - 'rabbitmq-server'
+rabbitmq_service: rabbitmq-server
 keystone_packages:
  - 'keystone'
  - 'python-openstackclient'
@@ -37,7 +38,10 @@ cinder_packages:
  - 'python-openstackclient'
  - 'cinder-volume'
  - 'python-mysqldb'
-cinder_service: cinder
+cinder_services: 
+ - 'cinder-api'
+ - 'cinder-scheduler'
+cinder_volume_service: 'cinder-volume'
 neutron_packages:
  - 'neutron-server'
  - 'neutron-plugin-ml2'
@@ -63,7 +67,12 @@ nova_packages:
  - 'nova-scheduler'
  - 'python-novaclient'
  - 'python-openstackclient'
-nova_service: nova
+nova_services:
+ - 'nova-api'
+ - 'nova-conductor'
+ - 'nova-scheduler'
+ - 'nova-novncproxy'
+ - 'nova-consoleauth'
 nova_compute_packages:
  - 'nova-compute'
  - 'sysfsutils'
@@ -79,7 +88,11 @@ heat_packages:
  - 'heat-engine'
  - 'python-heatclient'
  - 'python-openstackclient'
-heat_service: heat
+heat_services:
+ - 'heat-api'
+ - 'heat-api-cfn'
+ - 'heat-api-cloudwatch'
+ - 'heat-engine'
 ceilometer_packages:
  - 'ceilometer-api'
  - 'ceilometer-collector'
@@ -87,7 +100,15 @@ ceilometer_packages:
  - 'ceilometer-agent-notification'
  - 'python-ceilometerclient'
  - 'python-openstackclient'
-ceilometer_service: ceilometer
+ceilometer_services:
+ - 'ceilometer-api'
+ - 'ceilometer-collector'
+ - 'ceilometer-agent-central'
+ - 'ceilometer-agent-notification'
+ceilometer_alarm_services:
+ - 'ceilometer-alarm-evaluator'
+ - 'ceilometer-alarm-notifier'
+ - 'ceilometer-agent-notification'
 ceilometer_compute_service: ceilometer-agent-compute
 ceilometer_notification_service: ceilometer-agent-notification
 swift_packages:
@@ -105,7 +126,14 @@ swift_storage_packages:
  - 'swift-account'
  - 'swift-container'
  - 'swift-object'
-swift_service: swift
+swift_services:
+ - 'swift-proxy'
+ - 'memcached'
+swift_storage_services:
+ - 'xinetd'
+ - 'swift-object'
+ - 'swift-container'
+ - 'swift-account'
 horizon_packages:
  - 'apache2'
  - 'libapache2-mod-wsgi'
@@ -120,7 +148,11 @@ aodh_packages:
  - 'aodh-expirer'
  - 'python-aodhclient'
  - 'python-openstackclient'
-aodh_service: aodh
+aodh_services:
+ - 'aodh-api'
+ - 'aodh-evaluator'
+ - 'aodh-notifier'
+ - 'aodh-listener'
 redis_packages:
  - 'redis-server'
 redis_service: redis-server
@@ -131,7 +163,11 @@ designate_packages:
  - 'designate-pool-manager'
  - 'designate-mdns'
  - 'python-openstackclient'
-designate_service: designate
+designate_services:
+ - 'designate-api'
+ - 'designate-central'
+ - 'designate-mdsn'
+ - 'designate-pool-manager'
 bind_packages:
  - 'bind9'
  - 'bind9utils'
@@ -144,4 +180,6 @@ magnum_packages:
  - 'magnum-conductor'
  - 'python-magnumclient.noarch'
  - 'python-openstackclient'
-magnum_service: magnum
+magnum_services:
+ - 'magnum-api'
+ - 'magnum-conductor'

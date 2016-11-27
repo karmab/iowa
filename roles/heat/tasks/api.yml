@@ -13,9 +13,6 @@
     backup: yes
   notify:
    - Restart Heat
-   - Restart Heat CloudFormation
-   - Restart Heat CloudWatch
-   - Restart Heat Engine
 
 - name: Populate Heat Database
   run_once: yes
@@ -69,11 +66,7 @@
 
 - name: Enable Heat Services
   service:
-    name: "{{ heat_service }}-{{ item }}"
+    name: "{{ item }}"
     enabled: yes
     state: started
-  with_items:
-   - api
-   - api-cfn
-   - api-cloudwatch
-   - engine
+  with_items: "{{ heat_services }}"

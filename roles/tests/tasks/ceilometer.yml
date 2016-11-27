@@ -7,13 +7,7 @@
     ports: 
      - 8777
     packages: "{{ ceilometer_packages }}"
-    services:
-     - 'openstack-ceilometer-api'
-     - 'openstack-ceilometer-collector'
-     - 'openstack-ceilometer-central'
-     - 'openstack-ceilometer-alarm-evaluator'
-     - 'openstack-ceilometer-alarm-notifier'
-     - 'openstack-ceilometer-notification'
+    services: "{{ ceilometer_services }}"
     configuration_files:
      - '/etc/ceilometer/ceilometer.conf'
 

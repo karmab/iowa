@@ -7,13 +7,11 @@
   with_items: "{{ glance_services }}"
 
 - name: Restart Cinder
-  service: name="{{ cinder_service }}-api" state=restarted
-
-- name: Restart Cinder Scheduler
-  service: name="{{ cinder_service }}-scheduler" state=restarted
+  service: name="{{ item }}" state=restarted
+  with_items: "{{ cinder_services }}"
 
 - name: Restart Cinder Volume
-  service: name="{{ cinder_service }}-volume" state=restarted
+  service: name="{{ cinder_volume_service }}" state=restarted
 
 - name: Restart Keystone
   service: name="{{ keystone_service }}" state=restarted
@@ -34,103 +32,58 @@
   service: name=openvswitch state=restarted
 
 - name: Restart Nova
-  service: name="{{ nova_service }}-api" state=restarted
+  service: name="{{ item }}" state=restarted
+  with_items: "{{ nova_services }}"
 
 - name: Restart Nova Compute
   service: name="{{ nova_service }}-compute" state=restarted
 
-- name: Restart Nova Conductor
-  service: name="{{ nova_service }}-conductor" state=restarted
-
-- name: Restart Nova Scheduler
-  service: name="{{ nova_service }}-scheduler" state=restarted
-
-- name: Restart Nova VncProxy
-  service: name="{{ nova_service }}-novncproxy" state=restarted
-
 - name: Restart Heat
-  service: name="{{ heat_service }}-api" state=restarted
-
-- name: Restart Heat CloudFormation
-  service: name="{{ heat_service }}-api-cfn" state=restarted
-
-- name: Restart Heat CloudWatch
-  service: name="{{ heat_service }}-api-cloudwatch" state=restarted
-
-- name: Restart Heat Engine
-  service: name="{{ heat_service }}-engine" state=restarted
+  service: name="{{ item }}" state=restarted
+  with_items: "{{ heat_services }}"
 
 - name: Restart Apache
-  service: name={{ apache_service }} state=restarted
+  service: name="{{ apache_service }}" state=restarted
 
 - name: Restart MongoDB
-  service: name={{ mongodb_service }} state=restarted
+  service: name="{{ mongodb_service }}" state=restarted
 
 - name: Restart Ceilometer
-  service: name="{{ ceilometer_service }}-api" state=restarted
+  service: name="{{ item }}" state=restarted
+  with_items: "{{ ceilometer_services }}"
 
-- name: Restart Ceilometer Central
-  service: name="{{ ceilometer_service }}-central" state=restarted
-
-- name: Restart Ceilometer Collector
-  service: name="{{ ceilometer_service }}-collector" state=restarted
- 
-- name: Restart Ceilometer Alarm Evaluator
-  service: name="{{ ceilometer_service }}-alarm-evaluator" state=restarted
-
-- name: Restart Ceilometer Alarm Notifier
-  service: name="{{ ceilometer_service }}-alarm-notifier" state=restarted
-
-- name: Restart Ceilometer Notification
-  service: name="{{ ceilometer_notification_service }}" state=restarted
+- name: Restart Ceilometer Alarm
+  service: name="{{ item }}" state=restarted
+  with_items: "{{ ceilometer_alarm_services }}"
 
 - name: Restart Xinetd
   service: name=xinetd state=restarted
 
-- name: Restart Swift Object
-  service: name="{{ swift_service }}-object" state=restarted
+- name: Restart Rsync
+  service: name=rsync state=restarted
 
-- name: Restart Swift Account
-  service: name="{{ swift_service }}-account" state=restarted
+- name: Restart Swift Storage
+  service: name="{{ item }}" state=restarted
+  with_items: "{{ swift_storage_services }}"
 
-- name: Restart Swift Container
-  service: name="{{ swift_service }}-container" state=restarted
-
-- name: Restart Swift Proxy
-  service: name="{{ swift_service }}-proxy" state=restarted
+- name: Restart Swift
+  service: name="{{ item }}" state=restarted
+  with_items: "{{ swift_services }}"
 
 - name: Restart Haproxy
   service: name=haproxy state=restarted
 
 - name: Restart Aodh
-  service: name="{{ aodh_service }}-api" state=restarted
-
-- name: Restart Aodh Evaluator
-  service: name="{{ aodh_service }}-evaluator" state=restarted
-
-- name: Restart Aodh Notifier
-  service: name="{{ aodh_service }}-notifier" state=restarted
-
-- name: Restart Aodh Listener
-  service: name="{{ aodh_service }}-listener" state=restarted
+  service: name="{{ item }}" state=restarted
+  with_items: "{{ aodh_services }}"
 
 - name: Restart Designate
-  service: name="{{ designate_service }}-api" state=restarted
-
-- name: Restart Designate Central
-  service: name="{{ designate_service }}-central" state=restarted
-
-- name: Restart Designate Mdns
-  service: name="{{ designate_service }}-mdns" state=restarted
-
-- name: Restart Designate Pool Manager
-  service: name="{{ designate_service }}-pool-manager" state=restarted
+  service: name="{{ item }}" state=restarted
+  with_items: "{{ designate_services }}"
 
 - name: Restart Bind
   service: name="{{ bind_service }}" state=restarted
 
 - name: Restart Magnum
   service: name="{{ magnum_service }}" state=restarted
-
-- name: Restart Magnum Conductor
-  service: name="{{ magnum_service }}-conductor" state=restarted
+  with_items: "{{ magnum_services }}"

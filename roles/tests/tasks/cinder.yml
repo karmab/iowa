@@ -7,9 +7,7 @@
     ports: 
      - 8776
     packages: "{{ cinder_packages }}"
-    services:
-     - 'openstack-cinder-api'
-     - 'openstack-cinder-scheduler'
+    services: "{{ cinder_services }}"
     configuration_files:
      - '/etc/cinder/cinder.conf'
 
