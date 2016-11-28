@@ -7,7 +7,7 @@
   when: ports is defined
 
 - name: Test Packages Are Installed
-  shell: yum list installed | grep {{ item }}
+  shell: rpm -qa | grep {{ item }}
   ignore_errors: yes
   with_items: "{{ packages }}"
   when: packages is defined
