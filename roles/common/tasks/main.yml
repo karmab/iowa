@@ -39,3 +39,23 @@
    - neutron
    - nova
    - swift
+
+- name: Create Common Keystone V3 Client File
+  template:
+    src: keystonerc_admin_v3.j2
+    dest: /root/keystonerc_admin_v3
+  tags:
+   - allinone
+   - api
+   - ceilometer
+   - cinder
+   - common
+   - compute
+   - debug
+   - glance
+   - heat
+   - horizon
+   - keystone
+   - neutron
+   - nova
+   - swift
