@@ -1753,7 +1753,7 @@ project_name=services
 
 # Domain name containing project (string value)
 #project_domain_name = <None>
-{% if 'v3' in keystone_versions %}
+{% if keystone_version == 'v3' %}
 project_domain_name=Default
 {% endif %}
 
@@ -1783,7 +1783,7 @@ username= {{ ceilometer.username }}
 
 # User's domain name (string value)
 #user_domain_name = <None>
-{% if 'v3' in keystone_versions %}
+{% if keystone_version == 'v3' %}
 user_domain_name=Default
 {% endif %}
 

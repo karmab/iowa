@@ -169,7 +169,7 @@ auth_protocol = http
 project_name = {{ common.tenant }}
 username = {{ designate.username }}
 password = {{ designate.password }}
-{% if 'v3' in keystone_versions %}
+{% if keystone_version == 'v3' %}
 auth_version = 3
 project_domain_id = default
 user_domain_id = default

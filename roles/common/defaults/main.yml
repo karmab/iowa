@@ -37,8 +37,7 @@ keystone:
  dbname: keystone
  admin_token: XXXXXX
  admin_password: unix1234
- versions:
-  - v2.0
+ version: v2.0
 
 glance:
  dbuser: glance

@@ -1178,7 +1178,7 @@ connection = {{ mysql_prefix }}://{{ heat.dbuser }}:{{ heat.dbpassword }}@{{ com
 
 # Authentication Endpoint URI. (string value)
 #auth_uri = <None>
-auth_uri = http://192.168.5.140:5000/v2.0
+auth_uri = {{ keystone_internal_url }}
 
 # Allow orchestration of multiple clouds. (boolean value)
 #multi_cloud = false
@@ -2119,7 +2119,7 @@ policy_file = /etc/heat/policy.json
 
 # Authentication URL (string value)
 #auth_url = <None>
-auth_url = http://192.168.5.140:35357
+auth_url = {{ keystone_internal_url }
 
 # Domain ID to scope to (string value)
 #domain_id = <None>
@@ -2194,7 +2194,7 @@ project_name={{ common.tenant }}
 auth_url={{ keystone_identity_uri }}
 auth_uri={{ keystone_internal_url }}
 auth_type=password
-{% if 'v3' in keystone_versions %} 
+{% if keystone_version == 'v3' %} 
 project_domain_name=Default
 user_domain_name=Default
 {% endif %}

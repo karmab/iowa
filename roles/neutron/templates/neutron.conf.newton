@@ -958,7 +958,7 @@ auth_uri={{ keystone_internal_url }}
 # Authentication type to load (string value)
 # Deprecated group/name - [keystone_authtoken]/auth_plugin
 #auth_type = <None>
-{% if 'v3' in keystone_versions %}
+{% if keystone_version == 'v3' %}
 auth_type=v3password
 {% else %}
 auth_type=password
@@ -971,7 +971,7 @@ auth_type=password
 project_name={{ common.tenant }}
 username={{ neutron.username }}
 password={{ neutron.password }}
-{% if 'v3' in keystone_versions %}
+{% if keystone_version == 'v3' %}
 project_domain_name=Default
 user_domain_name=Default
 {% endif %}
@@ -1088,7 +1088,7 @@ password={{ nova.password }}
 # Domain ID containing project (string value)
 #project_domain_id = <None>
 
-{% if 'v3' in keystone_versions %}
+{% if keystone_version == 'v3' %}
 project_domain_id=Default
 {% endif %}
 
@@ -1120,7 +1120,7 @@ tenant_name={{ common.tenant }}
 # User's domain id (string value)
 #user_domain_id = <None>
 #
-{% if 'v3' in keystone_versions %}
+{% if keystone_version == 'v3' %}
 user_domain_id=default
 {% endif %}
 

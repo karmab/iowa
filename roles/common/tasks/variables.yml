@@ -10,7 +10,7 @@
   set_fact:
     keystone_host: "{{ [keystone.host, common.controller_host] | first_found | default('127.0.0.1') }}"
     keystone_hosts: "{{ [keystone.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
-    keystone_versions: "{{ keystone.versions | default(['v2.0']) }}"
+    keystone_version: "{{ keystone.version | default(['v2.0']) }}"
     glance_host: "{{ [glance.host, common.controller_host] | first_found | default('127.0.0.1') }}"
     glance_hosts: "{{ [glance.hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
     cinder_host: "{{ [cinder.host, common.controller_host] | first_found | default('127.0.0.1') }}"
@@ -39,12 +39,17 @@
     magnum_host: "{{ [common.magnum_host, common.controller_host] | first_found | default('127.0.0.1') }}"
     magnum_hosts: "{{ [common.magnum_hosts, common.controller_hosts] | first_found | default(['127.0.0.1']) }}"
 
+- name: Force Keystone Version to v2.0
+  set_fact:
+    #keystone_version: "{{ keystone.version | default('v2.0') }}"
+    keystone_version: "v2.0"
+
 - name: Set Openstack Variables
   set_fact:
     version: "{{ common.version | default('latest') }}"
-    keystone_public_url: "{{ keystone.public_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
-    keystone_internal_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/v2.0') }}"
-    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ keystone_host ~ ':35357/v2.0') }}"
+    keystone_public_url: "{{ keystone.public_url | default('http://' ~ keystone_host ~ ':5000/' ~ keystone_version) }}"
+    keystone_internal_url: "{{ keystone.internal_url | default('http://' ~ keystone_host ~ ':5000/' ~ keystone_version) }}"
+    keystone_admin_url: "{{ keystone.admin_url | default('http://' ~ keystone_host ~ ':35357/' ~ keystone_version) }}"
     keystone_identity_uri: "{{ 'http://' ~ keystone_host ~ ':35357' }}"
     glance_public_url: "{{ glance.public_url | default('http://' ~ glance_host ~ ':9292') }}"
     glance_internal_url: "{{ glance.internal_url | default('http://' ~ glance_host ~ ':9292') }}"

@@ -6628,7 +6628,7 @@ timeout=60
 # Authentication type to load (string value)
 # Deprecated group;name - [neutron]/auth_plugin
 #auth_type=<None>
-{% if 'v3' in keystone_versions %}
+{% if keystone_version == 'v3' %}
 auth_type=v3password
 {% else %}
 auth_type=password
@@ -6659,7 +6659,7 @@ project_name={{ common.tenant }}
 
 # Domain name containing project (string value)
 #project_domain_name=<None>
-{% if 'v3' in keystone_versions %}
+{% if keystone_version == 'v3' %}
 project_domain_name=Default
 {% endif %}
 
@@ -6689,7 +6689,7 @@ username={{ neutron.username }}
 
 # User's domain name (string value)
 #user_domain_name=<None>
-{% if 'v3' in keystone_versions %}
+{% if keystone_version == 'v3' %}
 user_domain_name=Default
 {% endif %}
 
