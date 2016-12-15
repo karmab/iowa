@@ -1,10 +1,22 @@
 ---
 
+- name: Install Common Openstack Packages
+  package:
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ openstack_packages }}"
+
 - name: Install Heat Packages
   package: 
     name: '{{ item }}'
     state: latest
   with_items: "{{ heat_packages }}"
+
+- name: Install PyMysql Package
+  package: 
+    name: 'python-PyMySQL'
+    state: latest
+  when: version != 'kilo' and ansible_os_family == 'RedHat'
 
 - name: Configure Heat
   template:

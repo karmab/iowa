@@ -11,14 +11,25 @@ mongodb_packages:
  - 'mongodb-server'
  - 'mongodb-clients'
  - 'python-pymongo'
+ - 'python-mysqldb'
 mongodb_conf_file: /etc/mongodb.conf
 mongodb_service: mongodb
 rabbitmq_packages:
  - 'rabbitmq-server'
 rabbitmq_service: rabbitmq-server
+openstack_packages:
+ - 'python-openstackclient'
+ - 'python-glanceclient'
+ - 'python-cinderclient'
+ - 'python-openstackclient'
+ - 'python-neutronclient'
+ - 'python-novaclient'
+ - 'python-heatclient'
+ - 'python-ceilometerclient'
+ - 'python-swiftclient'
+ - 'python-keystoneclient'
 keystone_packages:
  - 'keystone'
- - 'python-openstackclient'
  - 'apache2'
  - 'libapache2-mod-wsgi'
  - 'memcached'
@@ -26,18 +37,13 @@ keystone_packages:
 keystone_service: keystone
 glance_packages:
  - 'glance'
- - 'python-glanceclient'
- - 'python-openstackclient'
 glance_services:
  - 'glance-api'
  - 'glance-registry'
 cinder_packages:
  - 'cinder-api'
  - 'cinder-scheduler'
- - 'python-cinderclient'
- - 'python-openstackclient'
  - 'cinder-volume'
- - 'python-mysqldb'
 cinder_services: 
  - 'cinder-api'
  - 'cinder-scheduler'
@@ -49,8 +55,6 @@ neutron_packages:
  - 'neutron-l3-agent'
  - 'neutron-dhcp-agent'
  - 'neutron-metadata-agent'
- - 'python-neutronclient'
- - 'python-openstackclient'
 neutron_service: neutron-server
 neutron_ovs_service: neutron-openvswitch-agent
 neutron_dhcp_service: neutron-dhcp-agent
@@ -65,8 +69,6 @@ nova_packages:
  - 'nova-consoleauth'
  - 'nova-novncproxy'
  - 'nova-scheduler'
- - 'python-novaclient'
- - 'python-openstackclient'
 nova_services:
  - 'nova-api'
  - 'nova-conductor'
@@ -86,8 +88,6 @@ heat_packages:
  - 'heat-api-cfn'
  - 'heat-api-cloudwatch'
  - 'heat-engine'
- - 'python-heatclient'
- - 'python-openstackclient'
 heat_services:
  - 'heat-api'
  - 'heat-api-cfn'
@@ -98,8 +98,6 @@ ceilometer_packages:
  - 'ceilometer-collector'
  - 'ceilometer-agent-central'
  - 'ceilometer-agent-notification'
- - 'python-ceilometerclient'
- - 'python-openstackclient'
 ceilometer_services:
  - 'ceilometer-api'
  - 'ceilometer-collector'
@@ -114,11 +112,8 @@ ceilometer_notification_service: ceilometer-agent-notification
 swift_packages:
  - 'swift'
  - 'swift-proxy'
- - 'python-swiftclient'
- - 'python-keystoneclient'
  - 'python-keystonemiddleware'
  - 'memcached'
- - 'python-openstackclient'
 swift_storage_packages:
  - 'rsync'
  - 'xinetd'
@@ -147,7 +142,6 @@ aodh_packages:
  - 'aodh-listener'
  - 'aodh-expirer'
  - 'python-aodhclient'
- - 'python-openstackclient'
 aodh_services:
  - 'aodh-api'
  - 'aodh-evaluator'
@@ -162,7 +156,6 @@ designate_packages:
  - 'designate-sink'
  - 'designate-pool-manager'
  - 'designate-mdns'
- - 'python-openstackclient'
 designate_services:
  - 'designate-api'
  - 'designate-central'
@@ -179,7 +172,6 @@ magnum_packages:
  - 'magnum-api'
  - 'magnum-conductor'
  - 'python-magnumclient.noarch'
- - 'python-openstackclient'
 magnum_services:
  - 'magnum-api'
  - 'magnum-conductor'

@@ -10,6 +10,12 @@
     ceilometer_handlers: ['Restart Ceilometer']
   when: version not in ['kilo', 'liberty']
 
+- name: Install Common Openstack Packages
+  package:
+    name: '{{ item }}'
+    state: latest
+  with_items: "{{ openstack_packages }}"
+
 - name: Install Ceilometer Packages
   package: 
     name: '{{ item }}'
