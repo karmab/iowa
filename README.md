@@ -31,6 +31,8 @@ A set of roles to deploy openstack in a spread per component way
 
 ## OVERRIDING VARIABLES
 
+Either use extra-vars or a group_var directory
+
 ```
 ansible-playbook init.yml --extra-vars "@samples/madrid.yaml"
 ```
@@ -50,17 +52,17 @@ export ANSIBLE_ROLES_PATH=roles
 
 - allinone
 ```
-ansible-playbook -i ~/klist.py controller.yml --extra-vars @samples/barcelona.yml
+ansible-playbook -i ~/klist.py controller.yml
 ```
 
 - api only
 ```
-ansible-playbook -i ~/klist.py controller.yml --extra-vars @samples/barcelona.yml --tags api
+ansible-playbook -i ~/klist.py controller.yml --tags api
 ```
 
 - compute
 ```
-ansible-playbook -i ~/klist.py compute.yml --extra-vars @samples/barcelona.yml --tags compute
+ansible-playbook -i ~/klist.py compute.yml --tags compute
 ```
 
 ##RUNNING TESTS

@@ -36,7 +36,7 @@
   with_items: "{{ nova_services }}"
 
 - name: Restart Nova Compute
-  service: name="{{ nova_service }}-compute" state=restarted
+  service: name="{{ nova_compute_service }}" state=restarted
 
 - name: Restart Heat
   service: name="{{ item }}" state=restarted
