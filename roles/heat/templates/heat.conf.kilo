@@ -954,7 +954,7 @@ keystone_ec2_uri = {{ keystone_admin_url }}
 #auth_protocol = https
 
 # Complete public Identity API endpoint (string value)
-#auth_uri = <None>
+auth_uri = {{ keystone_internal_url }}
 
 # Complete admin Identity API endpoint. This should specify the unversioned
 # root endpoint e.g. https://localhost:35357/ (string value)
