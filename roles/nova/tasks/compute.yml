@@ -1,10 +1,10 @@
 ---
 
-- name: Install Common Openstack Packages
-  package:
-    name: '{{ item }}'
-    state: latest
-  with_items: "{{ openstack_packages }}"
+#- name: Install Common Openstack Packages
+#  package:
+#    name: '{{ item }}'
+#    state: latest
+#  with_items: "{{ openstack_packages }}"
 
 - name: Install Nova Compute Packages
   package: 

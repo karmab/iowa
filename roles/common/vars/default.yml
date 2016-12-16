@@ -77,6 +77,7 @@ nova_services:
 nova_compute_packages:
  - 'libvirt-daemon'
  - 'openstack-nova-compute'
+ - 'openstack-selinux'
 nova_compute_service: openstack-nova-compute
 nova_compute_ceilometer_packages:
  - 'openstack-ceilometer-compute'
