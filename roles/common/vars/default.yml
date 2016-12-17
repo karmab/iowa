@@ -29,6 +29,7 @@ openstack_packages:
  - 'python-ceilometerclient'
  - 'python-swiftclient'
  - 'python-novaclient'
+ - 'python-neutronclient'
 keystone_packages:
  - 'openstack-keystone'
  - 'python-keystonemiddleware'
