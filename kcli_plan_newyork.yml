@@ -1,0 +1,304 @@
+newyork:
+ type: network
+ cidr: 192.168.100.0/24
+ dhcp: false
+
+mysql:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 1024
+ numcpus: 2
+ disks:
+  - size: 10
+ nets: 
+  - name: newyork
+    ip: 192.168.100.2
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+  - nfs.sh
+
+mongodb:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 1024
+ numcpus: 2
+ disks:
+  - size: 10
+ nets: 
+  - name: newyork
+    ip: 192.168.100.3
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+
+rabbitmq:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 1024
+ numcpus: 2
+ disks:
+  - size: 10
+ nets: 
+  - name: newyork
+    ip: 192.168.100.4
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+
+keystone:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 2048
+ numcpus: 2
+ disks:
+  - size: 10
+ nets: 
+  - name: newyork
+    ip: 192.168.100.5
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+
+glance:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 1024
+ numcpus: 2
+ disks:
+  - size: 20
+ nets: 
+  - name: newyork
+    ip: 192.168.100.6
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+
+cinder:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 1024
+ numcpus: 2
+ nets:
+  - name: newyork
+    ip: 192.168.100.7
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ disks:
+  - size: 20
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+
+neutron:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 1024
+ numcpus: 2
+ nets:
+  - name: newyork
+    ip: 192.168.100.8
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+  - name: newyork
+  - name: newyork
+ dns: 192.168.100.1
+ disks:
+  - size: 10
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+
+nova:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 3072
+ numcpus: 2
+ nets:
+  - name: newyork
+    ip: 192.168.100.9
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ disks:
+  - size: 10
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+
+heat:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 1024
+ numcpus: 2
+ nets:
+  - name: newyork
+    ip: 192.168.100.10
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ disks:
+  - size: 10
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+
+ceilometer:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 1024
+ numcpus: 2
+ nets:
+  - name: newyork
+    ip: 192.168.100.11
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ disks:
+  - size: 10
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+
+horizon:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 1024
+ numcpus: 2
+ nets:
+  - name: newyork
+    ip: 192.168.100.12
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ disks:
+  - size: 10
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+
+compute01:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 5144
+ numcpus: 2
+ reserveip: true
+ nets:
+  - name: newyork
+    ip: 192.168.100.13
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ disks:
+  - size: 40
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+
+compute02:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 3072
+ numcpus: 2
+ reserveip: true
+ nets:
+  - name: newyork
+    ip: 192.168.100.14
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ disks:
+  - size: 40
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 10
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
+
+compute03:
+ template: rhel-guest-image-7.2-20160302.0.x86_64.qcow2
+ memory: 4096
+ numcpus: 2
+ reserveip: true
+ nets:
+  - name: newyork
+    ip: 192.168.100.15
+    mask: 255.255.255.0
+    gateway: 192.168.100.1
+ dns: 192.168.100.1
+ disks:
+  - size: 60
+ pool: vms
+ cmds: 
+  - echo unix1234 | passwd --stdin root
+  - echo nameserver 192.168.100.1 > /etc/resolv.conf
+  - sleep 30
+ scripts: 
+  - ~/register.sh
+  - kilo.sh
