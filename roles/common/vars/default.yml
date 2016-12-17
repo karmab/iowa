@@ -137,6 +137,7 @@ horizon_packages:
  - 'mod_ssl'
  - 'memcached'
  - 'openstack-dashboard'
+ - 'python-django-pyscss'
 aodh_packages:
  - 'openstack-aodh-api'
  - 'openstack-aodh-evaluator'
