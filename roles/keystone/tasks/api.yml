@@ -33,7 +33,7 @@
     dest: "{{ apache_dir }}/wsgi-keystone.conf"
   notify: 
    - Restart Apache
-  when: version != 'kilo'
+#  when: version != 'kilo'
 
 - name: Create Keystone Ssl Directory
   copy:
@@ -50,12 +50,12 @@
   shell: su - keystone -s /bin/bash -c 'keystone-manage db_sync'
 #  when: keystone_db_version.stdout == "0" or keystone_db_version.stdout == '43'
 #
-- name: Enable Keystone Service For Kilo
-  service:
-   name: "{{ keystone_service }}"
-   enabled: yes
-   state: started
-  when: version == 'kilo'
+#- name: Enable Keystone Service For Kilo
+#  service:
+#   name: "{{ keystone_service }}"
+#   enabled: yes
+#   state: started
+#  when: version == 'kilo'
 
 #- name: Disable Keystone Service
 #  service:
@@ -70,7 +70,7 @@
    name: "{{ apache_service }}"
    enabled: yes
    state: started
-  when: version != 'kilo'
+#  when: version != 'kilo'
 
 - name: Create Keystone Admin Tenant
   run_once: yes
