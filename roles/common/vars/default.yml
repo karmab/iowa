@@ -28,6 +28,7 @@ openstack_packages:
  - 'python-ceilometer'
  - 'python-ceilometerclient'
  - 'python-swiftclient'
+ - 'python-novaclient'
 keystone_packages:
  - 'openstack-keystone'
  - 'python-keystonemiddleware'
