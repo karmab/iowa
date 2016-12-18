@@ -6,6 +6,9 @@ A set of roles to deploy openstack in a spread per component way
 
 ## TODO LIST
 
+- improve documentation !!!
+- create a simple web ui to assign roles
+- create a specific bridge mappings for compute nodes
 - document cinder enabled backends
 - add ldap support in keystone? keystone v3 ?
 - document how to run the role with a custom variables files ( and with a specific component through tags)
