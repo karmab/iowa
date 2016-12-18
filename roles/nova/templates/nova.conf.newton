@@ -4869,7 +4869,7 @@ connection = {{ mysql_prefix }}://{{ nova.dbuser }}:{{ nova.dbpassword }}@{{ com
 # "scheme://hostname:port[/path]" (i.e. "http://10.0.1.0:9292" or
 # "https://my.glance.server/image") (list value)
 #api_servers=<None>
-api_servers={{ glance_api_servers | prepend('http:') | append(':9292') | join(',') }}
+api_servers={{ glance_api_servers | prepend('http://') | append(':9292') | join(',') }}
 
 # Allow to perform insecure SSL (https) requests to glance (boolean value)
 #api_insecure=false

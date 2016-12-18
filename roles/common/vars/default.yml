@@ -17,7 +17,7 @@ rabbitmq_packages:
  - 'rabbitmq-server'
 rabbitmq_service: rabbitmq-server
 openstack_packages:
- - 'openstack-utils'
+# - 'openstack-utils'
  - 'openstack-selinux'
  - 'python-openstackclient'
  - 'python-memcached'
@@ -45,7 +45,6 @@ glance_services:
  - 'openstack-glance-registry'
 cinder_packages:
  - 'openstack-cinder'
- - 'openstack-utils'
  - 'device-mapper-multipath'
 cinder_services: 
  - 'openstack-cinder-api'
@@ -80,6 +79,8 @@ nova_compute_packages:
  - 'libvirt-daemon'
  - 'openstack-nova-compute'
  - 'openstack-selinux'
+ - 'python-novaclient'
+ - 'python-neutronclient'
 nova_compute_service: openstack-nova-compute
 nova_compute_ceilometer_packages:
  - 'openstack-ceilometer-compute'
@@ -90,6 +91,7 @@ heat_packages:
  - 'openstack-heat-engine'
  - 'openstack-heat-api-cloudwatch'
  - 'heat-cfntools'
+ - 'python-keystonemiddleware'
 heat_services:
  - 'openstack-heat-api'
  - 'openstack-heat-api-cfn'

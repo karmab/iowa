@@ -1657,7 +1657,7 @@ driver =messagingv2
 # This option is deprecated for removal.
 # Its value may be silently ignored in the future.
 # Reason: Replaced by [DEFAULT]/transport_url
-rabbit_hosts = { rabbit_hosts }}
+rabbit_hosts = {{ rabbit_hosts }}
 
 # Connect over SSL for RabbitMQ. (boolean value)
 # Deprecated group/name - [DEFAULT]/rabbit_use_ssl
@@ -2119,7 +2119,7 @@ policy_file = /etc/heat/policy.json
 
 # Authentication URL (string value)
 #auth_url = <None>
-auth_url = {{ keystone_internal_url }
+auth_url = {{ keystone_internal_url }}
 
 # Domain ID to scope to (string value)
 #domain_id = <None>
