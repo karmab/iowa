@@ -2720,7 +2720,7 @@ admin_tenant_name = {{ common.tenant }}
 
 # Libvirt domain type (valid options are: kvm, lxc, qemu, uml,
 # xen and parallels) (string value)
-virt_type= {{ nova_virt_type }}
+virt_type={{ nova_virt_type }}
 
 # Override the default libvirt URI (which is dependent on
 # virt_type) (string value)

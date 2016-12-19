@@ -5728,7 +5728,7 @@ password={{ nova.password }}
 #  (string value)
 # Allowed values: kvm, lxc, qemu, uml, xen, parallels
 #virt_type=kvm
-virt_type= {{ nova_virt_type }}
+virt_type={{ nova_virt_type }}
 
 #
 # Overrides the default libvirt URI of the chosen virtualization type.

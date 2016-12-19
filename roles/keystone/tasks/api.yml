@@ -50,27 +50,35 @@
   shell: su - keystone -s /bin/bash -c 'keystone-manage db_sync'
 #  when: keystone_db_version.stdout == "0" or keystone_db_version.stdout == '43'
 #
-#- name: Enable Keystone Service For Kilo
-#  service:
-#   name: "{{ keystone_service }}"
-#   enabled: yes
-#   state: started
-#  when: version == 'kilo'
+- name: Enable Keystone Service
+  service:
+   name: "{{ keystone_service }}"
+   enabled: yes
+   state: started
+  when: version == 'kilo'
 
-#- name: Disable Keystone Service
-#  service:
-#   name: "{{ keystone_service }}"
-#   enabled: no
-#   state: stopped
-#  ignore_errors: yes
-#  when: version != 'liberty'
+- name: Disable Keystone Service
+  service:
+   name: "{{ keystone_service }}"
+   enabled: no
+   state: stopped
+  ignore_errors: yes
+  when: version != 'kilo'
 
 - name: Enable Keystone Apache Service
   service:
    name: "{{ apache_service }}"
    enabled: yes
    state: started
-#  when: version != 'kilo'
+  when: version != 'kilo'
+
+- name: Debug keystone_admin_url
+  debug:
+    var: keystone_admin_url
+
+- name: Debug keystone_admin_token
+  debug:
+    var: keystone.admin_token
 
 - name: Create Keystone Admin Tenant
   run_once: yes
