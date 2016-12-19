@@ -1,6 +1,7 @@
 - include: api.yml
   tags:
-   - controller
+   - allinone
+   - api
    - nova
 - include: compute.yml
   tags:

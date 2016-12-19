@@ -98,6 +98,7 @@ heat_services:
  - 'openstack-heat-api-cloudwatch'
  - 'openstack-heat-engine'
 ceilometer_packages:
+ - 'python-oslo-config'
  - 'openstack-ceilometer-api'
  - 'openstack-ceilometer-central'
  - 'openstack-ceilometer-collector'

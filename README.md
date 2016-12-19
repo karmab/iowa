@@ -64,6 +64,11 @@ ansible-playbook -i ~/klist.py controller.yml
 ansible-playbook -i ~/klist.py controller.yml --tags api
 ```
 
+- controller stuff
+```
+ansible-playbook -i ~/klist.py site.yml --tags controller,mysql,rabbitmq,mongodb
+```
+
 - compute
 ```
 ansible-playbook -i ~/klist.py compute.yml --tags compute
