@@ -98,6 +98,7 @@ nova:
  security_group_api: neutron
  firewall_driver: nova.virt.firewall.NoopFirewallDriver
  vncserver_listen: 0.0.0.0
+ virt_type: qemu
 
 nova_api:
  dbuser: nova

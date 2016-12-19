@@ -28,6 +28,7 @@ A set of roles to deploy openstack in a spread per component way
 
 ## NOVA
  - documento nova.novncproxy_url as it cant be set in defaults var file
+ - virt_type is qemu by default, you can set  nova.virt_type to kvm if using nested ( it s giving some issues actually)
 
 
 ## RUN SPECIFIC COMPONENT
