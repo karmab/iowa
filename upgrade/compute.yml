@@ -1,10 +1,14 @@
 ---
-- name: Install Keystone
-  hosts: cont01
+- name: Install Nova Compute
+  hosts:
+   - compute01
+   - compute02
+   - compute03
   remote_user: cloud-user
   gather_facts: true
   become: yes
   become_user: root
   become_method: sudo
   roles:
-    - keystone
+    - neutron
+    - nova

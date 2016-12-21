@@ -1,0 +1,110 @@
+---
+- name: Install Mongodb
+  hosts: mongodb
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - mongodb
+
+- name: Install Mysql
+  hosts: mysql
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - mysql
+
+- name: Install Rabbitmq
+  hosts: rabbitmq
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - rabbitmq
+
+- name: Install Keystone
+  hosts: keystone
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - keystone
+
+- name: Install Glance
+  hosts: glance
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - glance
+
+- name: Install Cinder
+  hosts: cinder
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - cinder
+
+- name: Install Neutron
+  hosts: neutron
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - neutron
+
+- name: Install Nova
+  hosts: nova
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - nova
+
+- name: Install Heat
+  hosts: heat
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - heat
+
+- name: Install Horizon
+  hosts: horizon
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - horizon
+
+- name: Install Ceilometer
+  hosts: ceilometer
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  roles:
+    - ceilometer

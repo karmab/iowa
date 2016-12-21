@@ -1,2 +1,0 @@
-testinfra>=1.4.2
-pytest>=3.0.3

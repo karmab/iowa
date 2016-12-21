@@ -6652,9 +6652,7 @@ auth_url={{ keystone_admin_url }}
 
 # Project name to scope to (string value)
 #project_name=<None>
-{% if keystone_version == 'v3' %}
 project_name={{ common.tenant }}
-{% endif %}
 
 # Domain ID containing project (string value)
 #project_domain_id=<None>
@@ -6703,7 +6701,7 @@ password={{ neutron.password }}
 #tenant_id=<None>
 
 # Tenant Name (string value)
-tenant_name={{ common.tenant }}
+#tenant_name=<None>
 
 
 [osapi_v21]

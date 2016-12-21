@@ -1,0 +1,28 @@
+---
+- name: Set Newton Repos
+  hosts: newyork
+  remote_user: cloud-user
+  gather_facts: true
+  become: yes
+  become_user: root
+  become_method: sudo
+  tasks:
+
+#  - name: Register Systems
+#    redhat_subscription:
+#     state: present
+#     username: kboumedh@redhat.com
+#     password: 'r3dhA7$27'
+#     autosubscribe: 'true'
+#     pool: '8a85f981568e999d01568ed222cd6712'
+
+  - name: Activate Liberty Repos
+    redhat_repos:
+     state: present
+     only: yes
+     repos:
+      - rhel-7-server-rpms
+      - rhel-7-server-rh-common-rpms
+      - rhel-7-server-openstack-10-rpms
+      - rhel-ha-for-rhel-7-server-rpms
+      - rhel-7-server-extras-rpms
