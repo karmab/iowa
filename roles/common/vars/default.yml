@@ -17,7 +17,7 @@ rabbitmq_packages:
  - 'rabbitmq-server'
 rabbitmq_service: rabbitmq-server
 openstack_packages:
-# - 'openstack-utils'
+ - 'openstack-utils'
  - 'openstack-selinux'
  - 'python-openstackclient'
  - 'python-memcached'

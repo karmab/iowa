@@ -4,6 +4,7 @@
 
 A set of roles to deploy openstack in a spread per component way
 
+
 ## TODO LIST
 
 - improve documentation !!!
@@ -29,6 +30,11 @@ A set of roles to deploy openstack in a spread per component way
 ## NOVA
  - documento nova.novncproxy_url as it cant be set in defaults var file
  - virt_type is qemu by default, you can set  nova.virt_type to kvm if using nested ( it s giving some issues actually)
+
+# INSTALLING ON RHEL
+note that those roles dont handle subscriptions
+also note that newton requires the rhel-7-server-openstack-10-devtools-rpms channel
+
 
 
 ## RUN SPECIFIC COMPONENT
