@@ -41,10 +41,10 @@
 # (integer value)
 #stale_token_duration = 30
 
-# Subset of trustor roles to be delegated to heat. If left unset, all roles of
+# Subset of trustor roles to be dnelegated to heat. If left unset, all roles of
 # a user will be delegated to heat when creating a stack. (list value)
 #trusts_delegated_roles =
-trusts_delegated_roles =heat_stack_owner
+###trusts_delegated_roles =heat_stack_owner
 
 # Maximum resources allowed per top-level stack. -1 stands for unlimited.
 # (integer value)
@@ -184,7 +184,8 @@ heat_watch_server_url = http://{{ heat_host }}:8003
 #region_name_for_services = <None>
 
 # Keystone role for heat template-defined users. (string value)
-heat_stack_user_role = {{ heat.heat_stack_user_role }}
+# # TODO KARIM
+###heat_stack_user_role = {{ heat.heat_stack_user_role }}
 
 # Keystone domain ID which contains heat template-defined users. If this option
 # is set, stack_user_domain_name option will be ignored. (string value)
@@ -199,11 +200,11 @@ stack_user_domain_name = heat
 # Keystone username, a user with roles sufficient to manage users and projects
 # in the stack_user_domain. (string value)
 #stack_domain_admin = <None>
-stack_domain_admin = heat_admin
+stack_domain_admin = keystone
 
 # Keystone password for stack_domain_admin user. (string value)
 #stack_domain_admin_password = <None>
-stack_domain_admin_password = 05ac189db86242da
+stack_domain_admin_password = {{ keystone.admin_password }}
 
 # Maximum raw byte size of any template. (integer value)
 #max_template_size = 524288
@@ -223,7 +224,7 @@ num_engine_workers = 2
 # Key used to encrypt authentication info in the database. Length of this key
 # must be 32 characters. (string value)
 #auth_encryption_key = notgood but just long enough i t
-auth_encryption_key = cb2e83de82444488
+auth_encryption_key = {{ heat.auth_encryption_key }}
 
 #
 # From heat.common.wsgi
@@ -745,7 +746,7 @@ rpc_backend = {{ heat.rpc_backend }}
 
 # Unversioned keystone url in format like http://0.0.0.0:5000. (string value)
 #auth_uri =
-auth_uri = {{ keystone_admin_url }}
+auth_uri = {{ keystone_identity_uri }}
 
 
 [clients_magnum]
@@ -2119,7 +2120,7 @@ policy_file = /etc/heat/policy.json
 
 # Authentication URL (string value)
 #auth_url = <None>
-auth_url = {{ keystone_internal_url }}
+auth_url = {{ keystone_identity_uri }}
 
 # Domain ID to scope to (string value)
 #domain_id = <None>
@@ -2161,7 +2162,7 @@ project_domain_name = Default
 # Username (string value)
 # Deprecated group/name - [trustee]/user-name
 #username = <None>
-username = heat
+username = {{ heat.username }}
 
 # User's domain id (string value)
 #user_domain_id = <None>
@@ -2172,7 +2173,7 @@ user_domain_name = Default
 
 # User's password (string value)
 #password = <None>
-password = 41189ea4eacd45bb
+password = {{ heat.password }}
 auth_plugin=password
 
 
@@ -2194,7 +2195,5 @@ project_name={{ common.tenant }}
 auth_url={{ keystone_identity_uri }}
 auth_uri={{ keystone_internal_url }}
 auth_type=password
-{% if keystone_version == 'v3' %} 
 project_domain_name=Default
 user_domain_name=Default
-{% endif %}

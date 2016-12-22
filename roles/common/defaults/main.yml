@@ -113,6 +113,7 @@ heat:
  password: heat
  rpc_backend: rabbit
  heat_stack_user_role: heat_stack_user
+ auth_encryption_key: cb2e83de82444488
 
 ceilometer:
  dbuser: ceilometer
