@@ -6628,18 +6628,14 @@ timeout=60
 # Authentication type to load (string value)
 # Deprecated group;name - [neutron]/auth_plugin
 #auth_type=<None>
-{% if keystone_version == 'v3' %}
 auth_type=v3password
-{% else %}
-auth_type=password
-{% endif %}
 
 # Config Section from which to load plugin specific options (string value)
 #auth_section=<None>
 
 # Authentication URL (string value)
 #auth_url=<None>
-auth_url={{ keystone_admin_url }}
+auth_url={{ keystone_admin_url_v3 }}
 
 # Domain ID to scope to (string value)
 #domain_id=<None>
@@ -6652,18 +6648,14 @@ auth_url={{ keystone_admin_url }}
 
 # Project name to scope to (string value)
 #project_name=<None>
-{% if keystone_version == 'v3' %}
 project_name={{ common.tenant }}
-{% endif %}
 
 # Domain ID containing project (string value)
 #project_domain_id=<None>
 
 # Domain name containing project (string value)
 #project_domain_name=<None>
-{% if keystone_version == 'v3' %}
 project_domain_name=Default
-{% endif %}
 
 # Trust ID (string value)
 #trust_id=<None>
@@ -6691,9 +6683,7 @@ username={{ neutron.username }}
 
 # User's domain name (string value)
 #user_domain_name=<None>
-{% if keystone_version == 'v3' %}
 user_domain_name=Default
-{% endif %}
 
 # User's password (string value)
 #password=<None>
@@ -6703,7 +6693,7 @@ password={{ neutron.password }}
 #tenant_id=<None>
 
 # Tenant Name (string value)
-tenant_name={{ common.tenant }}
+#tenant_name={{ common.tenant }}
 
 
 [osapi_v21]
