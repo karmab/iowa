@@ -50,7 +50,6 @@ cinder_packages:
  - 'device-mapper-multipath'
  - 'python-osprofiler'
  - 'python-oslo-middleware'
- - 'python-os-brick'
 cinder_services: 
  - 'openstack-cinder-api'
  - 'openstack-cinder-scheduler'
@@ -89,7 +88,6 @@ nova_compute_packages:
  - 'openstack-selinux'
  - 'python-novaclient'
  - 'python-neutronclient'
- - 'python-os-brick'
 nova_compute_service: openstack-nova-compute
 nova_compute_ceilometer_packages:
  - 'openstack-ceilometer-compute'

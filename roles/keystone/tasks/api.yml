@@ -33,7 +33,7 @@
     dest: "{{ apache_dir }}/wsgi-keystone.conf"
   notify: 
    - Restart Apache
-#  when: version != 'kilo'
+  when: version != 'kilo'
 
 - name: Create Keystone Ssl Directory
   copy:

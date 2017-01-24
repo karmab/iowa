@@ -17,11 +17,12 @@ rabbitmq_packages:
  - 'rabbitmq-server'
 rabbitmq_service: rabbitmq-server
 openstack_packages:
-# - 'openstack-utils'
+ - 'openstack-utils'
  - 'openstack-selinux'
  - 'python-openstackclient'
  - 'python-memcached'
  - 'python-oslo-log'
+ - 'python-oslo-middleware'
  - 'python-keystoneclient'
  - 'python-cinderclient'
  - 'python-heatclient'
@@ -40,12 +41,16 @@ keystone_packages:
 keystone_service: openstack-keystone
 glance_packages:
  - 'openstack-glance'
+ - 'python-osprofiler'
 glance_services:
  - 'openstack-glance-api'
  - 'openstack-glance-registry'
 cinder_packages:
  - 'openstack-cinder'
  - 'device-mapper-multipath'
+ - 'python-osprofiler'
+ - 'python-oslo-middleware'
+ - 'python-os-brick'
 cinder_services: 
  - 'openstack-cinder-api'
  - 'openstack-cinder-scheduler'
@@ -55,6 +60,8 @@ neutron_packages:
  - 'openstack-neutron'
  - 'openstack-neutron-ml2'
  - 'openstack-neutron-openvswitch'
+ - 'python-pecan'
+ - 'python-kombu'
 neutron_service: neutron-server
 neutron_ovs_service: neutron-openvswitch-agent
 neutron_dhcp_service: neutron-dhcp-agent
@@ -68,6 +75,7 @@ nova_packages:
  - 'openstack-nova-scheduler'
  - 'openstack-nova-novncproxy'
  - 'openstack-nova-console'
+ - 'python-kombu'
 nova_services:
  - 'openstack-nova-api'
  - 'openstack-nova-conductor'
@@ -81,6 +89,7 @@ nova_compute_packages:
  - 'openstack-selinux'
  - 'python-novaclient'
  - 'python-neutronclient'
+ - 'python-os-brick'
 nova_compute_service: openstack-nova-compute
 nova_compute_ceilometer_packages:
  - 'openstack-ceilometer-compute'
@@ -92,6 +101,8 @@ heat_packages:
  - 'openstack-heat-api-cloudwatch'
  - 'heat-cfntools'
  - 'python-keystonemiddleware'
+ - 'python-osprofiler'
+ - 'python-oslo-middleware'
 heat_services:
  - 'openstack-heat-api'
  - 'openstack-heat-api-cfn'
@@ -106,6 +117,7 @@ ceilometer_packages:
  - 'openstack-ceilometer-compute'
  - 'openstack-ceilometer-alarm'
  - 'openstack-ceilometer-notification'
+ - 'python-oslo-middleware'
 ceilometer_services:
  - 'openstack-ceilometer-api'
  - 'openstack-ceilometer-collector'
@@ -142,6 +154,8 @@ horizon_packages:
  - 'memcached'
  - 'openstack-dashboard'
  - 'python-django-pyscss'
+ - 'python-django-openstack-auth'
+ - 'python-XStatic-smart-table.noarch'
 aodh_packages:
  - 'openstack-aodh-api'
  - 'openstack-aodh-evaluator'

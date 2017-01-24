@@ -42,7 +42,7 @@ listen horizon_ssl
   {% endfor %}
 {% endif %}
 
-{% if msyql_hosts is defined %}
+{% if mysql_hosts is defined %}
 listen mysql
   bind *:3306
   balance  source
