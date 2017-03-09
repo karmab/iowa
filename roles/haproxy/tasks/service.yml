@@ -19,6 +19,12 @@
   notify:
    - Restart Haproxy
 
+- name: Allow Selinux
+  seboolean:
+    name: haproxy_connect_any
+    state: yes
+    persistent: yes
+
 - name: Enable Haproxy Service
   service:
    name: haproxy
